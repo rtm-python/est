@@ -1,10 +1,7 @@
 # WORKFLOW
 
-(Landing Page) --> (Authentication Page) --> (Results Page / Completed Page / Examination Page) --> [Logout]
-(Results Page) <-- (Completed Tasks Page) --> (Examintaion Page)
-(Completed Tasks Page) <-- (Examination Page) --> (Results Page)
-(Examintaion Page) <-- (Results Page) --> (Completed Tasks Page)
-(Examination Page) --> [Task Page] --> [Examination Complete Page]
+* **Introduction** --> **Authentication** --> **Statistics / Examination** --> [Logout]
+* **Statistics** <-> **Examintaion**
 
 
 ## Introduction

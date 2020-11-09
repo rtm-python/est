@@ -40,3 +40,5 @@ class UrlPrefix(Enum):
 	Application url_prefix enumeration.
 	"""
 	base = '/'
+	statistics = '/statistics/'
+	examination = '/examination/'

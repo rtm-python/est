@@ -26,7 +26,9 @@ paranoid.redirect_view = 'base.landing'
 # (prevent circular imports)
 for module_name in \
 		[
-			'base'
+			'base',
+			'statistics',
+			'examination'
 		]:
 	module = importlib.import_module('blueprints.%s' % module_name)
 	application.register_blueprint(

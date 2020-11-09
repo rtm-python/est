@@ -1,17 +1,13 @@
 # -*- coding: utf-8 -*-
 
 """
-Initial base blueprint module to handle basic routes.
+Initial blueprint module to initiate base blueprint.
 """
 
 # Standard libraries import
-import logging
-import os
-import sys
+
 
 # Application modules import
-from config import config
-from config import UrlPrefix
 from blueprints import application
 
 # Additional libraries import
@@ -23,6 +19,10 @@ blueprint = Blueprint(
 	static_folder='',
 	template_folder=''
 )
+
+# Routes import
+from blueprints.base import landing
+from blueprints.base import sign
 
 
 # HTTP_400_BAD_REQUEST
@@ -75,39 +75,10 @@ blueprint = Blueprint(
 @application.errorhandler(503)
 @application.errorhandler(504)
 @application.errorhandler(505)
-def error_handler(error):
+def handle_error(error):
 	"""
 	Return error message.
 	"""
-	logging.debug(error)
 	error_code = getattr(error, 'code', 0)
 	return str(error_code), \
 		error_code if 400 <= error_code < 500 else 200
-
-
-@blueprint.route('/', methods=('GET',))
-def landing():
-	"""
-	Return landing page.
-	"""
-	logging.debug('LANDING')
-	return 'Landing Page', 200
-
-
-## Register blueprint
-#application.register_blueprint(
-#	blueprint,
-#	url_prefix=UrlPrefix.BASE.value
-#)
-
-
-
-#logging.debug(
-#	"\r\n".join(
-#		[
-#			"%s = %s" % (key, getattr(blueprint, key)) \
-#				if key[:1] != '_' else '' \
-#					for key in dir(blueprint)
-#		]
-#	)
-#)

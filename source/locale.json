@@ -1,0 +1,9 @@
+{
+	"__": {
+		"supported_languages": ["kz", "ru", "en"]
+	},
+	"Catalog": {
+		"endpoint": null,
+		"ru": "Каталог"
+	}
+}

@@ -5,7 +5,7 @@ Initial blueprint module to initiate examination blueprint.
 """
 
 # Standard libraries import
-
+import os
 
 # Application modules import
 from blueprints import application
@@ -16,8 +16,10 @@ from flask import Blueprint
 # Initiate Blueprint object
 blueprint = Blueprint(
 	'examination', __name__,
-	static_folder='',
-	template_folder=''
+	static_folder=os.path.join(
+		os.path.abspath(os.curdir), 'source/static'),
+	template_folder=os.path.join(
+		os.path.abspath(os.curdir), 'source/templates')
 )
 
 # Routes import

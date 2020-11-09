@@ -1,0 +1,18 @@
+{%- extends "layout.html" -%}
+{% set title -%}{{ __('Catalog') }}{%- endset %}
+{%- block body_content -%}
+	<div class="col 12">
+		<h1>{{ __('Catalog') }}</h1>
+		{%- include 'examination/filter.html' -%}
+		{%- for item in examinations -%}
+			<div>
+				{{ item.name }}
+				{{ item.plugin }}
+				{{ item.options }}
+				{{ item.public }}
+			</div>
+		{%- endfor -%}
+		{%- include 'paginator.html' -%}
+	</div>
+{%- endblock -%}
+

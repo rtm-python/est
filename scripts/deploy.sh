@@ -8,10 +8,16 @@
 
 [ -f config/app.json ] \
 	&& yes | cp config/app.json config/_app.json \
-	&& echo 'File "config/app.json" - backup created!'
+	&& echo 'File "config/_app.json" - backup created!'
 
-jq '.data[] | select(.version == "'$*'")' secrets/deployment.json > config/app.json \
-	&& echo 'File "config/app.json" - created!'
+config=$(jq '.data[] | select(.version == "'$*'")' secrets/deployment.json)
+if [ -z "$config" ];
+then
+	echo 'Define configuration version!' \
+		&& exit
+fi
+echo "$config" > config/app.json \
+	&& echo 'File "config/app.json" for "'"$*"'" - created!'
 
 # Virtual Environment
 

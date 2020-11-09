@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
 
-from flask import Flask
+"""
+Main module to run application.
+"""
 
-
-application = Flask('hw')
-
-@application.route('/')
-def home():
-	return 'Hello World'
+# Application modules import
+from blueprints import application
 
 
 if __name__ == '__main__':

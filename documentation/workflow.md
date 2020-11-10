@@ -48,7 +48,7 @@
 ### Examinations Page
 *active*
 
-- [ ] Examination List
+- [x] Examination List
 - [ ] List Filter
 - [ ] Delete / Edit / Create / Start Examination
 

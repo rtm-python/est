@@ -1,13 +1,13 @@
 {%- extends "layout.html" -%}
 {% set title -%}{{ __('Catalog') }}{%- endset %}
 {%- block body_content -%}
-	<h1 style="margin-top: 10px;">{{ __('Catalog') }}</h1>
+	<h2 class="mt-3">{{ __('Catalog') }}</h2>
 	{%- include 'examination/filter.html' -%}
 	{%- for item in examinations -%}
 		<div class="list-group list-group-flush">
-			<a href="{{ url_for('examination.get_examination', uid=item.uid) }}" class="list-group-item list-group-item-action" style="padding-bottom: 25px;">
-				<div class="d-flex w-100 justify-content-between">
-					<h5 class="mb-1">{{ item.name }}</h5>
+			<a href="{{ url_for('examination.get_examination', uid=item.uid, page_index=pagination.page_index, per_page=pagination.per_page, filter_name=filter.filter_name.data, filter_plugin=filter.filter_plugin.data, filter_hide_global=filter.filter_hide_global.data) }}" class="list-group-item list-group-item-action">
+				<div class="mt-2 d-flex w-100 justify-content-between">
+					<h4 class="mb-2">{{ item.name }}</h4>
 					<small>{{ item.plugin }}</small>
 				</div>
 				<small>{{ item.options }}</small>
@@ -15,11 +15,11 @@
 				<div class="progress" style="height: 3px;">
 					<div class="progress-bar" role="progressbar" style="width: {{ item.score }}%" area-valuenow="{{ item.score }}" area-valuemin="0" area-valuemax="100"></div>
 				</div>
-				<small class="timestamp d-flex justify-content-end">{{ item.passed }}</small>
+				<small class="mt-2 timestamp d-flex justify-content-end">{{ item.passed }}</small>
 			</a>
 		</div>
 	{%- endfor -%}
-	<small class="d-flex justify-content-start">{{ caption }}</small>
+	<small class="mt-2 d-flex justify-content-start">{{ caption }}</small>
 	{%- include 'paginator.html' -%}
 {%- endblock -%}
 {%- block body_script -%}

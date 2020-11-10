@@ -1,0 +1,40 @@
+{%- extends "layout.html" -%}
+{% set title -%}{{ __('Information') }}{%- endset %}
+{%- block body_content -%}
+	<h2 class="mt-3">{{ __('Examination') }}</h2>
+	<div class="row">
+		<div class="col-12 col-md-4 mb-2">
+			<nav class="nav flex-column">
+				<a class="nav-link btn btn-outline-dark mb-1" href="{{ url_for('examination.get_examination_catalog', page_index=pagination.page_index, per_page=pagination.per_page, filter_name=filter.filter_name.data, filter_plugin=filter.filter_plugin.data, filter_hide_global=filter.filter_hide_global.data) }}">{{ __('Back to catalog...') }}</a>
+				<a class="nav-link btn btn-outline-dark mb-1" href="#">{{ __('Start...') }}</a>
+				<a class="nav-link btn btn-outline-dark mb-1" href="{{ url_for('examination.edit_examination', uid=item['uid'], page_index=pagination.page_index, per_page=pagination.per_page, filter_name=filter.filter_name.data, filter_plugin=filter.filter_plugin.data, filter_hide_global=filter.filter_hide_global.data) }}">{{ __('Edit...') }}</a>
+				<a class="nav-link btn btn-outline-dark mb-1" href="#">{{ __('Delete...') }}</a>
+			</nav>
+		</div>
+		<div class="col-12 col-md-8">
+			<div class="m-2">
+				<div class="mt-2 d-flex w-100 justify-content-between">
+					<h4 class="mb-2">{{ item.name }}</h4>
+					<small>{{ item.plugin }}</small>
+				</div>
+				<small>{{ item.options }}</small>
+				<p class="lb-1">{{ item.description }}</p>
+				<div class="progress" style="height: 3px;">
+					<div class="progress-bar" role="progressbar" style="width: {{ item.score }}%" area-valuenow="{{ item.score }}" area-valuemin="0" area-valuemax="100"></div>
+				</div>
+				<small class="mt-2 timestamp d-flex justify-content-end">{{ item.passed }}</small>
+			</div>
+		</div>
+	</div>
+{%- endblock -%}
+{%- block body_script -%}
+	<script type="text/javascript">
+		var elements = $(".timestamp");
+		var user_tz = moment.tz.guess();
+
+		for (var i = 0; i < elements.length; i++) {
+			elements[i].textContent = moment(elements[i].textContent + "+00:00").tz(user_tz).format('HH:mm:ss DD MMMM YYYY, dddd');
+		}
+	</script>
+{%- endblock -%}
+

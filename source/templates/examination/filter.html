@@ -1,3 +1,34 @@
-<div>
-	FILTER
+<div class="accordion" id="accordionFilter">
+  <div class="card">
+    <div class="card-header p-0 m-0" id="headingFilter">
+      <button class="btn btn-block" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+        {{ __('Filter') }}
+      </button>
+    </div>
+    <div id="collapseOne" class="collapse hide" aria-labelledby="headingFilter" data-parent="#accordionFilter">
+      <div class="card-body">
+				<form method="post" actions="">
+					{{ filter.csrf_token }}
+					<div class="form-row">
+						<div class="col-12 col-md-4 mb-2">
+							<small>{{ __('Name') }}</small>
+							<input type="text" class="form-control" id="filter_name" name="filter_name" placeholder="{{ __('Name') }}" value="{{ filter.filter_name.data|default('', True) }}" />	
+						</div>
+						<div class="col-12 col-md-4 mb-2">
+							<small>{{ __('Plugin') }}</small>
+							<input type="text" class="form-control" id="filter_plugin" name="filter_plugin" placeholder="{{ __('Plugin') }}" value="{{ filter.filter_plugin.data|default('', True) }}" />
+						</div>
+						<div class="col-12 col-md-2 mb-2">
+							<small>{{ __('Hide global') }}</small>
+							<input type="checkbox" class="form-control" id="filter_hide_global" name="filter_hide_global" style="width: auto;" {%- if filter.filter_hide_global.data == 'True' -%}checked{%- endif -%} />
+						</div>
+						<div class="col-12 col-md-2 my-2">
+							<button type="submit" class="btn btn-block btn-outline-dark">{{ __('Apply') }}</button>
+							<a href="{{ url_for('examination.get_examination_catalog') }}" class="btn btn-block btn-outline-dark">{{ __('Reset') }}</a>
+						</div>
+					</div>
+				</form>
+      </div>
+    </div>
+  </div>
 </div>

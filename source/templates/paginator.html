@@ -4,7 +4,7 @@
 {%- if loop_last > pagination.page_count -%}{%- set loop_last = pagination.page_count -%}{%- endif -%}
 {%- if pagination.page_index == 1 -%}{%- set first = 0 -%}{%- set prev = 0 -%}{%- else -%}{%- set first = 1 -%}{%- set prev = pagination.page_index - 1 -%}{%- endif -%}
 {%- if pagination.page_index == pagination.page_count -%}{%- set last = 0 -%}{%- set next = 0 -%}{%- else -%}{%- set last = pagination.page_count -%}{%- set next = pagination.page_index + 1 -%}{%- endif -%}
-<nav style="margin-top: 10px;">
+<nav class="mt-3">
 	<ul class="pagination pagination-sm justify-content-center">
 	{%- if first > 0 -%}
 		<li class="page-item">

@@ -1,5 +1,76 @@
-{%- for page in pages -%}
-	<div>
-		{{ page }}
-	</div>
-{%- endfor -%}
+{%- set loop_first = pagination.page_index - 2 -%}
+{%- if loop_first < 1 -%}{%- set loop_first = 1 -%}{%- endif -%}
+{%- set loop_last = pagination.page_index + 2 -%}
+{%- if loop_last > pagination.page_count -%}{%- set loop_last = pagination.page_count -%}{%- endif -%}
+{%- if pagination.page_index == 1 -%}{%- set first = 0 -%}{%- set prev = 0 -%}{%- else -%}{%- set first = 1 -%}{%- set prev = pagination.page_index - 1 -%}{%- endif -%}
+{%- if pagination.page_index == pagination.page_count -%}{%- set last = 0 -%}{%- set next = 0 -%}{%- else -%}{%- set last = pagination.page_count -%}{%- set next = pagination.page_index + 1 -%}{%- endif -%}
+<nav>
+	<ul class="pagination">
+	{%- if first > 0 -%}
+		<li class="page-item">
+			<a class="page-link" href="{{ url_for('examination.get_examination_catalog', page_index=first) }}">
+	{%- else -%}
+		<li class="page-item disabled">
+			<a class="page-link" href="#">
+	{%- endif -%}
+				<span aria-hidden="true">&laquo;</span>
+			</a>
+		</li>
+	{%- if prev > 0 -%}
+		<li class="page-item">
+			<a class="page-link" href="{{ url_for('examination.get_examination_catalog', page_index=prev) }}">
+	{%- else -%}
+		<li class="page-item disabled">
+			<a class="page-link" href="#">
+	{%- endif -%}
+				<span aria-hidden="true">&laquo;</span>
+			</a>
+		</li>
+	{%- if loop_first > 1 -%}
+		<li class="page-item disabled">
+			<a class="page-link" href="#">
+				<span aria-hidden="true">...</span>
+			</a>
+		</li>
+	{%- endif -%}
+	{%- for page_index in range(loop_first, loop_last + 1) -%}
+		{%- if pagination.page_index == page_index -%}
+			<li class="page-item active" aria-current="page">
+				<a class="page-link" href="#">
+		{%- else -%}
+			<li class="page-item">
+				<a class="page-link" href="{{ url_for('examination.get_examination_catalog', page_index=page_index) }}">
+		{%- endif -%}
+					{{ page_index }}
+				</a>
+			</li>
+	{%- endfor -%}
+	{%- if loop_last < pagination.page_count -%}
+		<li class="page-item disabled">
+			<a class="page-link" href="#">
+				<span aria-hidden="true">...</span>
+			</a>
+		</li>
+	{%- endif -%}
+	{%- if next > 0 -%}
+		<li class="page-item">
+			<a class="page-link" href="{{ url_for('examination.get_examination_catalog', page_index=next) }}">
+	{%- else -%}
+		<li class="page-item disabled">
+			<a class="page-link" href="#">
+	{%- endif -%}
+				<span aria-hidden="true">&raquo;</span>
+			</a>
+		</li>
+	{%- if last > 0 -%}
+		<li class="page-item">
+			<a class="page-link" href="{{ url_for('examination.get_examination_catalog', page_index=last) }}">
+	{%- else -%}
+		<li class="page-item disabled">
+			<a class="page-link" href="#">
+	{%- endif -%}
+				<span aria-hidden="true">&raquo;</span>
+			</a>
+		</li>
+	</ul>	
+</nav>

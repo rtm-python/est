@@ -15,7 +15,7 @@
 			</div>
 			<div class="col-12 my-2">
 				<button type="submit" class="btn btn-block btn-outline-dark">{{ __('Save') }}</button>
-				<a href="{{ url_for('examination.get_examination', uid=uid, page_index=pagination.page_index, per_page=pagination.per_page) }}" class="btn btn-block btn-outline-dark">{{  __('Cancel') }}</a>
+				<a href="{{ url_for('examination.get_examination', uid=uid) }}" class="btn btn-block btn-outline-dark">{{  __('Cancel') }}</a>
 			</div>
 		</div>
 	</form>

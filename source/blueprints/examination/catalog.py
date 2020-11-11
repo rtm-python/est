@@ -12,6 +12,9 @@ from blueprints import application
 from blueprints.examination import blueprint
 from blueprints.__paginator__ import get_pagination
 from blueprints.__locale__ import __
+from blueprints.__args__ import get_string
+from blueprints.__args__ import get_boolean
+from blueprints.__args__ import set_value
 
 # Additional libraries import
 from flask import render_template
@@ -62,11 +65,11 @@ test_examinations = [
 		'score': 30
 	}
 ]
-#test_examinations += test_examinations
-#test_examinations += test_examinations
-#test_examinations += test_examinations
-#test_examinations += test_examinations
-#test_examinations += test_examinations
+test_examinations += test_examinations
+test_examinations += test_examinations
+test_examinations += test_examinations
+test_examinations += test_examinations
+test_examinations += test_examinations
 
 
 class FilterForm(FlaskForm):
@@ -78,13 +81,21 @@ class FilterForm(FlaskForm):
 	filter_hide_global = BooleanField()
 	submit = SubmitField()
 
-	def set_fields_from_request(self) -> None:
+	def define_fields(self) -> None:
 		"""
 		Set form fields to values from request.
 		"""
-		self.filter_name.data = request.args.get('filter_name')
-		self.filter_plugin.data = request.args.get('filter_plugin')
-		self.filter_hide_global.data = request.args.get('filter_hide_global')
+		self.filter_name.data = get_string('filter_name')
+		self.filter_plugin.data = get_string('filter_plugin')
+		self.filter_hide_global.data = get_boolean('filter_hide_global')
+
+	def store_fields(self) -> None:
+		"""
+		Set form fields to values from request.
+		"""
+		set_value('filter_name', self.filter_name.data)
+		set_value('filter_plugin', self.filter_plugin.data)
+		set_value('filter_hide_global', self.filter_hide_global.data)
 
 
 class EditorForm(FlaskForm):
@@ -115,13 +126,14 @@ def get_examination_catalog():
 	"""
 	filter = FilterForm()
 	if filter.validate_on_submit():
+		filter.store_fields()
 		return redirect(url_for(
 			'examination.get_examination_catalog',
 			filter_name=filter.filter_name.data,
 			filter_plugin=filter.filter_plugin.data,
 			filter_hide_global=filter.filter_hide_global.data
 		))
-	filter.set_fields_from_request()
+	filter.define_fields()
 	pagination = get_pagination(len(test_examinations))
 	pagination['endpoint'] = 'examination.get_examination_catalog'
 	examinations = test_examinations[
@@ -147,14 +159,9 @@ def get_examination(uid: str):
 	"""
 	Return examination view page.
 	"""
-	filter = FilterForm()
-	filter.set_fields_from_request()
-	pagination = get_pagination(len(test_examinations))
 	item = test_examinations[0]
 	return render_template(
 		'examination/info.html',
-		filter=filter,
-		pagination=pagination,
 		item=item
 	)
 
@@ -164,15 +171,10 @@ def edit_examination(uid: str):
 	"""
 	Return examination edit page.
 	"""
-	filter = FilterForm()
-	filter.set_fields_from_request()
-	pagination = get_pagination(len(test_examinations))
 	item = test_examinations[0]
 	editor = EditorForm(item)
 	return render_template(
 		'examination/edit.html',
-		filter=filter,
-		pagination=pagination,
 		editor=editor,
 		uid=uid
 	)

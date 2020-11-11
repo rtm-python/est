@@ -6,18 +6,8 @@ Helper module to handle pagination.
 
 # Additional libraries import
 from flask import request
-
-
-def get_integer(argument_name: str, default_value: int) -> int:
-	"""
-	Return integer value from request argument or
-	default value on cast to integer error.
-	"""
-	argument_value = request.args.get(argument_name)
-	try:
-		return int(argument_value)
-	except:
-		return default_value
+from blueprints.__args__ import get_integer
+from blueprints.__args__ import set_value
 
 
 def get_pagination(entity_count: int) -> dict:
@@ -37,6 +27,9 @@ def get_pagination(entity_count: int) -> dict:
 		raise ValueError('Requested page_index out of range!')
 	if per_page < 1:
 		raise ValueError('Requested per_page out of range!')
+	# Store arguments in session
+	set_value('page_index', page_index)
+	set_value('per_page', per_page)
 	return {
 		"page_index": page_index,
 		"per_page": per_page,

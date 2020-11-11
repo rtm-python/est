@@ -1,0 +1,87 @@
+{%- extends "layout.html" -%}
+{% set title -%}{{ __('Create Examination') }}{%- endset %}
+{%- block body_content -%}
+	<h2 class="mt-3">{{ __('Create Examination') }}</h2>
+	<form method="post" actions="">
+		{{ creator.csrf_token }}
+		<div class="form-row">
+			<div class="col-12 col-md-4 mb-2">
+				<small>{{ __('Name') }}</small>
+				<input type="text" class="form-control{%- if creator.name.errors -%}{{ ' is-invalid' }}{%- endif -%}" name="name" placeholder="{{ __('Name') }}" value="{{ creator.name.data|default('', true) }}" />
+				{%- for error in creator.name.errors -%}
+					<div class="invalid-feedback">
+						{{ __(error) }}
+					</div>
+				{%- endfor -%}
+			</div>
+			<div class="col-12 col-md-8 mb-2">
+				<small>{{ __('Description') }}</small>
+				<input type="text" class="form-control{%- if creator.description.errors -%}{{ ' is-invalid' }}{%- endif -%}" name="description" placeholder="{{ __('Description') }}" value="{{ creator.description.data|default('', true) }}" />
+				{%- for error in creator.description.errors -%}
+					<div class="invalid-feedback">
+						{{ __(error) }}
+					</div>
+				{%- endfor -%}
+			</div>
+			<div class="col-12 col-md-4 mb-2">
+				<small>{{ __('Plugin') }}</small>
+				<select class="custom-select{%- if creator.plugin.errors -%}{{ ' is-invalid' }}{%- endif -%}" name="plugin" >
+					<option {%- if creator.plugin.data == '' -%}selected{%- endif -%}>{{ __('Select Plugin...') }}</option>
+					{%- for choice in creator.plugin.choices -%}
+						<option value="{{ choice[0] }}" {%- if creator.plugin.data == choice[0] -%}selected{%- endif -%}>{{ choice[1] }}</option>
+					{%- endfor -%}
+				</select>
+				{%- for error in creator.plugin.errors -%}
+					<div class="invalid-feedback">
+						{{ __(error) }}
+					</div>
+				{%- endfor -%}
+			</div>
+			<div class="col-12 col-md-4 mb-2">
+				<small>{{ __('Default Repeat') }}</small>
+				<select class="custom-select{%- if creator.default_repeat.errors -%}{{ ' is-invalid' }}{%- endif -%}" name="default_repeat">
+					<option {%- if creator.default_repeat.data == '' -%}selected{%- endif -%}>{{ __('Select Default Repeat...') }}</option>
+					{%- for choice in creator.default_repeat.choices -%}
+						<option value="{{ choice[0] }}"{%- if creator.default_repeat.data == choice[0] -%}selected{%- endif -%}>{{ choice[1] }}</option>
+					{%- endfor -%}
+				</select>
+				{%- for error in creator.default_repeat.errors -%}
+					<div class="invalid-feedback">
+						{{ __(error) }}
+					</div>
+				{%- endfor -%}
+			</div>
+			<div class="col-12 col-md-4 mb-2">
+				<small>{{ __('Default Perfomance') }}</small>
+				<select class="custom-select{%- if creator.default_performance.errors -%}{{ ' is-invalid' }}{%- endif -%}" name="default_performance">
+					<option {%- if creator.default_performance.data == '' -%}selected{%- endif -%}>{{ __('Select Default Performance...') }}</option>
+					{%- for choice in creator.default_performance.choices -%}
+						<option value="{{ choice[0] }}"{%- if creator.default_performance.data == choice[0] -%}selected{%- endif -%}>{{ choice[1] }}</option>
+					{%- endfor -%}
+				</select>
+				{%- for error in creator.default_performance.errors -%}
+					<div class="invalid-feedback">
+						{{ __(error) }}
+					</div>
+				{%- endfor -%}
+			</div>
+			{%- if is_plugin -%}
+				
+			{%- else -%}
+				<div class="col-12 mb-2">
+					<small>{{ __('Plugin Options') }}</small>
+					<textarea class="form-control" name="plugin_options" placeholder="{{ __('Plugin Options') }}">{{ creator.plugin_options.data|default('', true) }}</textarea>
+				</div>
+			{%- endif -%}
+			<div class="col-12 col-md-3 col-lg-2 my-2">
+				{%- if is_plugin -%}
+					<button type="submit" name="save_plugin" class="btn btn-block btn-outline-dark">{{ __('Save Plugin...') }}</button>
+				{%- else -%}
+					<button type="submit" name="configure_plugin" class="btn btn-block btn-outline-dark">{{ __('Configure Plugin...') }}</button>
+				{%- endif -%}
+				<button type="submit" name="save" class="btn btn-block btn-outline-dark" {%- if is_plugin -%}disabled{%- endif -%}>{{ __('Save') }}</button>
+				<a href="{{ url_for('examination.get_examination_catalog') }}" class="btn btn-block btn-outline-dark">{{  __('Cancel') }}</a>
+			</div>
+		</div>
+	</form>
+{%- endblock -%}

@@ -5,7 +5,9 @@ Blueprint module to handle examination catalog routes.
 """
 
 # Standard libraries import
+import sys
 import datetime
+import importlib
 
 # Application modules import
 from blueprints import application
@@ -15,6 +17,7 @@ from blueprints.__locale__ import __
 from blueprints.__args__ import get_string
 from blueprints.__args__ import get_boolean
 from blueprints.__args__ import set_value
+from config import PLUGIN_LIST
 
 # Additional libraries import
 from flask import render_template
@@ -24,6 +27,7 @@ from flask import url_for
 from flask_wtf import FlaskForm
 from wtforms import StringField
 from wtforms import BooleanField
+from wtforms import SelectField
 from wtforms import SubmitField
 
 # Test data
@@ -98,6 +102,37 @@ class FilterForm(FlaskForm):
 		set_value('filter_hide_global', self.filter_hide_global.data)
 
 
+class CreatorForm(FlaskForm):
+	"""
+	This is CreatorForm class to retrieve form data.
+	"""
+	name = StringField()
+	description = StringField()
+	plugin = SelectField()
+	default_repeat = SelectField()
+	default_performance = SelectField()
+	plugin_options = StringField()
+	submit = SubmitField()
+
+	def __init__(self) -> 'CreatorForm':
+		"""
+		Initiate object with plugin, default_repeat and
+		default_preformance choices
+		"""
+		super(CreatorForm, self).__init__()
+		self.plugin.choices = [
+			('arithmetic', 'Arithmetic'),
+			('word2word', 'Word Translation'),
+			('image2word', 'Image Translation')
+		]
+		self.default_repeat.choices = [
+			('5', '5'), ('10', '10'), ('15', '15'),('25', '25'),('50', '50')
+		]
+		self.default_performance.choices = [
+			('0.25', '25%'), ('0.50', '50%'), ('0.75', '75%'), ('1.00', '100%')
+		]
+
+
 class EditorForm(FlaskForm):
 	"""
 	This is EditorForm class to retrieve form data.
@@ -163,6 +198,38 @@ def get_examination(uid: str):
 	return render_template(
 		'examination/info.html',
 		item=item
+	)
+
+
+@blueprint.route('/create/', methods=('GET', 'POST'))
+def create_examination():
+	"""
+	Return examination create page.
+	"""
+	creator = CreatorForm()
+	is_plugin = False
+	if 'save' in request.form:
+		# Saving examination
+		if creator.validate_on_submit():
+			pass
+	elif 'save_plugin' in request.form:
+		# Saving plugin options
+		if creator.validate_on_submit():
+			pass
+	elif 'configure_plugin' in request.form:
+		# Configure plugin options
+		if creator.validate_on_submit():
+			if creator.plugin.data in PLUGIN_LIST:
+				try:
+					plugin_module = importlib.import_module(
+						'plugins.%s' % creator.plugin.data)
+					is_plugin = True
+				except:
+					creator.plugin.errors = ('Plugin error.',)
+	return render_template(
+		'examination/creator.html',
+		creator=creator,
+		is_plugin=is_plugin
 	)
 
 

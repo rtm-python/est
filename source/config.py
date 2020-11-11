@@ -18,6 +18,11 @@ LOCALE_PATH_KEY = 'EST_LOCALE_PATH'
 # Application constants
 CONFIG_PATH = 'config/app.json'
 LOCALE_PATH = 'source/locale.json'
+PLUGIN_LIST = [
+	'arithmetic',
+	'word2word',
+	'image2word'
+]
 
 # Initiate configuration
 try:

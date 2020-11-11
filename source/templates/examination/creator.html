@@ -66,16 +66,21 @@
 				{%- endfor -%}
 			</div>
 			{%- if is_plugin -%}
-				
+				{%- include 'examination/plugin.html' -%}
 			{%- else -%}
 				<div class="col-12 mb-2">
 					<small>{{ __('Plugin Options') }}</small>
-					<textarea class="form-control" name="plugin_options" placeholder="{{ __('Plugin Options') }}">{{ creator.plugin_options.data|default('', true) }}</textarea>
+					<textarea class="form-control{%- if creator.plugin_options.errors -%}{{ ' is-invalid' }}{%- endif -%}" name="plugin_options" placeholder="{{ __('Plugin Options') }}" rows="5">{{ creator.plugin_options.data|default('', true) }}</textarea>
+					{%- for error in creator.plugin_options.errors -%}
+						<div class="invalid-feedback">
+							{{ __(error) }}
+						</div>
+					{%- endfor -%}
 				</div>
 			{%- endif -%}
 			<div class="col-12 col-md-3 col-lg-2 my-2">
 				{%- if is_plugin -%}
-					<button type="submit" name="save_plugin" class="btn btn-block btn-outline-dark">{{ __('Save Plugin...') }}</button>
+					<button type="submit" name="apply_plugin" class="btn btn-block btn-outline-dark">{{ __('Apply Plugin...') }}</button>
 				{%- else -%}
 					<button type="submit" name="configure_plugin" class="btn btn-block btn-outline-dark">{{ __('Configure Plugin...') }}</button>
 				{%- endif -%}

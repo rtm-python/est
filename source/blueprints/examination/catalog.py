@@ -6,8 +6,10 @@ Blueprint module to handle examination catalog routes.
 
 # Standard libraries import
 import sys
+import json
 import datetime
 import importlib
+import logging
 
 # Application modules import
 from blueprints import application
@@ -208,14 +210,23 @@ def create_examination():
 	"""
 	creator = CreatorForm()
 	is_plugin = False
+	options = None
 	if 'save' in request.form:
 		# Saving examination
 		if creator.validate_on_submit():
 			pass
-	elif 'save_plugin' in request.form:
-		# Saving plugin options
+	elif 'apply_plugin' in request.form:
+		# Applying plugin options
 		if creator.validate_on_submit():
-			pass
+			if creator.plugin.data in PLUGIN_LIST:
+				try:
+					plugin_module = importlib.import_module(
+						'plugins.%s' % creator.plugin.data)
+					creator.plugin_options.data = \
+						plugin_module.parse_options(request.form)
+				except Exception as exc:
+					logging.error(getattr(exc, 'message', repr(exc)))
+					creator.plugin_options.errors = ('Options error.',)
 	elif 'configure_plugin' in request.form:
 		# Configure plugin options
 		if creator.validate_on_submit():
@@ -223,13 +234,16 @@ def create_examination():
 				try:
 					plugin_module = importlib.import_module(
 						'plugins.%s' % creator.plugin.data)
+					options = plugin_module.form_options(creator.plugin_options.data)
 					is_plugin = True
-				except:
+				except Exception as exc:
+					logging.error(getattr(exc, 'message', repr(exc)))
 					creator.plugin.errors = ('Plugin error.',)
 	return render_template(
 		'examination/creator.html',
 		creator=creator,
-		is_plugin=is_plugin
+		is_plugin=is_plugin,
+		options=options
 	)
 
 

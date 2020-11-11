@@ -1,0 +1,19 @@
+{%- for option in options -%}
+	<div class="col-12 col-md-{{ option.width }} mb-2">
+		<small>{{ __(option.label) }}</small>
+		{%- if option.type == 'select' -%}
+			<select class="custom-select" name="option_{{ option.name }}" >
+				<option value="" {%- if option.value == '' -%}selected{%- endif -%}>{{ __('Select...') }}</option>
+				{%- for choice in option.data -%}
+					<option value="{{ choice.name }}" {%- if option.value == choice.name -%}selected{%- endif -%}>{{ __(choice.label) }}</option>
+				{%- endfor -%}
+			</select>
+		{%- elif option.type == 'bool' -%}
+			<select class="custom-select" name="option_{{ option.name }}" >
+				<option value="" {%- if option.value == '' -%}selected{%- endif -%}>{{ __('Select...') }}</option>
+				<option value="true" {%- if option.value == 'true' -%}selected{%- endif -%}>{{ __('True') }}</option>
+				<option value="false" {%- if option.value == 'false' -%}selected{%- endif -%}>{{ __('False') }}</option>
+			</select>
+		{%- endif -%}
+	</div>
+{%- endfor -%}

@@ -5,76 +5,111 @@ Plugin module to handle examination process.
 """
 
 # Standard libraries import
+import json
 
-
-# Application modules import
-
-
-# Additional libraries import
-
-
-# Plugin configuration data
-data = {
-	'default_language': 'en',
-	'name': {
-		'en': 'Arithmetic',
-		'ru': 'Арифметика'
+# Plugin options
+options = [
+	{
+		'name':	'add',
+		'label': 'Additions',
+		'width': 2,
+		'type': 'bool'
 	},
-	'description': {
-		'en': 'Arithmetic is a branch of mathematics that consists of the study of numbers, especially the properties of the traditional operations on them—addition, subtraction, multiplication, division, exponentiation and extraction of roots.',
-		'ru': 'В арифметике рассматриваются измерения, вычислительные операции (сложение, вычитание, умножение, деление) и приёмы вычислений. Изучением свойств отдельных целых чисел занимается высшая арифметика, или теория чисел.'
+	{
+		'name':	'subs',
+		'label': 'Substractions',
+		'width': 2,
+		'type': 'bool'
 	},
-	'options': {
-		'operations': {
-			'name': {
-				'en': 'Operations on numbers',
-				'ru': 'Операции надо числами'
+	{
+		'name':	'mult',
+		'label': 'Multiplications',
+		'width': 2,
+		'type': 'bool'
+	},
+	{
+		'name':	'div',
+		'label': 'Divisions',
+		'width': 2,
+		'type': 'bool'
+	},
+	{
+		'name':	'vars_count',
+		'label': 'Number of variables',
+		'width': 2,
+		'type': 'select',
+		'data': [
+			{
+				'name': '2',
+				'label': '2'
 			},
-			'multiselect': {
-				'add': {
-					'name': {
-						'en': 'Addition',
-						'ru': 'Сложение'
-					}
-				},
-				'subs': {
-					'name': {
-						'en': 'Substraction',
-						'ru': 'Вычитание'
-					}
-				},
-				'mult': {
-					'name': {
-						'en': 'Multiplication',
-						'ru': 'Умножение'
-					}
-				},
-				'div': {
-					'name': {
-						'en': 'Division',
-						'ru': 'Деление'
-					}
-				}
-			}
-		},
-		'variables': {
-			'name': {
-				'en': 'Number of variables',
-				'ru': 'Количество переменных'
+			{
+				'name': '3',
+				'label': '3'
 			},
-			'range': {
-				'min': 2,
-				'max': 4
+			{
+				'name': '4',
+				'label': '4'
 			}
-		},
-		'result_only': {
-			'name': {
-				'en': 'Only result is unknown',
-				'ru': 'Неизвестным является только результат'
-			},
-			'value': {
-				'type': 'bool'
-			}
-		}
+		]
+	},
+	{
+		'name':	'result_only',
+		'label': 'Only result is unknown',
+		'width': 2,
+		'type': 'bool'
 	}
-}
+]
+
+# Map option name to valid data
+valid_data_dict = {}
+for option in options:
+	data = []
+	if option['type'] == 'select':
+		for item in option['data']:
+			data += [item['name']]
+	elif option['type'] == 'bool':
+		data += ['true', 'false']
+	valid_data_dict[option['name']] = data
+
+
+def get_valid_value(request_form, name: str) -> str:
+	"""
+	Validate and return value from request form.
+	"""
+	value = request_form['option_%s' % name]
+	if value in valid_data_dict[name]:
+		return value
+	raise ValueError('Not valid data.')
+
+
+def parse_options(request_form) -> str:
+	"""
+	Return text string representation of options dictionary.
+	"""
+	return json.dumps(
+		{
+			'add': get_valid_value(request_form, 'add'),
+			'subs': get_valid_value(request_form, 'subs'),
+			'mult': get_valid_value(request_form, 'mult'),
+			'div': get_valid_value(request_form, 'div'),
+			'vars_count': get_valid_value(request_form, 'vars_count'),
+			'result_only': get_valid_value(request_form, 'result_only')
+		},
+		indent=2
+	)
+
+
+def form_options(values: str) -> dict:
+	"""
+	Return options with defined values.
+	"""
+	try:
+		values_dict = json.loads(values)
+	except:
+		values_dict = {}
+	result = []
+	for option in options:
+		option['value'] = values_dict.get(option['name'], '')
+		result += [option]
+	return result

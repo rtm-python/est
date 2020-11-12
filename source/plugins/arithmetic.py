@@ -120,3 +120,13 @@ def form_options(values: str, is_mandatory: bool=False) -> dict:
 		option['value'] = values_dict.get(option['name'], '')
 		result += [option]
 	return result
+
+
+def get_data(options: dict) -> dict:
+	"""
+	Return data dictionary.
+	"""
+	return {
+		'task': '20 + 20 = ?',
+		'answer': '40'
+	}

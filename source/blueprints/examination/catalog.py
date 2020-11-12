@@ -81,7 +81,7 @@ class ExaminationForm(FlaskForm):
 	plugin_options = StringField()
 	submit = SubmitField()
 
-	def __init__(self, examination: 'ExaminationForm'=None) -> 'ExaminationForm':
+	def __init__(self, examination=None) -> 'ExaminationForm':
 		"""
 		Initiate object with plugin, default_repeat and
 		default_preformance choices

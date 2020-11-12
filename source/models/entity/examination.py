@@ -4,9 +4,6 @@
 Entity module for examination entity.
 '''
 
-# Standard libraries import
-
-
 # Additional libraries import
 from sqlalchemy import Column
 from sqlalchemy import ForeignKey

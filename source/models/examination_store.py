@@ -4,13 +4,6 @@
 Store module for Examination entity.
 '''
 
-# Standard libraries import
-import datetime
-import math
-
-# Additional libraries import
-from sqlalchemy import Column, ForeignKey, Enum as SAEnum, func, or_
-
 # Application modules import
 from models import database
 from models import count

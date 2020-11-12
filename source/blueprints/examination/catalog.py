@@ -55,6 +55,10 @@ class FilterForm(FlaskForm):
 			self.filter_name.data = get_string('filter_name')
 			self.filter_plugin.data = get_string('filter_plugin')
 			self.filter_hide_global.data = get_boolean('filter_hide_global')
+		else:
+			set_value('filter_name', None)
+			set_value('filter_plugin', None)
+			set_value('filter_hide_global', None)
 
 	def store_fields(self) -> None:
 		"""
@@ -150,22 +154,11 @@ def get_examination_catalog():
 		filter.filter_hide_global.data
 	)
 	return render_template(
-		'examination/catalog.html',
+		'examination/catalog/catalog.html',
 		filter=filter,
 		examinations=examinations,
 		pagination=pagination,
 		alert=delete_alert
-	)
-
-
-@blueprint.route('/view/<uid>/', methods=('GET',))
-def get_examination(uid: str):
-	"""
-	Return examination view page.
-	"""
-	return render_template(
-		'examination/info.html',
-		item=examination_store.read_examination(uid)
 	)
 
 
@@ -224,7 +217,7 @@ def create_examination():
 					logging.error(getattr(exc, 'message', repr(exc)))
 					creator.plugin.errors = ('Plugin error.',)
 	return render_template(
-		'examination/creator.html',
+		'examination/catalog/creator.html',
 		creator=creator,
 		is_plugin=is_plugin,
 		options=options
@@ -290,7 +283,7 @@ def update_examination(uid: str):
 					logging.error(getattr(exc, 'message', repr(exc)))
 					updater.plugin.errors = ('Plugin error.',)
 	return render_template(
-		'examination/updater.html',
+		'examination/catalog/updater.html',
 		updater=updater,
 		is_plugin=is_plugin,
 		options=options

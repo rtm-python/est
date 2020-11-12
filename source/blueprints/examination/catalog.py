@@ -20,6 +20,7 @@ from blueprints.__args__ import get_string
 from blueprints.__args__ import get_boolean
 from blueprints.__args__ import set_value
 from config import PLUGIN_LIST
+from models import examination_store
 
 # Additional libraries import
 from flask import render_template
@@ -31,51 +32,7 @@ from wtforms import StringField
 from wtforms import BooleanField
 from wtforms import SelectField
 from wtforms import SubmitField
-
-# Test data
-test_examinations = [
-	{
-		'uid': '1',
-		'name': 'Test Examination 1',
-		'description': 'Simple exmine for your kids',
-		'plugin': 'arithmetics',
-		'options': [],
-		'created': datetime.datetime.utcnow(),
-		'modified': datetime.datetime.utcnow(),
-		'passed': datetime.datetime.utcnow(),
-		'public': True,
-		'score': 30
-	},
-	{
-		'uid': '2',
-		'name': 'Test Examination 2',
-		'description': 'Simple exmine for your kids',
-		'plugin': 'arithmetics',
-		'options': [],
-		'created': datetime.datetime.utcnow(),
-		'modified': datetime.datetime.utcnow(),
-		'passed': datetime.datetime.utcnow(),
-		'public': True,
-		'score': 30
-	},
-	{
-		'uid': '3',
-		'name': 'Test Examination 3',
-		'description': 'Simple exmine for your kids',
-		'plugin': 'arithmetics',
-		'options': [],
-		'created': datetime.datetime.utcnow(),
-		'modified': datetime.datetime.utcnow(),
-		'passed': datetime.datetime.utcnow(),
-		'public': True,
-		'score': 30
-	}
-]
-test_examinations += test_examinations
-test_examinations += test_examinations
-test_examinations += test_examinations
-test_examinations += test_examinations
-test_examinations += test_examinations
+from wtforms import validators
 
 
 class FilterForm(FlaskForm):
@@ -91,9 +48,10 @@ class FilterForm(FlaskForm):
 		"""
 		Set form fields to values from request.
 		"""
-		self.filter_name.data = get_string('filter_name')
-		self.filter_plugin.data = get_string('filter_plugin')
-		self.filter_hide_global.data = get_boolean('filter_hide_global')
+		if not get_boolean('filter_reset'):
+			self.filter_name.data = get_string('filter_name')
+			self.filter_plugin.data = get_string('filter_plugin')
+			self.filter_hide_global.data = get_boolean('filter_hide_global')
 
 	def store_fields(self) -> None:
 		"""
@@ -108,11 +66,11 @@ class CreatorForm(FlaskForm):
 	"""
 	This is CreatorForm class to retrieve form data.
 	"""
-	name = StringField()
-	description = StringField()
-	plugin = SelectField()
-	default_repeat = SelectField()
-	default_performance = SelectField()
+	name = StringField(validators=[validators.DataRequired()])
+	description = StringField(validators=[validators.DataRequired()])
+	plugin = SelectField(validators=[validators.DataRequired()])
+	default_repeat = SelectField(validators=[validators.DataRequired()])
+	default_performance = SelectField(validators=[validators.DataRequired()])
 	plugin_options = StringField()
 	submit = SubmitField()
 
@@ -131,7 +89,7 @@ class CreatorForm(FlaskForm):
 			('5', '5'), ('10', '10'), ('15', '15'),('25', '25'),('50', '50')
 		]
 		self.default_performance.choices = [
-			('0.25', '25%'), ('0.50', '50%'), ('0.75', '75%'), ('1.00', '100%')
+			('25', '25%'), ('50', '50%'), ('75', '75%'), ('100', '100%')
 		]
 
 
@@ -171,12 +129,21 @@ def get_examination_catalog():
 			filter_hide_global=filter.filter_hide_global.data
 		))
 	filter.define_fields()
-	pagination = get_pagination(len(test_examinations))
+	pagination = get_pagination(
+		 examination_store.count_examination_list(
+			filter.filter_name.data,
+			filter.filter_plugin.data,
+			filter.filter_hide_global.data
+		)
+	)
 	pagination['endpoint'] = 'examination.get_examination_catalog'
-	examinations = test_examinations[
-		(pagination['page_index'] - 1) * pagination['per_page']:
-		pagination['page_index'] * pagination['per_page']
-	]
+	examinations =  examination_store.read_examination_list(
+		(pagination['page_index'] - 1) * pagination['per_page'],
+		pagination['per_page'],
+		filter.filter_name.data,
+		filter.filter_plugin.data,
+		filter.filter_hide_global.data
+	)
 	caption = __('%d examinations out of %d') % \
 		(
 			min(pagination['entity_count'], pagination['per_page']),
@@ -196,10 +163,9 @@ def get_examination(uid: str):
 	"""
 	Return examination view page.
 	"""
-	item = test_examinations[0]
 	return render_template(
 		'examination/info.html',
-		item=item
+		item=examination_store.read_examination(uid)
 	)
 
 
@@ -214,7 +180,24 @@ def create_examination():
 	if 'save' in request.form:
 		# Saving examination
 		if creator.validate_on_submit():
-			pass
+			if creator.plugin.data in PLUGIN_LIST:
+				try:
+					plugin_module = importlib.import_module(
+						'plugins.%s' % creator.plugin.data)
+					options = plugin_module.form_options(
+						creator.plugin_options.data, True)
+					examination_store.create_examination(
+						creator.name.data,
+						creator.description.data,
+						creator.plugin.data,
+						creator.plugin_options.data,
+						creator.default_repeat.data,
+						creator.default_performance.data
+					)
+					return redirect(url_for('examination.get_examination_catalog'))
+				except Exception as exc:
+					logging.error(getattr(exc, 'message', repr(exc)))
+					creator.plugin_options.errors = ('Options error.',)
 	elif 'apply_plugin' in request.form:
 		# Applying plugin options
 		if creator.validate_on_submit():
@@ -234,7 +217,8 @@ def create_examination():
 				try:
 					plugin_module = importlib.import_module(
 						'plugins.%s' % creator.plugin.data)
-					options = plugin_module.form_options(creator.plugin_options.data)
+					options = plugin_module.form_options(
+						creator.plugin_options.data)
 					is_plugin = True
 				except Exception as exc:
 					logging.error(getattr(exc, 'message', repr(exc)))
@@ -252,8 +236,7 @@ def edit_examination(uid: str):
 	"""
 	Return examination edit page.
 	"""
-	item = test_examinations[0]
-	editor = EditorForm(item)
+	editor = EditorForm(examination_store.read_examination(uid))
 	return render_template(
 		'examination/edit.html',
 		editor=editor,

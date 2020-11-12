@@ -15,7 +15,7 @@
 			<div class="progress" style="height: 3px;">
 				<div class="progress-bar" role="progressbar" style="width: {{ item.score }}%" area-valuenow="{{ item.score }}" area-valuemin="0" area-valuemax="100"></div>
 			</div>
-			<small class="mt-2 timestamp d-flex justify-content-end">{{ item.passed }}</small>
+			<small class="mt-2 timestamp d-flex justify-content-end">{{ item.modified_utc }}</small>
 		</a>
 	{%- endfor -%}
 	</div>

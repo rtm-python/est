@@ -100,13 +100,15 @@ def parse_options(request_form) -> str:
 	)
 
 
-def form_options(values: str) -> dict:
+def form_options(values: str, is_mandatory: bool=False) -> dict:
 	"""
 	Return options with defined values.
 	"""
 	try:
 		values_dict = json.loads(values)
 	except:
+		if is_mandatory:
+			raise ValueError('This field is required.')
 		values_dict = {}
 	result = []
 	for option in options:

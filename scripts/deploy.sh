@@ -33,6 +33,20 @@ python3 -m venv .venv \
 	&& echo 'Virtual environment ".venv" - requirements installed!' \
 	&& deactivate
 
+# Database
+
+[ ! -d database ] \
+	&& mkdir database \
+	&& echo 'Folder "database" - created!'
+
+export FLASK_APP=source/run.py \
+	&& . .venv/bin/activate \
+	&& flask db init \
+	&& flask db migrate \
+	&& flask db upgrade \
+	&& echo 'Database "est.db" - initiated!' \
+	&& deactivate
+
 # Serivce (WSGI)
 
 name=$(jq -r '.name' secrets/deployment.json)

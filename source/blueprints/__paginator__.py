@@ -23,7 +23,7 @@ def get_pagination(entity_count: int) -> dict:
 	page_count = int(page_count) + 1 \
 		if int(page_count) < page_count else int(page_count)
 	# check page_index and per_page validity
-	if page_index < 1 or page_index > page_count:
+	if (page_index < 1 or page_index > page_count) and page_index != 1:
 		raise ValueError('Requested page_index out of range!')
 	if per_page < 1:
 		raise ValueError('Requested per_page out of range!')

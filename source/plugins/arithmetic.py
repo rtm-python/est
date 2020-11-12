@@ -106,9 +106,14 @@ def form_options(values: str, is_mandatory: bool=False) -> dict:
 	"""
 	try:
 		values_dict = json.loads(values)
+		if is_mandatory:
+			# Validate plugin values
+			if values_dict['add'] == 'false' and values_dict['subs'] == 'false' and \
+					values_dict['mult'] == 'false' and values_dict['div'] == 'false':
+				raise ValueError()
 	except:
 		if is_mandatory:
-			raise ValueError('This field is required.')
+			raise ValueError()
 		values_dict = {}
 	result = []
 	for option in options:

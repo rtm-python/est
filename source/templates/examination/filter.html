@@ -28,8 +28,14 @@
 							<input type="checkbox" class="form-control" id="filter_hide_global" name="filter_hide_global" style="width: auto;" {%- if (filter.filter_hide_global.data == 'true' or filter.filter_hide_global.data == 'True') or filter.filter_hide_global.data is true -%}checked{%- endif -%} />
 						</div>
 						<div class="col-12 col-md-2 my-2">
-							<button type="submit" class="btn btn-block btn-outline-dark">{{ __('Apply') }}</button>
-							<a href="{{ url_for('examination.get_examination_catalog', filter_reset=True) }}" class="btn btn-block btn-outline-dark">{{ __('Reset') }}</a>
+							<div class="form-row">
+								<div class="mb-2 col-6 col-md-12">
+									<button type="submit" class="btn btn-sm btn-block btn-outline-dark">{{ __('Apply') }}</button>
+								</div>
+								<div class="mb-2 col-6 col-md-12">
+									<a href="{{ url_for('examination.get_examination_catalog', filter_reset=True) }}" class="btn btn-sm btn-block btn-outline-dark">{{ __('Reset') }}</a>
+								</div>
+							</div>
 						</div>
 					</div>
 				</form>

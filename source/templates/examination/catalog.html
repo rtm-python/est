@@ -1,16 +1,26 @@
 {%- extends "layout.html" -%}
-{% set title -%}{{ __('Catalog') }}{%- endset %}
+{% set title -%}{{ __('Examination Catalog') }}{%- endset %}
 {%- block body_content -%}
-	<h2 class="mt-3">{{ __('Catalog') }}</h2>
+	<h2 class="mt-3">{{ __('Examination Catalog') }}</h2>
 	{%- include 'examination/filter.html' -%}
 	<div class="list-group list-group-flush">
 	{%- for item in examinations -%}
-		<a href="{{ url_for('examination.get_examination', uid=item.uid) }}" class="list-group-item list-group-item-action">
+		<a href="{{ url_for('examination.start_examination') }}" class="list-group-item list-group-item-action">
 			<div class="mt-2 d-flex w-100 justify-content-between">
 				<h4 class="mb-2">{{ item.name }}</h4>
 				<small>{{ item.plugin }}</small>
 			</div>
-			<small>{{ item.options }}</small>
+			<div class="d-flex w-100 justify-content-between">
+				<small>{{ item.plugin_options }}</small>
+				<div>
+					<form style="display: inline;" action="{{ url_for('examination.update_examination', uid=item.uid) }}" method="get">
+						<button class="btn-block mb-1 btn btn-sm btn-outline-dark">{{ __('Edit...') }}</button>
+					</form>
+					<form style="display: inline;" action="{{ url_for('examination.get_examination_catalog', delete_uid=item.uid) }}" method="post">
+						<button class="btn-block mb-1 btn btn-sm btn-outline-dark">{{ __('Delete') }}</button>
+					</form>
+				</div>
+			</div>
 			<p class="lb-1">{{ item.description }}</p>
 			<div class="progress" style="height: 3px;">
 				<div class="progress-bar" role="progressbar" style="width: {{ item.score }}%" area-valuenow="{{ item.score }}" area-valuemin="0" area-valuemax="100"></div>
@@ -19,7 +29,7 @@
 		</a>
 	{%- endfor -%}
 	</div>
-	<small class="mt-2 d-flex justify-content-start">{{ caption }}</small>
+	<small class="mt-2 d-flex justify-content-start">{{ __('%d examinations out of %s') % ([pagination.entity_count, pagination.per_page]|min, pagination.entity_count) }}</small>
 	{%- include 'paginator.html' -%}
 {%- endblock -%}
 {%- block body_script -%}

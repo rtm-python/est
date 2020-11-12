@@ -13,7 +13,7 @@ from blueprints.examination import blueprint
 
 
 @blueprint.route('/process/', methods=('GET',))
-def get_examination_process():
+def start_examination():
 	"""
 	Return examination process page.
 	"""

@@ -19,6 +19,9 @@ from blueprints.__locale__ import __
 from blueprints.__args__ import get_string
 from blueprints.__args__ import get_boolean
 from blueprints.__args__ import set_value
+from blueprints.__alert__ import AlertType
+from blueprints.__alert__ import AlertButton
+from blueprints.__alert__ import Alert
 from config import PLUGIN_LIST
 from models import examination_store
 
@@ -62,9 +65,9 @@ class FilterForm(FlaskForm):
 		set_value('filter_hide_global', self.filter_hide_global.data)
 
 
-class CreatorForm(FlaskForm):
+class ExaminationForm(FlaskForm):
 	"""
-	This is CreatorForm class to retrieve form data.
+	This is ExaminationForm class to retrieve form data.
 	"""
 	name = StringField(validators=[validators.DataRequired()])
 	description = StringField(validators=[validators.DataRequired()])
@@ -74,12 +77,12 @@ class CreatorForm(FlaskForm):
 	plugin_options = StringField()
 	submit = SubmitField()
 
-	def __init__(self) -> 'CreatorForm':
+	def __init__(self, examination: 'ExaminationForm'=None) -> 'ExaminationForm':
 		"""
 		Initiate object with plugin, default_repeat and
 		default_preformance choices
 		"""
-		super(CreatorForm, self).__init__()
+		super(ExaminationForm, self).__init__()
 		self.plugin.choices = [
 			('arithmetic', 'Arithmetic'),
 			('word2word', 'Word Translation'),
@@ -91,26 +94,13 @@ class CreatorForm(FlaskForm):
 		self.default_performance.choices = [
 			('25', '25%'), ('50', '50%'), ('75', '75%'), ('100', '100%')
 		]
-
-
-class EditorForm(FlaskForm):
-	"""
-	This is EditorForm class to retrieve form data.
-	"""
-	editor_name = StringField()
-	editor_description = StringField()
-	submit = SubmitField()
-
-	def __init__(self, item: dict) -> 'EditorForm':
-		"""
-		"""
-		pass
-
-	def set_fields_from_request(self) -> None:
-		"""
-		Set form fields to values from request.
-		"""
-		pass
+		if examination:
+			self.name.data = examination.name
+			self.description.data = examination.description
+			self.plugin.data = examination.plugin
+			self.plugin_options.data = examination.plugin_options
+			self.default_repeat.data = str(examination.default_repeat)
+			self.default_performance.data = str(examination.default_performance)
 
 
 @blueprint.route('/', methods=('GET', 'POST'))
@@ -119,6 +109,21 @@ def get_examination_catalog():
 	"""
 	Return examination catalog page.
 	"""
+	delete_uid = request.args.get('delete_uid')
+	if delete_uid:
+		delete_alert = Alert(
+			'Examination Catalog', 'Delete examination "%s"?',
+			(examination_store.read_examination(delete_uid).name,),
+			[
+				AlertButton(
+					AlertType.DARK,
+					url_for('examination.delete_examination', uid=delete_uid),
+					'Delete'
+				)
+			]
+		)
+	else:
+		delete_alert = None
 	filter = FilterForm()
 	if filter.validate_on_submit():
 		filter.store_fields()
@@ -144,17 +149,12 @@ def get_examination_catalog():
 		filter.filter_plugin.data,
 		filter.filter_hide_global.data
 	)
-	caption = __('%d examinations out of %d') % \
-		(
-			min(pagination['entity_count'], pagination['per_page']),
-			pagination['entity_count']
-		)
 	return render_template(
 		'examination/catalog.html',
 		filter=filter,
 		examinations=examinations,
-		caption=caption,
-		pagination=pagination
+		pagination=pagination,
+		alert=delete_alert
 	)
 
 
@@ -174,7 +174,7 @@ def create_examination():
 	"""
 	Return examination create page.
 	"""
-	creator = CreatorForm()
+	creator = ExaminationForm()
 	is_plugin = False
 	options = None
 	if 'save' in request.form:
@@ -191,8 +191,8 @@ def create_examination():
 						creator.description.data,
 						creator.plugin.data,
 						creator.plugin_options.data,
-						creator.default_repeat.data,
-						creator.default_performance.data
+						int(creator.default_repeat.data),
+						int(creator.default_performance.data)
 					)
 					return redirect(url_for('examination.get_examination_catalog'))
 				except Exception as exc:
@@ -231,22 +231,76 @@ def create_examination():
 	)
 
 
-@blueprint.route('/edit/<uid>/', methods=('GET', 'POST'))
-def edit_examination(uid: str):
+@blueprint.route('/update/<uid>/', methods=('GET', 'POST'))
+def update_examination(uid: str):
 	"""
-	Return examination edit page.
+	Return examination update page.
 	"""
-	editor = EditorForm(examination_store.read_examination(uid))
+	if request.method == 'GET':
+		updater = ExaminationForm(examination_store.read_examination(uid))
+	else:
+		updater = ExaminationForm()
+	is_plugin = False
+	options = None
+	if 'save' in request.form:
+		# Saving examination
+		if updater.validate_on_submit():
+			if updater.plugin.data in PLUGIN_LIST:
+				try:
+					plugin_module = importlib.import_module(
+						'plugins.%s' % updater.plugin.data)
+					options = plugin_module.form_options(
+						updater.plugin_options.data, True)
+					examination_store.update_examination(
+						uid,
+						updater.name.data,
+						updater.description.data,
+						updater.plugin.data,
+						updater.plugin_options.data,
+						int(updater.default_repeat.data),
+						int(updater.default_performance.data)
+					)
+					return redirect(url_for('examination.get_examination_catalog'))
+				except Exception as exc:
+					logging.error(getattr(exc, 'message', repr(exc)))
+					updater.plugin_options.errors = ('Options error.',)
+	elif 'apply_plugin' in request.form:
+		# Applying plugin options
+		if updater.validate_on_submit():
+			if updater.plugin.data in PLUGIN_LIST:
+				try:
+					plugin_module = importlib.import_module(
+						'plugins.%s' % updater.plugin.data)
+					updater.plugin_options.data = \
+						plugin_module.parse_options(request.form)
+				except Exception as exc:
+					logging.error(getattr(exc, 'message', repr(exc)))
+					updater.plugin_options.errors = ('Options error.',)
+	elif 'configure_plugin' in request.form:
+		# Configure plugin options
+		if updater.validate_on_submit():
+			if updater.plugin.data in PLUGIN_LIST:
+				try:
+					plugin_module = importlib.import_module(
+						'plugins.%s' % updater.plugin.data)
+					options = plugin_module.form_options(
+						updater.plugin_options.data)
+					is_plugin = True
+				except Exception as exc:
+					logging.error(getattr(exc, 'message', repr(exc)))
+					updater.plugin.errors = ('Plugin error.',)
 	return render_template(
-		'examination/edit.html',
-		editor=editor,
-		uid=uid
+		'examination/updater.html',
+		updater=updater,
+		is_plugin=is_plugin,
+		options=options
 	)
 
 
-@blueprint.route('/catalog/delete/<uid>/', methods=('GET',))
+@blueprint.route('/delete/<uid>/', methods=('GET',))
 def delete_examination(uid: str):
 	"""
-	Return examination delete page.
+	Delete examination and redirect to examination catalog.
 	"""
-	return 'Examination Delete Page'
+	examination_store.delete_examination(uid)
+	return redirect(url_for('examination.get_examination_catalog'))

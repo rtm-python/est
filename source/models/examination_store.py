@@ -51,7 +51,8 @@ def update_examination(uid: str, name: str, description: str,
 	examination.description = description
 	examination.plugin = plugin
 	examination.plugin_options = plugin_options
-	examination.default_repeat = default_performance
+	examination.default_repeat = default_repeat
+	examination.default_performance = default_performance
 	examination.set_modified()
 	database.session.commit()
 
@@ -77,7 +78,8 @@ def _get_list_query(filter_name: str, filter_plugin: str,
 		True if filter_name is None else \
 			Examination.name.contains(filter_name),
 		True if filter_plugin is None else \
-			Examination.plugin.contains(filter_plugin)
+			Examination.plugin.contains(filter_plugin),
+		Examination.deleted_utc == None
 	).order_by(
 		Examination.modified_utc.desc()
 	)

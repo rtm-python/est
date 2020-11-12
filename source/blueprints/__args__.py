@@ -48,7 +48,6 @@ def get_boolean(name: str, default: bool = None) -> bool:
 	Return boolean value by name from user's request or session.
 	"""
 	for args in [request.args, session.get('args') or {}]:
-		print(args)
 		value = args.get(name)
 		if value is not None:
 			try:

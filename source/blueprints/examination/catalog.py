@@ -249,6 +249,7 @@ def update_examination(uid: str):
 						'plugins.%s' % updater.plugin.data)
 					options = plugin_module.form_options(
 						updater.plugin_options.data, True)
+					print(updater.plugin_options.data)
 					ExaminationStore.update(
 						uid,
 						updater.name.data,

@@ -169,6 +169,10 @@ def form_options(values: str, is_mandatory: bool=False) -> dict:
 			if values_dict['add'] == 'false' and values_dict['subs'] == 'false' and \
 					values_dict['mult'] == 'false' and values_dict['div'] == 'false':
 				raise ValueError()
+			limit = int(values_dict['limit'])
+			vars_count = int(values_dict['vars_count'])
+			if not values_dict['result_only'] in ['false', 'true']:
+				raise ValueError()
 	except:
 		if is_mandatory:
 			raise ValueError()
@@ -199,7 +203,7 @@ def get_random_operation(options: dict) -> list:
 	if options['add'] == 'true':
 		operations += [get_addition]
 	if options['subs'] == 'true':
-		operations += [get_addition]
+		operations += [get_substraction]
 	if options['mult'] == 'true':
 		operations += [get_addition]
 	if options['div'] == 'true':
@@ -219,6 +223,18 @@ def get_addition(limit: int, preset: list = None) -> list:
 	return preset
 
 
+def get_substraction(limit: int, preset: list = None) -> list:
+	"""
+	Return values and result for substraction.
+	"""
+	value_1 = randint(0, limit) \
+		if preset is None else int(preset[-1])
+	value_2 = randint(0, value_1)
+	preset = ['-', str(value_1), str(value_2), str(value_1 + value_2)] \
+		if preset is None else preset[:-1] + [str(value_2), str(value_1 + value_2)]
+	return preset
+
+
 def get_data(options: dict) -> dict:
 	"""
 	Return data dictionary.
@@ -227,7 +243,8 @@ def get_data(options: dict) -> dict:
 	preset = None
 	for i in range(int(options['vars_count']) - 1):
 		preset = operation(int(options['limit']), preset)
-	hide_index = randint(1, len(preset) - 1)
+	hide_index = randint(1, len(preset) - 1) \
+		if options['result_only'] == 'false' else len(preset) - 1
 	answer = preset[hide_index]
 	preset[hide_index] = '?'
 	return {

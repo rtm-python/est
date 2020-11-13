@@ -55,6 +55,9 @@ class ExaminationStore(Store):
 		examination.plugin_options = plugin_options
 		examination.default_repeat = default_repeat
 		examination.default_performance = default_performance
+		return super(ExaminationStore, ExaminationStore).update(
+			examination
+		)
 
 	@staticmethod
 	def delete(uid: str) -> Examination:

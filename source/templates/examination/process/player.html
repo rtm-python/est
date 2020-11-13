@@ -22,7 +22,7 @@
 					<div class="form-row">
 						<div class="text-left col-12 mb-2">
 							<small>{{ __('Answer') }}</small>
-							<input autofocus id="answer" type="text" class="w-100 form-control{%- if player.answer.errors -%}{{ ' is-invalid' }}{%- endif -%}" name="answer" placeholder="{{ __('Answer') }}" value="{{ player.answer.data|default('', True) }}" />
+							<input autofocus id="answer" type="text" class="w-100 form-control{%- if player.answer.errors -%}{{ ' is-invalid' }}{%- endif -%}" name="answer" placeholder="{{ __('Answer') }}" value="{{ player.answer.data|default('', True) }}" autocomplete="off" />
 							{%- for error in player.answer.errors -%}
 								<div class="invalid-feedback">
 									{{ __(error) }}

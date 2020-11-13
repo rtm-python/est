@@ -6,6 +6,7 @@ Plugin module to handle examination process.
 
 # Standard libraries import
 import json
+from random import randint
 
 # Plugin options
 options = [
@@ -190,11 +191,47 @@ def validate_answer(answer: str) -> list:
 		return ['Answer should be a number.']
 
 
+def get_random_operation(options: dict) -> list:
+	"""
+	Return random accessible operation.
+	"""
+	operations = []
+	if options['add'] == 'true':
+		operations += [get_addition]
+	if options['subs'] == 'true':
+		operations += [get_addition]
+	if options['mult'] == 'true':
+		operations += [get_addition]
+	if options['div'] == 'true':
+		operations += [get_addition]
+	return operations[randint(0, len(operations) - 1)]
+
+
+def get_addition(limit: int, preset: list = None) -> list:
+	"""
+	Return values and result for addition.
+	"""
+	value_1 = randint(0, limit) \
+		if preset is None else int(preset[-1])
+	value_2 = randint(0, limit - value_1)
+	preset = ['+', str(value_1), str(value_2), str(value_1 + value_2)] \
+		if preset is None else preset[:-1] + [str(value_2), str(value_1 + value_2)]
+	return preset
+
+
 def get_data(options: dict) -> dict:
 	"""
 	Return data dictionary.
 	"""
+	operation = get_random_operation(options)
+	preset = None
+	for i in range(int(options['vars_count']) - 1):
+		preset = operation(int(options['limit']), preset)
+	hide_index = randint(1, len(preset) - 1)
+	answer = preset[hide_index]
+	preset[hide_index] = '?'
 	return {
-		'task': '20 + 20 = ?',
-		'answer': '40'
+		'task': '%s = %s' % \
+			((' %s ' % preset[0]).join(preset[1: -1]), preset[-1]),
+		'answer': answer
 	}

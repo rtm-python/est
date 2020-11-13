@@ -84,7 +84,10 @@ class ExaminationProgress:
 		for process in self.recents:
 			answer_count += process.answer_count
 			correct_count += process.correct_count
-		self.value = int(correct_count / answer_count * 100)
+		if answer_count > 0:
+			self.value = int(correct_count / answer_count * 100)
+		else:
+			self.value = 0
 		self.modified_utc = self.recents[0].modified_utc \
 			if self.recents else examination.modified_utc
 

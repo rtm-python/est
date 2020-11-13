@@ -205,9 +205,9 @@ def get_random_operation(options: dict) -> list:
 	if options['subs'] == 'true':
 		operations += [get_substraction]
 	if options['mult'] == 'true':
-		operations += [get_addition]
+		operations += [get_multiplication]
 	if options['div'] == 'true':
-		operations += [get_addition]
+		operations += [get_division]
 	return operations[randint(0, len(operations) - 1)]
 
 
@@ -230,8 +230,33 @@ def get_substraction(limit: int, preset: list = None) -> list:
 	value_1 = randint(0, limit) \
 		if preset is None else int(preset[-1])
 	value_2 = randint(0, value_1)
-	preset = ['-', str(value_1), str(value_2), str(value_1 + value_2)] \
-		if preset is None else preset[:-1] + [str(value_2), str(value_1 + value_2)]
+	preset = ['-', str(value_1), str(value_2), str(value_1 - value_2)] \
+		if preset is None else preset[:-1] + [str(value_2), str(value_1 - value_2)]
+	return preset
+
+
+def get_multiplication(limit: int, preset: list = None) -> list:
+	"""
+	Return values and result for multiplication.
+	"""
+	value_1 = randint(1, limit) \
+		if preset is None else int(preset[-1])
+	value_2 = randint(0, int(limit / value_1)) \
+		if value_1 > 0 else 0
+	preset = ['x', str(value_1), str(value_2), str(value_1 * value_2)] \
+		if preset is None else preset[:-1] + [str(value_2), str(value_1 * value_2)]
+	return preset
+
+
+def get_division(limit: int, preset: list = None) -> list:
+	"""
+	Return values and result for division.
+	"""
+	value_2 = randint(1, limit) \
+		if preset is None else int(preset[1])
+	value_1 = randint(1, int(limit / value_2)) * value_2
+	preset = ['/', str(value_1), str(value_2), str(int(value_1 / value_2))] \
+		if preset is None else [preset[0]] + [str(value_1), str(int(value_1 / value_2))] + preset[2:]
 	return preset
 
 
@@ -245,6 +270,9 @@ def get_data(options: dict) -> dict:
 		preset = operation(int(options['limit']), preset)
 	hide_index = randint(1, len(preset) - 1) \
 		if options['result_only'] == 'false' else len(preset) - 1
+	if preset[0] in ['x', '/']:
+		if preset[hide_index] != 0 and '0' in preset:
+			hide_index = len(preset) - 1
 	answer = preset[hide_index]
 	preset[hide_index] = '?'
 	return {

@@ -92,13 +92,24 @@ class ProcessStore(Store):
 	@staticmethod
 	def add_answer(uid: str, is_correct: bool) -> Process:
 		"""
-		Increment and return answer count and
+		Return process after increment answer count and
 		if answer is correct then insrement correct count.
 		"""
 		process = ProcessStore.read(uid)
 		process.answer_count += 1
 		if is_correct:
 			process.correct_count += 1
+		return super(ProcessStore, ProcessStore).update(
+			process
+		)
+
+	@staticmethod
+	def set_result(uid: str, correctness: int) -> Process:
+		"""
+		Set result and return process.
+		"""
+		process = ProcessStore.read(uid)
+		process.correctness = correctness
 		return super(ProcessStore, ProcessStore).update(
 			process
 		)

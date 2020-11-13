@@ -1,0 +1,25 @@
+{%- extends "layout.html" -%}
+{% set title -%}{{ process.name }}{%- endset %}
+{%- block body_content -%}
+	<div class="mt-3 d-flex w-100 justify-content-between">
+		<h2>{{ process.name }}</h2>
+		<small>{{ process.plugin }}</small>
+	</div>
+	<div class="align-items-center mb-3 d-flex w-100 justify-content-between">
+		<h3 class="m-0">{{ process.answer_count }}/{{ process.repeat }}</h3>
+		<a href="{{ url_for('examination.stop_process', uid=process.uid) }}" class="btn btn-sm btn-outline-dark">{{ __('Exit...') }}</a>
+	</div>
+	<div class="progress" style="height: 3px;">
+		<div class="progress-bar" role="progressbar" style="width: {{  process.answer_count / process.repeat * 100 }}%" area-valuenow="{{  process.answer_count / process.repeat * 100 }}" area-valuemin="0" area-valuemax="100"></div>
+	</div>
+	<div class="my-5 col-12 col-sm-10 offset-sm-1 col-md-8 offset-md-2 col-lg-6 offset-lg-3">
+		<div class="card text-center">
+			<div class="card-body">
+				<h2>{{ __('Result') }}</h2>
+				<hr/>
+				<small>{{ __('Correctness') }}</small>
+				<h3>{{ process.correctness }}</h3>
+			</div>
+		</div>
+	</div>
+{%- endblock -%}

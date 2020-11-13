@@ -132,10 +132,19 @@ def play_process(uid: str):
 		tasks = TaskStore.read_list(
 			offset=0, limit=1, filter_process_id=process.id
 		)
-		if len(tasks) == 1:	# Continue on existing task
+		if tasks and tasks[0].answer is None:	# Continue on existing task
 			task = tasks[0]
 			data = json.loads(task.data)
 		else:  # (normal behavior) Continue with creating new task
+			if process.answer_count >= process.repeat:
+				# Process complete (all tasks answered)
+				ProcessStore.set_result(
+					uid,
+					int(process.correct_count / process.answer_count * 100)
+				)
+				return redirect(
+					url_for('examination.show_process_result', uid=process.uid)
+				)
 			data = plugin_module.get_data(json.loads(process.plugin_options))
 			task = TaskStore.create(process.id, json.dumps(data))
 		player = PlayerForm()
@@ -183,4 +192,16 @@ def stop_process(uid: str):
 	examination = ExaminationStore.get(process.examination_id)
 	return redirect(
 		url_for('examination.start_examination', uid=examination.uid)
+	)
+
+
+@blueprint.route('/process/<uid>/result/', methods=('GET',))
+def show_process_result(uid: str):
+	"""
+	Return process result page.
+	"""
+	process = ProcessStore.read(uid)
+	return render_template(
+		'examination/process/result.html',
+		process=process
 	)

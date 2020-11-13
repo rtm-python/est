@@ -35,6 +35,9 @@ class Process(Entity):
 		database.Integer, default=0,
 		index=True, nullable=False
 	)
+	correctness = Column(database.Integer, index=True, nullable=True)
+	answer_time = Column(database.Integer, index=True, nullable=True)
+	total_time = Column(database.Integer, index=True, nullable=True)
 
 	def __init__(self, examination_id: int,
 							 plugin: str, plugin_options: str,

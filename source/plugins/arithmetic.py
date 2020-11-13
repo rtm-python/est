@@ -10,6 +10,62 @@ import json
 # Plugin options
 options = [
 	{
+		'name':	'limit',
+		'label': 'Maximum number limit',
+		'width': 2,
+		'type': 'select',
+		'data': [
+			{
+				'value': '10',
+				'label': '10'
+			},
+			{
+				'value': '20',
+				'label': '20'
+			},
+			{
+				'value': '30',
+				'label': '30'
+			},
+			{
+				'value': '40',
+				'label': '40'
+			},
+			{
+				'value': '50',
+				'label': '50'
+			},
+			{
+				'value': '100',
+				'label': '100'
+			},
+			{
+				'value': '500',
+				'label': '500'
+			},
+			{
+				'value': '1000',
+				'label': '1000'
+			},
+			{
+				'value': '5000',
+				'label': '5000'
+			},
+			{
+				'value': '10000',
+				'label': '10000'
+			},
+			{
+				'value': '100000',
+				'label': '100000'
+			},
+			{
+				'value': '1000000',
+				'label': '1000000'
+			}
+		]
+	},
+	{
 		'name':	'add',
 		'label': 'Additions',
 		'width': 2,
@@ -36,19 +92,19 @@ options = [
 	{
 		'name':	'vars_count',
 		'label': 'Number of variables',
-		'width': 2,
+		'width': 1,
 		'type': 'select',
 		'data': [
 			{
-				'name': '2',
+				'value': '2',
 				'label': '2'
 			},
 			{
-				'name': '3',
+				'value': '3',
 				'label': '3'
 			},
 			{
-				'name': '4',
+				'value': '4',
 				'label': '4'
 			}
 		]
@@ -56,7 +112,7 @@ options = [
 	{
 		'name':	'result_only',
 		'label': 'Only result is unknown',
-		'width': 2,
+		'width': 1,
 		'type': 'bool'
 	}
 ]
@@ -67,7 +123,7 @@ for option in options:
 	data = []
 	if option['type'] == 'select':
 		for item in option['data']:
-			data += [item['name']]
+			data += [item['value']]
 	elif option['type'] == 'bool':
 		data += ['true', 'false']
 	valid_data_dict[option['name']] = data
@@ -89,6 +145,7 @@ def parse_options(request_form) -> str:
 	"""
 	return json.dumps(
 		{
+			'limit': get_valid_value(request_form, 'limit'),
 			'add': get_valid_value(request_form, 'add'),
 			'subs': get_valid_value(request_form, 'subs'),
 			'mult': get_valid_value(request_form, 'mult'),
@@ -120,6 +177,17 @@ def form_options(values: str, is_mandatory: bool=False) -> dict:
 		option['value'] = values_dict.get(option['name'], '')
 		result += [option]
 	return result
+
+
+def validate_answer(answer: str) -> list:
+	"""
+	Return errors list on invalid answer.
+	"""
+	try:
+		answer_int = int(answer)
+		return None
+	except:
+		return ['Answer should be a number.']
 
 
 def get_data(options: dict) -> dict:

@@ -4,35 +4,97 @@
 Store module for Task entity.
 '''
 
-# Standard libraries import
-import datetime
-import math
-
-# Additional libraries import
-from sqlalchemy import Column, ForeignKey, Enum as SAEnum, func, or_
-
 # Application modules import
 from models import database
-from models import count
+from models.__base__ import Store
 from models.entity.task import Task
 from models.entity.process import Process
 
 
-def create_task(process_id: int, data: str) -> Task:
+class TaskStore(Store):
 	"""
-	Create task and return created entity.
+	This is a task class.
 	"""
-	task = Task(process_id, data)
-	database.session.add(task)
-	database.session.commit()
-	return task
 
+	@staticmethod
+	def create(process_id: int, data: str) -> Task:
+		"""
+		Create and return task.
+		"""
+		return super(TaskStore, TaskStore).create(
+			Task(process_id, data)
+		)
 
-def read_task(uid: str) -> Task:
-	"""
-	Return task entity by uid.
-	"""
-	return Task.query.filter_by(uid=uid).first()
+	@staticmethod
+	def read(uid: str) -> Task:
+		"""
+		Return task by uid (only not deleted).
+		"""
+		return super(TaskStore, TaskStore).read(
+			Task, uid
+		)
+
+	@staticmethod
+	def update(uid: str, process_id: int, data: str, answer: str) -> Task:
+		"""
+		Update and return task.
+		"""
+		task = TaskStore.read(uid)
+		task.process_id = process_id
+		task.data = data
+		task.answer = answer
+		return super(TaskStore, TaskStore).update(
+			task
+		)
+
+	@staticmethod
+	def delete(uid: str) -> Task:
+		"""
+		Delete and return task.
+		"""
+		return super(TaskStore, TaskStore).delete(
+			TaskStore.read(uid)
+		)
+
+	@staticmethod
+	def read_list(offset: int, limit: int,
+							  filter_process_id: int
+								) -> list:
+		"""
+		Return list of tasks by arguments.
+		"""
+		return _get_list_query(
+			filter_process_id
+		).limit(limit).offset(offset).all()
+
+	@staticmethod
+	def count_list(filter_process_id: int) -> int:
+		"""
+		Return number of tasks in list.
+		"""
+		return Store.count(_get_list_query(
+			filter_process_id
+		))
+
+	@staticmethod
+	def set_answer(uid: str, answer: str) -> Task:
+		"""
+		Set user answer and return task.
+		"""
+		task = TaskStore.read(uid)
+		task.answer = answer
+		return super(TaskStore, TaskStore).update(
+			task
+		)
+
+	@staticmethod
+	def get(id: int) -> Task:
+		"""
+		Return task by id (no matter deleted or etc.).
+		"""
+		return super(TaskStore, TaskStore).get(
+			Task, id
+		)
 
 
 def _get_list_query(filter_process_id: int):
@@ -52,31 +114,3 @@ def _get_list_query(filter_process_id: int):
 	).order_by(
 		Task.modified_utc.desc()
 	)
-
-
-def read_task_list(offset: int, limit: int,
-									 filter_process_id: int
-									 ) -> [tuple]:
-	"""
-	Return filtered list of dictionaries filled with entity fields.
-	"""
-	return _get_list_query(
-		filter_process_id
-	).limit(limit).offset(offset).all()
-
-
-def count_task_list(filter_process_id: int) -> int:
-	"""
-	Return items number in filtered list of entities.
-	"""
-	return count(_get_list_query(filter_process_id))
-
-
-def set_answer(uid: str, answer: str) -> None:
-	"""
-	Set answer.
-	"""
-	task = read_task(uid)
-	task.answer = answer
-	task.set_modified()
-	database.session.commit()

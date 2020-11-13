@@ -8,9 +8,9 @@
 	</div>
 	<p class="lb-1">{{  examination.description }}</p>
 	<div class="progress" style="height: 3px;">
-		<div class="progress-bar" role="progressbar" style="width: {{  examination.score }}%" area-valuenow="{{  examination.score }}" area-valuemin="0" area-valuemax="100"></div>
+		<div class="progress-bar" role="progressbar" style="width: {{  examination_progress.value }}%" area-valuenow="{{ examination_progress.value }}" area-valuemin="0" area-valuemax="100"></div>
 	</div>
-	<small class="mt-2 timestamp d-flex justify-content-end">{{  examination.modified_utc }}</small>
+	<small class="mt-2 timestamp d-flex justify-content-end">{{  examination_progress.modified_utc }}</small>
 	<form actions="" method="post" class="col-12 col-md-8 offset-md-2 mt-3">
 		{{ starter.csrf_token }}
 		<div class="form-row">
@@ -50,12 +50,12 @@
 			</div>
 		</div>
 	</form>
-	{%- if recent|length > 0 -%}
+	{%- if examination_progress.recents|length > 0 -%}
 		<div class="row mt-3 mb-2">
 			<small class="col-12">{{ __('Recents...') }}</small>
 		</div>
 		<div class="row mb-1">
-			{%- for item in recent -%}
+			{%- for item in examination_progress.recents -%}
 				<div class="mb-2 col-12 col-sm-6 col-md-4 col-lg-3">
 					<div class="card">
 						<div class="card-body">
@@ -64,15 +64,15 @@
 								<small>{{  item.plugin }}</small>
 							</div>
 							<div class="card-text">
-								<small>{{ item.answered_count }}/{{ item.repeat }}</small>
+								<small>{{ item.answer_count }}/{{ item.repeat }}</small>
 								<div class="progress" style="height: 3px;">
-									<div class="progress-bar" role="progressbar" style="width: {{  item.progress }}%" area-valuenow="{{  item.progress }}" area-valuemin="0" area-valuemax="100"></div>
+									<div class="progress-bar" role="progressbar" style="width: {{  item.answer_count / item.repeat * 100 }}%" area-valuenow="{{  item.answer_count / item.repeat * 100 }}" area-valuemin="0" area-valuemax="100"></div>
 								</div>
 								<small class="mt-2 timestamp d-flex justify-content-end">{{  item.modified_utc }}</small>
 							</div>
-							{%- if item.repeat > item.answered_count -%}
+							{%- if item.repeat > item.answer_count -%}
 								<div class="col-8 offset-2 mt-2">
-									<a href="{{ url_for('examination.follow_process', uid=item.uid) }}" class="btn btn-sm btn-block btn-outline-dark"">{{ __('Continue...') }}</a>
+									<a href="{{ url_for('examination.play_process', uid=item.uid) }}" class="btn btn-sm btn-block btn-outline-dark"">{{ __('Continue...') }}</a>
 								</div>
 							{%- endif -%}
 						</div>

@@ -15,7 +15,6 @@ import logging
 from blueprints import application
 from blueprints.examination import blueprint
 from blueprints.__paginator__ import get_pagination
-from blueprints.__locale__ import __
 from blueprints.__args__ import get_string
 from blueprints.__args__ import get_boolean
 from blueprints.__args__ import set_value
@@ -23,7 +22,8 @@ from blueprints.__alert__ import AlertType
 from blueprints.__alert__ import AlertButton
 from blueprints.__alert__ import Alert
 from config import PLUGIN_LIST
-from models import examination_store
+from models.examination_store import ExaminationStore
+from blueprints.examination.process import ExaminationProgress
 
 # Additional libraries import
 from flask import render_template
@@ -117,7 +117,7 @@ def get_examination_catalog():
 	if delete_uid:
 		delete_alert = Alert(
 			'Examination Catalog', 'Delete examination "%s"?',
-			(examination_store.read_examination(delete_uid).name,),
+			(ExaminationStore.read(delete_uid).name,),
 			[
 				AlertButton(
 					AlertType.DARK,
@@ -139,24 +139,29 @@ def get_examination_catalog():
 		))
 	filter.define_fields()
 	pagination = get_pagination(
-		 examination_store.count_examination_list(
+		 ExaminationStore.count_list(
 			filter.filter_name.data,
 			filter.filter_plugin.data,
 			filter.filter_hide_global.data
 		)
 	)
 	pagination['endpoint'] = 'examination.get_examination_catalog'
-	examinations =  examination_store.read_examination_list(
+	examinations =  ExaminationStore.read_list(
 		(pagination['page_index'] - 1) * pagination['per_page'],
 		pagination['per_page'],
 		filter.filter_name.data,
 		filter.filter_plugin.data,
 		filter.filter_hide_global.data
 	)
+	examinations_with_progress = []
+	for examination in examinations:
+		examinations_with_progress += [
+			(examination, ExaminationProgress(examination))
+		]
 	return render_template(
 		'examination/catalog/catalog.html',
 		filter=filter,
-		examinations=examinations,
+		examinations_with_progress=examinations_with_progress,
 		pagination=pagination,
 		alert=delete_alert
 	)
@@ -179,7 +184,7 @@ def create_examination():
 						'plugins.%s' % creator.plugin.data)
 					options = plugin_module.form_options(
 						creator.plugin_options.data, True)
-					examination_store.create_examination(
+					ExaminationStore.create(
 						creator.name.data,
 						creator.description.data,
 						creator.plugin.data,
@@ -230,7 +235,7 @@ def update_examination(uid: str):
 	Return examination update page.
 	"""
 	if request.method == 'GET':
-		updater = ExaminationForm(examination_store.read_examination(uid))
+		updater = ExaminationForm(ExaminationStore.read(uid))
 	else:
 		updater = ExaminationForm()
 	is_plugin = False
@@ -244,7 +249,7 @@ def update_examination(uid: str):
 						'plugins.%s' % updater.plugin.data)
 					options = plugin_module.form_options(
 						updater.plugin_options.data, True)
-					examination_store.update_examination(
+					ExaminationStore.update(
 						uid,
 						updater.name.data,
 						updater.description.data,
@@ -295,5 +300,5 @@ def delete_examination(uid: str):
 	"""
 	Delete examination and redirect to examination catalog.
 	"""
-	examination_store.delete_examination(uid)
+	ExaminationStore.delete(uid)
 	return redirect(url_for('examination.get_examination_catalog'))

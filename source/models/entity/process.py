@@ -27,7 +27,7 @@ class Process(Entity):
 	name = Column(database.String, index=True, nullable=False)
 	repeat = Column(database.Integer, index=True, nullable=False)
 	performance = Column(database.Integer, index=True, nullable=False)
-	answered_count = Column(
+	answer_count = Column(
 		database.Integer, default=0,
 		index=True, nullable=False
 	)

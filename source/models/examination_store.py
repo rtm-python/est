@@ -6,64 +6,103 @@ Store module for Examination entity.
 
 # Application modules import
 from models import database
-from models import count
+from models.__base__ import Store
 from models.entity.examination import Examination
 
 
-def create_examination(name: str, description: str,
-											 plugin: str, plugin_options: str,
-											 default_repeat: int, default_performance: int
-											 ) -> Examination:
+class ExaminationStore(Store):
 	"""
-	Create examination and return created entity.
+	This is an examination store class.
 	"""
-	examination = Examination(name, description,
-    												plugin, plugin_options,
-														default_repeat, default_performance)
-	database.session.add(examination)
-	database.session.commit()
-	return examination
 
+	@staticmethod
+	def create(name: str, description: str,
+						 plugin: str, plugin_options: str,
+						 default_repeat: int, default_performance: int
+						 ) -> Examination:
+		"""
+		Create and return examination.
+		"""
+		return super(ExaminationStore, ExaminationStore).create(
+			Examination(
+				name, description,
+				plugin, plugin_options,
+				default_repeat, default_performance
+			)
+		)
 
-def read_examination(uid: str) -> Examination:
-	"""
-	Return examination entity by uid.
-	"""
-	return Examination.query.filter_by(uid=uid).first()
+	@staticmethod
+	def read(uid: str) -> Examination:
+		"""
+		Return examination by uid (only not deleted).
+		"""
+		return super(ExaminationStore, ExaminationStore).read(
+			Examination, uid
+		)
 
+	@staticmethod
+	def update(uid: str, name: str, description: str,
+						 plugin: str, plugin_options: str,
+						 default_repeat: int, default_performance: int
+						 ) -> Examination:
+		"""
+		Update and return examination.
+		"""
+		examination = ExaminationStore.read(uid)
+		examination.name = name
+		examination.description = description
+		examination.plugin = plugin
+		examination.plugin_options = plugin_options
+		examination.default_repeat = default_repeat
+		examination.default_performance = default_performance
 
-def update_examination(uid: str, name: str, description: str,
-											 plugin: str, plugin_options: str,
-											 default_repeat: int, default_performance: int
-											 ) -> Examination:
-	'''
-	Update examination and return updated entity.
-	'''
-	examination = read_examination(uid)
-	examination.name = name
-	examination.description = description
-	examination.plugin = plugin
-	examination.plugin_options = plugin_options
-	examination.default_repeat = default_repeat
-	examination.default_performance = default_performance
-	examination.set_modified()
-	database.session.commit()
+	@staticmethod
+	def delete(uid: str) -> Examination:
+		"""
+		Delete and return examination.
+		"""
+		return super(ExaminationStore, ExaminationStore).delete(
+			ExaminationStore.read(uid)
+		)
 
+	@staticmethod
+	def read_list(offset: int, limit: int,
+								filter_name: str, filter_plugin: str,
+								filter_hide_global: bool
+								) -> list:
+		"""
+		Return list of examinations by arguments.
+		"""
+		return _get_list_query(
+			filter_name, filter_plugin, filter_hide_global
+		).limit(limit).offset(offset).all()
 
-def delete_examination(uid: str) -> Examination:
-	'''
-	Delete examination by set_deleted and return deleted entity.
-	'''
-	examination = read_examination(uid)
-	examination.set_deleted()
-	database.session.commit()
+	@staticmethod
+	def count_list(filter_name: str, filter_plugin: str,
+								 filter_hide_global: bool
+								 ) -> int:
+		"""
+		Return number of examinations in list
+		"""
+		return Store.count(_get_list_query(
+			filter_name, filter_plugin, filter_hide_global
+		))
+
+	@staticmethod
+	def get(id: int) -> Examination:
+		"""
+		Return examination by id (no matter deleted or etc.)
+		"""
+		return super(ExaminationStore, ExaminationStore).get(
+			Examination, id
+		)
 
 
 def _get_list_query(filter_name: str, filter_plugin: str,
 										filter_hide_global: bool
 										):
 	"""
-	Return query object fo examination based on arguments.
+	Return query object for examination.
 	"""
 	return database.session.query(
 		Examination
@@ -76,25 +115,3 @@ def _get_list_query(filter_name: str, filter_plugin: str,
 	).order_by(
 		Examination.modified_utc.desc()
 	)
-
-
-def read_examination_list(offset: int, limit: int,
-													filter_name: str, filter_plugin: str,
-													filter_hide_global: bool
-													) -> [tuple]:
-	"""
-	Return filtered list of dictionaries filled with entity fields.
-	"""
-	return _get_list_query(
-		filter_name, filter_plugin, filter_hide_global
-	).limit(limit).offset(offset).all()
-
-
-def count_examination_list(filter_name: str, filter_plugin: str,
-													 filter_hide_global: bool
-													 ) -> int:
-	"""
-	Return items number in filtered list of entities.
-	"""
-	return count(_get_list_query(
-		filter_name, filter_plugin, filter_hide_global))

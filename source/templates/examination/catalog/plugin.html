@@ -5,7 +5,7 @@
 			<select class="custom-select" name="option_{{ option.name }}" >
 				<option value="" {%- if option.value == '' -%}selected{%- endif -%}>{{ __('Select...') }}</option>
 				{%- for choice in option.data -%}
-					<option value="{{ choice.name }}" {%- if option.value == choice.name -%}selected{%- endif -%}>{{ __(choice.label) }}</option>
+					<option value="{{ choice.value }}" {%- if option.value == choice.value -%}selected{%- endif -%}>{{ __(choice.label) }}</option>
 				{%- endfor -%}
 			</select>
 		{%- elif option.type == 'bool' -%}

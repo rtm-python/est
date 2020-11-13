@@ -10,7 +10,6 @@ import os
 # Additional libraries import
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from sqlalchemy import func
 
 # Application modules import
 from config import config
@@ -30,12 +29,5 @@ migrate = Migrate(application, database, directory=database_folder)
 
 # Entity modules import (prevent circular import)
 from models.entity import examination
-
-
-def count(list_query) -> int:
-	"""
-	Return number of elements from query.
-	"""
-	return database.session.execute(
-		list_query.statement.with_only_columns([func.count()]).order_by(None)
-	).scalar()
+from models.entity import process
+from models.entity import task

@@ -33,9 +33,9 @@
 ### New Examination
 *active*
 
-- [ ] Select a plugin
-- [ ] Set plugin options
-- [ ] Set examination values:
+- [x] Select a plugin
+- [x] Set plugin options
+- [x] Set examination values:
 * Number of tasks
 * Difficulty level
 * Examination Name
@@ -43,22 +43,22 @@
 ### Edit Examination
 *active*
 
-- [ ] Repeat create form
+- [x] Repeat create form
 
 ### Examinations Page
 *active*
 
 - [x] Examination List
-- [ ] List Filter
-- [ ] Delete / Edit / Create / Start Examination
+- [x] List Filter
+- [x] Delete / Edit / Create / Start Examination
 
 ### Examination Process Page
 *active*
 
-- [ ] Task view frame
-- [ ] Type answer frame
-- [ ] Correct answer frame
-- [ ] Status frame:
+- [x] Task view frame
+- [x] Type answer frame
+- [x] Correct answer frame
+- [x] Status frame:
 * Time
 * Progress
 * Correct / Incorrect count

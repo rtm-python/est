@@ -114,9 +114,10 @@ class ProcessStore(Store):
 		if task.answer == data['answer']:
 			process.correct_count += 1
 		process.total_answer_time += \
-			(task.modified_utc - task.created_utc).total_seconds()
+			int((task.modified_utc - task.created_utc).total_seconds())
 		process.performance_time += \
 			int(data['performance_time'] / process.performance * 100)
+		print('\r\n\%s' % process.performance_time)
 		if process.answer_count >= process.repeat:
 			correctness = int(process.correct_count / process.answer_count * 100)
 			performance = \

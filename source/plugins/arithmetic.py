@@ -9,10 +9,10 @@ import json
 from random import randint
 
 # Performance constants
-ADDITION_TIME_PER_BIT = 1
-SUBSTRACTION_TIME_PER_BIT = 2
-MULTIPLICATION_TIME_PER_BIT = 2
-DIVISION_TIME_PER_BIT = 3
+ADDITION_TIME_PER_BIT = 1.5
+SUBSTRACTION_TIME_PER_BIT = 2.5
+MULTIPLICATION_TIME_PER_BIT = 2.5
+DIVISION_TIME_PER_BIT = 4
 
 # Plugin options
 options = [
@@ -293,7 +293,7 @@ def get_data(options: dict) -> dict:
 		if preset[hide_index] != 0 and '0' in preset:
 			hide_index = len(preset) - 1
 	if hide_index < len(preset) - 1:
-		performance = int(performance * 1.05)
+		performance *= 1.05
 	# Prepare data
 	answer = preset[hide_index]
 	preset[hide_index] = '?'
@@ -301,5 +301,5 @@ def get_data(options: dict) -> dict:
 		'task': '%s = %s' % \
 			((' %s ' % preset[0]).join(preset[1: -1]), preset[-1]),
 		'answer': answer,
-		'performance_time': performance_time
+		'performance_time': int(performance_time)
 	}

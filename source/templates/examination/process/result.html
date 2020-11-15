@@ -17,7 +17,12 @@
 			<div class="card-body">
 				<h2>{{ __('Result') }}</h2>
 				<hr/>
-				<h3>{{ process.result }}%</h3>
+				<h2>{{ process.result }}%</h2>
+				<hr/>
+				<small>{{  __('Correctness') }}</small>
+				<h4>{{ process.correct_count }}/{{ process.answer_count }} {{ __('answers') }}</h4>
+				<small>{{  __('Performance') }}</small>
+				<h4>{{ process.total_answer_time }}/{{ process.performance_time }} {{ __('seconds') }}</h4>
 			</div>
 		</div>
 	</div>

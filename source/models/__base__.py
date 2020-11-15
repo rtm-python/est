@@ -41,6 +41,7 @@ class Store():
 		"""
 		entity.set_modified()
 		database.session.commit()
+		return entity
 
 	@staticmethod
 	def delete(entity: Entity) -> Entity:
@@ -49,6 +50,7 @@ class Store():
 		"""
 		entity.set_deleted()
 		database.session.commit()
+		return entity
 
 	@staticmethod
 	def get(entity_class, id: int) -> Entity:

@@ -138,10 +138,6 @@ def play_process(uid: str):
 		else:  # (normal behavior) Continue with creating new task
 			if process.answer_count >= process.repeat:
 				# Process complete (all tasks answered)
-				ProcessStore.set_result(
-					uid,
-					int(process.correct_count / process.answer_count * 100)
-				)
 				return redirect(
 					url_for('examination.show_process_result', uid=process.uid)
 				)
@@ -156,8 +152,8 @@ def play_process(uid: str):
 				player.answer.errors = validation_errors
 				do_get = True
 				break
-			TaskStore.set_answer(task.uid, user_answer)
-			ProcessStore.add_answer(process.uid, data['answer'] == user_answer)
+			task = TaskStore.set_answer(task.uid, user_answer)
+			ProcessStore.add_answer(process.uid, task)
 			if data['answer'] == user_answer:
 				message = '%s is correct answer!'
 			else:

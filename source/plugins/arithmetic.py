@@ -8,6 +8,12 @@ Plugin module to handle examination process.
 import json
 from random import randint
 
+# Performance constants
+ADDITION_TIME_PER_BIT = 1
+SUBSTRACTION_TIME_PER_BIT = 2
+MULTIPLICATION_TIME_PER_BIT = 2
+DIVISION_TIME_PER_BIT = 3
+
 # Plugin options
 options = [
 	{
@@ -268,15 +274,32 @@ def get_data(options: dict) -> dict:
 	preset = None
 	for i in range(int(options['vars_count']) - 1):
 		preset = operation(int(options['limit']), preset)
+	# Calculate performance for preset
+	performance_time = 0
+	for var in preset[1:]:
+		performance_time += len(var)
+	if operation is get_addition:
+		performance_time *= ADDITION_TIME_PER_BIT
+	if operation is get_substraction:
+		performance_time *= SUBSTRACTION_TIME_PER_BIT
+	if operation is get_multiplication:
+		performance_time *= MULTIPLICATION_TIME_PER_BIT
+	if operation is get_division:
+		performance_time *= DIVISION_TIME_PER_BIT
+	# Replace one of the vars with question mark
 	hide_index = randint(1, len(preset) - 1) \
 		if options['result_only'] == 'false' else len(preset) - 1
 	if preset[0] in ['x', '/']:
 		if preset[hide_index] != 0 and '0' in preset:
 			hide_index = len(preset) - 1
+	if hide_index < len(preset) - 1:
+		performance = int(performance * 1.05)
+	# Prepare data
 	answer = preset[hide_index]
 	preset[hide_index] = '?'
 	return {
 		'task': '%s = %s' % \
 			((' %s ' % preset[0]).join(preset[1: -1]), preset[-1]),
-		'answer': answer
+		'answer': answer,
+		'performance_time': performance_time
 	}

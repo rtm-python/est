@@ -11,8 +11,8 @@ from random import randint
 # Performance constants
 ADDITION_TIME_PER_BIT = 1.5
 SUBSTRACTION_TIME_PER_BIT = 2.5
-MULTIPLICATION_TIME_PER_BIT = 2.5
-DIVISION_TIME_PER_BIT = 4
+MULTIPLICATION_TIME_PER_BIT = 1
+DIVISION_TIME_PER_BIT = 1
 
 # Plugin options
 options = [
@@ -293,7 +293,7 @@ def get_data(options: dict) -> dict:
 		if preset[hide_index] != 0 and '0' in preset:
 			hide_index = len(preset) - 1
 	if hide_index < len(preset) - 1:
-		performance *= 1.05
+		performance_time *= 1.05
 	# Prepare data
 	answer = preset[hide_index]
 	preset[hide_index] = '?'

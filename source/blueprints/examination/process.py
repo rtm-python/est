@@ -33,6 +33,7 @@ from wtforms import StringField
 from wtforms import SelectField
 from wtforms import SubmitField
 from wtforms import validators
+from flask_login import current_user
 
 
 class StarterForm(FlaskForm):
@@ -77,7 +78,8 @@ class ExaminationProgress:
 		Initiate object with progress values.
 		"""
 		self.recents = ProcessStore.read_list(
-			offset=0, limit=12, filter_examination_id=examination.id
+			offset=0, limit=12, filter_examination_id=examination.id,
+			user_uid=current_user.get_id(), anonymous_token=current_user.get_token()
 		)
 		answer_count = 0
 		correct_count = 0
@@ -105,7 +107,8 @@ def start_examination(uid: str):
 	if starter.validate_on_submit():
 		process = ProcessStore.create(
 			examination.id, examination.plugin, examination.plugin_options,
-			examination.name, starter.repeat.data, starter.performance.data
+			examination.name, starter.repeat.data, starter.performance.data,
+			current_user.get_id(), current_user.get_token()
 		)
 		return redirect(url_for(
 			'examination.play_process', uid=process.uid))

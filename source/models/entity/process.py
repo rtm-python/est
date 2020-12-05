@@ -44,10 +44,13 @@ class Process(Entity):
 		index=True, nullable=False
 	)
 	result = Column(database.Integer, index=True, nullable=True)
+	user_uid = Column(database.String, index=True, nullable=True)
+	anonymous_token = Column(database.String, index=True, nullable=True)
 
 	def __init__(self, examination_id: int,
 							 plugin: str, plugin_options: str,
-							 name: str, repeat: int, performance: int
+							 name: str, repeat: int, performance: int,
+							 user_uid: str, anonymous_token: str
 							 ) -> "Process":
 		'''
 		Initiate object and stores Process' data.
@@ -59,3 +62,5 @@ class Process(Entity):
 		self.name = name
 		self.repeat = repeat
 		self.performance = performance
+		self.user_uid = user_uid
+		self.anonymous_token = anonymous_token

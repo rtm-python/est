@@ -23,7 +23,8 @@ class ProcessStore(Store):
 	@staticmethod
 	def create(examination_id: int,
 						 plugin: str, plugin_options: str,
-						 name: str, repeat: int, performance: int
+						 name: str, repeat: int, performance: int,
+						 user_uid: str, anonymous_token: str
 						 ) -> Process:
 		"""
 		Create and return process.
@@ -32,7 +33,8 @@ class ProcessStore(Store):
 			Process(
 				examination_id,
 				plugin, plugin_options,
-				name, repeat, performance
+				name, repeat, performance,
+				user_uid, anonymous_token
 			)
 		)
 
@@ -49,6 +51,7 @@ class ProcessStore(Store):
 	def update(uid: str, examination_id: int,
 						 plugin: str, plugin_options: str,
 						 name: str, repeat: int, performance: int,
+						 user_uid: str, anonymous_token: str,
 						 answer_count: int, correct_count: int,
 						 total_answer_time: int, performance_time: int,
 						 result: int
@@ -63,6 +66,8 @@ class ProcessStore(Store):
 		process.name = name
 		process.repeat = repeat
 		process.performance = performance
+		process.user_uid = user_uid
+		process.anonymous_token = anonymous_token
 		process.answer_count = answer_count
 		process.correct_count = correct_count
 		process.total_answer_time = total_answer_time
@@ -83,22 +88,25 @@ class ProcessStore(Store):
 
 	@staticmethod
 	def read_list(offset: int, limit: int,
-								filter_examination_id: int
+								filter_examination_id: int,
+								user_uid: str, anonymous_token: str
 								) -> list:
 		"""
 		Return list of processes by arguments.
 		"""
 		return _get_list_query(
-			filter_examination_id
+			filter_examination_id, user_uid, anonymous_token
 		).limit(limit).offset(offset).all()
 
 	@staticmethod
-	def count_list(filter_examination_id: int) -> int:
+	def count_list(filter_examination_id: int,
+								 user_uid: str, anonymous_token: str
+								 ) -> int:
 		"""
 		Return number of processes in list.
 		"""
 		return Store.count(_get_list_query(
-			filter_examination_id
+			filter_examination_id, user_uid, anonymous_token
 		))
 
 	@staticmethod
@@ -149,7 +157,8 @@ class ProcessStore(Store):
 			Process, id
 		)
 
-def _get_list_query(filter_examination_id: int):
+def _get_list_query(filter_examination_id: int,
+										user_uid: str, anonymous_token: str):
 	"""
 	Return query object for process.
 	"""
@@ -160,6 +169,10 @@ def _get_list_query(filter_examination_id: int):
 	).filter(
 		True if filter_examination_id is None else \
 			filter_examination_id == Examination.id,
+		True if user_uid is None else \
+			user_uid == Process.user_uid,
+		True if anonymous_token is None else \
+			anonymous_token == Process.anonymous_token,
 		Examination.deleted_utc == None,
 		Process.deleted_utc == None
 	).order_by(

@@ -127,6 +127,16 @@ def play_process(uid: str):
 	Return examination process page.
 	"""
 	process = ProcessStore.read(uid)
+	if current_user.get_id() is not None and \
+			current_user.get_id() != process.user_uid:
+		examination = ExaminationStore.get(process.examination_id)
+		return redirect(url_for(
+			'examination.start_examination', uid=examination.uid))
+	if current_user.get_token() is not None and \
+			current_user.get_token() != process.anonymous_token:
+		examination = ExaminationStore.get(process.examination_id)
+		return redirect(url_for(
+			'examination.start_examination', uid=examination.uid))
 	plugin_module = importlib.import_module('plugins.%s' % process.plugin)
 	answer_alert = None # To show in/correctness of answer
 	do_get = False
@@ -182,6 +192,16 @@ def stop_process(uid: str):
 	Remove current task and redirect to start examination page.
 	"""
 	process = ProcessStore.read(uid)
+	if current_user.get_id() is not None and \
+			current_user.get_id() != process.user_uid:
+		examination = ExaminationStore.get(process.examination_id)
+		return redirect(url_for(
+			'examination.start_examination', uid=examination.uid))
+	if current_user.get_token() is not None and \
+			current_user.get_token() != process.anonymous_token:
+		examination = ExaminationStore.get(process.examination_id)
+		return redirect(url_for(
+			'examination.start_examination', uid=examination.uid))
 	tasks = TaskStore.read_list(
 		offset=0, limit=1, filter_process_id=process.id
 	)
@@ -200,6 +220,16 @@ def show_process_result(uid: str):
 	Return process result page.
 	"""
 	process = ProcessStore.read(uid)
+	if current_user.get_id() is not None and \
+			current_user.get_id() != process.user_uid:
+		examination = ExaminationStore.get(process.examination_id)
+		return redirect(url_for(
+			'examination.start_examination', uid=examination.uid))
+	if current_user.get_token() is not None and \
+			current_user.get_token() != process.anonymous_token:
+		examination = ExaminationStore.get(process.examination_id)
+		return redirect(url_for(
+			'examination.start_examination', uid=examination.uid))
 	return render_template(
 		'examination/process/result.html',
 		process=process

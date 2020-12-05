@@ -94,6 +94,20 @@ class ExaminationProgress:
 			if self.recents else examination.modified_utc
 
 
+def verify_process_owner(process: Process) -> bool:
+	"""
+	Return True when current_user is the process owner,
+	otherwise return False.
+	"""
+	if current_user.get_id() is not None and \
+			current_user.get_id() != process.user_uid:
+		return False
+	if current_user.get_token() is not None and \
+			current_user.get_token() != process.anonymous_token:
+		return False
+	return True
+
+
 @blueprint.route('/start/<uid>/', methods=('GET', 'POST'))
 def start_examination(uid: str):
 	"""
@@ -127,13 +141,7 @@ def play_process(uid: str):
 	Return examination process page.
 	"""
 	process = ProcessStore.read(uid)
-	if current_user.get_id() is not None and \
-			current_user.get_id() != process.user_uid:
-		examination = ExaminationStore.get(process.examination_id)
-		return redirect(url_for(
-			'examination.start_examination', uid=examination.uid))
-	if current_user.get_token() is not None and \
-			current_user.get_token() != process.anonymous_token:
+	if not verify_process_owner(process):
 		examination = ExaminationStore.get(process.examination_id)
 		return redirect(url_for(
 			'examination.start_examination', uid=examination.uid))
@@ -192,13 +200,7 @@ def stop_process(uid: str):
 	Remove current task and redirect to start examination page.
 	"""
 	process = ProcessStore.read(uid)
-	if current_user.get_id() is not None and \
-			current_user.get_id() != process.user_uid:
-		examination = ExaminationStore.get(process.examination_id)
-		return redirect(url_for(
-			'examination.start_examination', uid=examination.uid))
-	if current_user.get_token() is not None and \
-			current_user.get_token() != process.anonymous_token:
+	if not verify_process_owner(process):
 		examination = ExaminationStore.get(process.examination_id)
 		return redirect(url_for(
 			'examination.start_examination', uid=examination.uid))
@@ -220,13 +222,7 @@ def show_process_result(uid: str):
 	Return process result page.
 	"""
 	process = ProcessStore.read(uid)
-	if current_user.get_id() is not None and \
-			current_user.get_id() != process.user_uid:
-		examination = ExaminationStore.get(process.examination_id)
-		return redirect(url_for(
-			'examination.start_examination', uid=examination.uid))
-	if current_user.get_token() is not None and \
-			current_user.get_token() != process.anonymous_token:
+	if not verify_process_owner(process):
 		examination = ExaminationStore.get(process.examination_id)
 		return redirect(url_for(
 			'examination.start_examination', uid=examination.uid))

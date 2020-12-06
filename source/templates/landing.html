@@ -20,37 +20,52 @@
 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.0-alpha14/js/tempusdominus-bootstrap-4.min.js"></script>
 		<script type="text/javascript" src="{{ url_for('static', filename='js/spartan-multi-image-picker-min.js') }}"></script>
 		{%- block script -%}{%- endblock -%}
-	</head>
-	<body class="d-flex flex-column h-100">
-		<header>
-			<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-				<a class="navbar-brand" href="{{ url_for('base.get_landing') }}">Elementary School Tutor</a>
-				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-				  <span class="navbar-toggler-icon"></span>
-				</button>
-				<div class="collapse navbar-collapse justify-content-md-end" id="navbarCollapse">
-				  <ul class="navbar-nav">
-				    <li class="nav-item active">
-				      <a class="nav-link" href="{{ url_for('examination.get_examination_catalog') }}">{{ __('Examination') }}</a>
-				    </li>
-				    <li class="nav-item">
-				      <a class="nav-link" href="#">{{ __('Charts') }}</a>
-				    </li>
-				    <li class="nav-item">
-				    	{%- if current_user.is_authenticated -%}
-					      <a class="nav-link" href="#">{{ __('Cabinet') }}</a>
-					    {%- else -%}
-					      <a class="nav-link" href="{{ url_for('base.sign_in') }}">{{ __('Sign in') }}</a>
-					    {%- endif -%}
-				    </li>
-				  </ul>
-				</div>
-			</nav>
-		</header>
-		<div class="container-fluid mt-5">
-			{%- block body_content -%}{%- endblock -%}
-		</div>
-		{%- include 'alert.html' -%}
-		{%- block body_script -%}{%- endblock -%}
-	</body>
+		<meta name="theme-color" content="#563d7c">
+    <style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+    </style>
+    <link href="{{ url_for('static', filename='cover.css') }}" rel="stylesheet">
+  </head>
+  <body class="text-center">
+    <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+  <header class="masthead mb-auto">
+    <div class="inner">
+      <h3 class="masthead-brand">{{ __('Elementary School Tutor') }}</h3>
+      <nav class="nav nav-masthead justify-content-center">
+        <a class="nav-link" href="{{ url_for('examination.get_examination_catalog') }}">{{ __('Examination') }}</a>
+        <a class="nav-link" href="#">{{ __('Charts') }}</a>
+        {%- if current_user.is_authenticated -%}
+	        <a class="nav-link" href="#">{{ __('Cabinet') }}</a>
+	      {%- else -%}
+	        <a class="nav-link" href="{{ url_for('base.sign_in') }}">{{ __('Sign in') }}</a>
+	      {%- endif -%}
+      </nav>
+    </div>
+  </header>
+  <main role="main" class="inner cover">
+    <h1 class="cover-heading">{{ __('Use a reliable tool to learn ariphmetic, languages and etc.') }}</h1>
+    <p class="lead">{{ __('') }}</p>
+    <p class="lead">
+      <a href="#" class="btn btn-secondary">{{ __('Sign up for free...') }}</a>
+    </p>
+  </main>
+  <footer class="mastfoot mt-auto">
+    <div class="inner">
+      <p>Free to use tool implemented with <a href="https://flask.palletsprojects.com/">Flask Framework</a>, by <a href="https://github.com/rtm-python/est/">rtm-python (p1a-7ck)</a>.</p>
+    </div>
+  </footer>
+</div>
+</body>
 </html>

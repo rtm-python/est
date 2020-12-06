@@ -19,7 +19,12 @@ from flask import url_for
 from flask_paranoid import Paranoid
 
 # Initiate Flask object
-application = Flask(config['name'])
+application = Flask(
+	config['name'],
+	static_url_path='',
+	static_folder='source/static',
+	template_folder='source/template'
+)
 application.config['SECRET_KEY'] = secrets.token_hex(256)
 paranoid = Paranoid(application)
 paranoid.redirect_view = 'base.get_landing'

@@ -16,6 +16,10 @@ from flask_login import LoginManager
 from flask_login import UserMixin
 from flask_login import AnonymousUserMixin
 from flask import session
+from flask import render_template
+from flask_wtf import FlaskForm
+from wtforms import StringField
+from wtforms import SubmitField
 
 
 class SignedInUser(UserMixin):
@@ -74,12 +78,24 @@ def load_user(user_id):
 	return SignedInUser(None)
 
 
-@blueprint.route('/sign/in/', methods=('GET',))
+class SignInForm(FlaskForm):
+	"""
+	This is a  SignInForm class to retrieve form data.
+	"""
+	access_pin = StringField()
+	submit = SubmitField()
+
+
+@blueprint.route('/sign/in/', methods=('GET', 'POST'))
 def sign_in():
 	"""
-	Return sign-in  page.
+	Return sign-in page and login user.
 	"""
-	return 'Sign-In Page', 200
+	sign_in = SignInForm()
+	return render_template(
+		'base/sign_in.html',
+		sign_in=sign_in
+	)
 
 
 @blueprint.route('/sign/up/', methods=('GET',))

@@ -22,5 +22,5 @@ def get_landing():
 	Return landing page.
 	"""
 	return render_template(
-		'landing.html'
+		'base/landing.html'
 	)

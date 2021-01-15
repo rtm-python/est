@@ -15,7 +15,7 @@
 					{%- for button in alert.buttons -%}
 						<a href="{{ button.link }}" class="btn btn-sm btn-outline-{{ button.type.value }}">{{ __(button.label) }}</a>
 					{%- endfor -%}
-		      <button id="alertClose" type="button" class="btn btn-sm btn-outline-dark" data-dismiss="modal">{{ __('Cancel') }}</button>
+		      <button id="alertClose" type="button" class="btn btn-sm btn-outline-dark" data-dismiss="modal">{{ __('Close') }}</button>
 		    </div>
 		  </div>
 		</div>

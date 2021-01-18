@@ -4,14 +4,15 @@
 	<h2 class="cover heading">Authentication</h2>
 	<div class="col-12 col-sm-10 offset-sm-1 col-md-10 offset-md-1 col-lg-8 offset-lg-2">
 		<div class="row">
-			<div class="col-12 col-sm-6 mb-5">
+			<div class="col-12 col-sm-6 mb-3">
 				<small>{{ __('Usercode') }}</small>
-				<h3 style="font-family: 'Roboto Mono', monospace;">{{ usercode }}</h3>
+				<h3 style="font-family: 'Roboto Mono', monospace;">{{ sign_in.usercode.value }}</h3>
 				<small>{{ __('Send usercode within chat message to @identica_bot') }}</small>
 			</div>
-			<div class="col-12 col-sm-6">
+			<div class="col-12 col-sm-6 mb-3">
 				<form method="post" actions="">
 					{{ sign_in.csrf_token }}
+					<input type="password" class="form-control" id="usercode" name="usercode" placeholder="{{ __('Usercode') }}" value="{{ sign_in.usercode.value|default('', True) }}" hidden />
 					<div class="col-12 mb-3">
 						<small>{{ __('Passcode') }}</small>
 						<input type="password" class="form-control" id="passcode" name="passcode" placeholder="{{ __('Passcode') }}" value="{{ sign_in.passcode.value|default('', True) }}" />

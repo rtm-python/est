@@ -26,7 +26,7 @@ cmd_delete_message = 'deleteMessage'
 alphabet = string.ascii_lowercase + string.digits
 code_length = 4
 clear_index = 120
-valid_seconds = 15
+valid_seconds = 30
 sleep_seconds = 3
 message_limit = 100
 
@@ -222,20 +222,22 @@ def verify_usercode(usercode: str, passcode: str) -> dict:
 	"""
 	if data['usercodes'].get(usercode) is not None:
 		if data['usercodes'][usercode]['passcode'] is not None:
-			if data['usercodes'][usercode]['valid_before'] < \
+			if data['usercodes'][usercode]['valid_before'] > \
 					datetime.datetime.utcnow().timestamp():
 				usercode_item = data['usercodes'][usercode]
+				# Delete used usercode data and message
+				response = requests.post(
+					data['url_delete_message'],
+					json={
+						'chat_id': usercode_item['chat_id'],
+						'message_id': usercode_item['message_id']
+					}
+				)
 			else:
+				logging.debug('Usercode/passcode pair timed out for %d seconds' % \
+											data['usercodes'][usercode]['valid_before'] - \
+											datetime.datetime.utcnow().timestamp())
 				usercode_item = None # indvalid (timed out) usercode
-			# Delete used usercode data and message
-			response = requests.post(
-				data['url_delete_message'],
-				json={
-					'chat_id': usercode_item['chat_id'],
-					'message_id': usercode_item['message_id']
-				}
-			)
-			del data['usercodes'][usercode]
 			return usercode_item
 
 

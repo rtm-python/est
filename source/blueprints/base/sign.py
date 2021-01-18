@@ -6,21 +6,29 @@ Blueprint module to handle sign routes.
 
 # Standard libraries import
 import secrets
+import logging
 
 # Application modules import
 from blueprints import application
 from blueprints.base import blueprint
 from identica import telegram as bot
+from models.user_store import UserStore
+from models.entity.user import User
 
 # Additional libraries import
 from flask_login import LoginManager
 from flask_login import UserMixin
 from flask_login import AnonymousUserMixin
+from flask_login import login_user
+from flask_login import logout_user
 from flask import session
+from flask import redirect
+from flask import url_for
 from flask import render_template
 from flask_wtf import FlaskForm
 from wtforms import StringField
 from wtforms import SubmitField
+from wtforms import validators
 
 
 class SignedInUser(UserMixin):
@@ -37,9 +45,9 @@ class SignedInUser(UserMixin):
 		Return uid for linked to SignedInUser object User entity.
 		"""
 		if self.user is not None:
-			return unicode(self.user.uid)
+			return self.user.uid
 
-	def get_token():
+	def get_token(self):
 		"""
 		Return None for SignedInUser object (no anonymous token).
 		"""
@@ -76,14 +84,15 @@ def load_user(user_id):
 	Return SignedInUser object linked to User entity by uid.
 	"""
 	# TODO: Sign entity and return entity by uid
-	return SignedInUser(None)
+	return SignedInUser(UserStore.read(user_id))
 
 
 class SignInForm(FlaskForm):
 	"""
 	This is a  SignInForm class to retrieve form data.
 	"""
-	access_pin = StringField()
+	usercode = StringField()
+	passcode = StringField(validators=[validators.DataRequired()])
 	submit = SubmitField()
 
 
@@ -92,21 +101,24 @@ def sign_in():
 	"""
 	Return sign-in page and login user.
 	"""
+	# TODO: verify for signed in user
 	sign_in = SignInForm()
-	usercode = bot.create_usercode()
+	if sign_in.validate_on_submit():
+		usercode_item = bot.verify_usercode(
+			sign_in.usercode.data, sign_in.passcode.data.strip())
+		if usercode_item is not None: # usercode/passcode is valid
+			user = UserStore.get_or_create_user(
+				usercode_item['from_id'], usercode_item['name'])
+			logging.debug('Sign in as user %s (%s)' % (user.name, user.from_id))
+			login_user(SignedInUser(user))
+			return redirect(url_for('base.get_landing'))
+		logging.warning('Invalid usercode/passcode pair')
+		return redirect(url_for('base.sign_in'))
+	sign_in.usercode.value = bot.create_usercode()
 	return render_template(
 		'base/sign_in.html',
-		sign_in=sign_in,
-		usercode=usercode
+		sign_in=sign_in
 	)
-
-
-@blueprint.route('/sign/up/', methods=('GET',))
-def sign_up():
-	"""
-	Return sign-up  page.
-	"""
-	return 'Sign-Up Page', 200
 
 
 @blueprint.route('/sign/out/', methods=('GET',))

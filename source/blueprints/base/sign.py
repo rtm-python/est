@@ -10,6 +10,7 @@ import secrets
 # Application modules import
 from blueprints import application
 from blueprints.base import blueprint
+from identica import telegram as bot
 
 # Additional libraries import
 from flask_login import LoginManager
@@ -92,9 +93,11 @@ def sign_in():
 	Return sign-in page and login user.
 	"""
 	sign_in = SignInForm()
+	usercode = bot.create_usercode()
 	return render_template(
 		'base/sign_in.html',
-		sign_in=sign_in
+		sign_in=sign_in,
+		usercode=usercode
 	)
 
 

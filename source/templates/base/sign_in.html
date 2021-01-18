@@ -2,17 +2,25 @@
 {%- set title -%}{{ __('Sign in') }}{%- endset -%}
 {%- block body_content -%}
 	<h2 class="cover heading">Authentication</h2>
-	<form method="post" actions="" class="col-12 col-sm-8 offset-sm-2 col-md-6 offset-md-3 col-lg-4 offset-lg-4">
-		{{ sign_in.csrf_token }}
-		<div class="col-12 mb-3">
-			<small>{{ __('Access PIN') }}</small>
-			<input type="password" class="form-control" id="access_pin" name="access_pin" placeholder="{{ __('Access PIN') }}" value="{{ sign_in.access_pin.value|default('', True) }}" />
+	<div class="col-12 col-sm-10 offset-sm-1 col-md-10 offset-md-1 col-lg-8 offset-lg-2">
+		<div class="row">
+			<div class="col-12 col-sm-6 mb-5">
+				<small>{{ __('Usercode') }}</small>
+				<h3 style="font-family: 'Roboto Mono', monospace;">{{ usercode }}</h3>
+				<small>{{ __('Send usercode within chat message to @identica_bot') }}</small>
+			</div>
+			<div class="col-12 col-sm-6">
+				<form method="post" actions="">
+					{{ sign_in.csrf_token }}
+					<div class="col-12 mb-3">
+						<small>{{ __('Passcode') }}</small>
+						<input type="password" class="form-control" id="passcode" name="passcode" placeholder="{{ __('Passcode') }}" value="{{ sign_in.passcode.value|default('', True) }}" />
+					</div>
+					<div class="col-12 my-2">
+						<button type="submit" class="btn btn-sm btn-block btn-outline-light">{{ __('Confirm') }}</button>
+					</div>
+				</form>
+			</div>		
 		</div>
-		<div class="col-12 my-2">
-			<button type="submit" class="btn btn-sm btn-block btn-outline-light">{{ __('Sign in') }}</button>
-		</div>
-		<div class="col-12 my-2">
-			<a href="{{ url_for('base.get_landing') }}" class="btn btn-sm btn-block btn-outline-light">{{ __('Cancel') }}</a>
-		</div>
-	</form>
+	</div>
 {%- endblock -%}

@@ -149,6 +149,26 @@ class ProcessStore(Store):
 		)
 
 	@staticmethod
+	def bind_token(user_uid: str, anonymous_token: str) -> int:
+		"""
+		Bind (replace anonymous_token with user_uid) processes
+		and return binded process number.
+		"""
+		binded_count = 0
+		while True:
+			process_list = ProcessStore.read_list(
+				0, 100, None, None, anonymous_token)
+			if len(process_list) == 0:
+				break
+			else:
+				for process in process_list:
+					process.user_uid = user_uid
+					process.anonymous_token = None
+					super(ProcessStore, ProcessStore).update(process)
+					binded_count += 1
+		return binded_count
+
+	@staticmethod
 	def get(id: int) -> Process:
 		"""
 		Return process bt id (no matter deleted or etc.).

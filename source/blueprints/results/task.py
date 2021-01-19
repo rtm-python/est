@@ -9,7 +9,7 @@ Blueprint module to handle completed task routes.
 
 # Application modules import
 from blueprints import application
-from blueprints.statistics import blueprint
+from blueprints.results import blueprint
 
 
 @blueprint.route('/task/', methods=('GET',))

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Initial blueprint module to initiate statistics blueprint.
+Initial blueprint module to initiate cabinet blueprint.
 """
 
 # Standard libraries import
@@ -15,11 +15,10 @@ from flask import Blueprint
 
 # Initiate Blueprint object
 blueprint = Blueprint(
-	'statistics', __name__,
+	'cabinet', __name__,
 	static_folder='',
 	template_folder=''
 )
 
 # Routes import
-from blueprints.statistics import examination
-from blueprints.statistics import task
+from blueprints.cabinet import profile

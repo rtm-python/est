@@ -163,7 +163,8 @@ def get_examination_catalog():
 		filter=filter,
 		examinations_with_progress=examinations_with_progress,
 		pagination=pagination,
-		alert=delete_alert
+		alert=delete_alert,
+		active='catalog'
 	)
 
 

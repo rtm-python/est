@@ -1,0 +1,51 @@
+{%- extends "layout_base.html" -%}
+{%- block style -%}
+		<meta name="theme-color" content="#563d7c">
+    <style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+    </style>
+    <link href="{{ url_for('static', filename='cover.css') }}" rel="stylesheet">
+{%- endblock -%}
+{%- block body -%}
+  <body class="text-center">
+    <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+		  <header class="masthead mb-auto">
+		    <div class="inner">
+		      <h4 class="masthead-brand">{{ __('Elementary School Tutor') }}</h4>
+		      <nav class="nav nav-masthead justify-content-center">
+		        <a class="nav-link" href="{{ url_for('examination.get_examination_catalog') }}">{{ __('Catalog') }}</a>
+		        <a class="nav-link" href="{{ url_for('results.get_top') }}">{{ __('History') }}</a>
+		        <a class="nav-link" href="{{ url_for('results.get_top') }}">{{ __('Score') }}</a>
+		        {%- if current_user.is_authenticated -%}
+			        <a class="nav-link" href="{{ url_for('cabinet.get_profile') }}">{{ current_user.name }}</a>
+			      {%- else -%}
+			        <a class="nav-link" href="{{ url_for('base.sign_in') }}">{{ __('Sign in') }}</a>
+			      {%- endif -%}
+		      </nav>
+		    </div>
+		  </header>
+		  <main role="main" class="inner cover">
+		  	{%- block body_content -%}{%- endblock -%}
+		  </main>
+		  <footer class="mastfoot mt-auto">
+		    <div class="inner">
+		      <small>Free to use tool implemented with <a href="https://flask.palletsprojects.com/">Flask Framework</a>, by <a href="https://github.com/rtm-python/est/">rtm-python (p1a-7ck)</a>.</small>
+		    </div>
+		  </footer>
+		</div>
+	  {%- include "alert.html" -%}
+	  {%- block body_script -%}{%- endblock -%}
+	</body>
+{%- endblock -%}

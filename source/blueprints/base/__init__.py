@@ -5,7 +5,7 @@ Initial blueprint module to initiate base blueprint.
 """
 
 # Standard libraries import
-
+import os
 
 # Application modules import
 from blueprints import application
@@ -16,13 +16,15 @@ from flask import Blueprint
 # Initiate Blueprint object
 blueprint = Blueprint(
 	'base', __name__,
-	static_folder='',
-	template_folder=''
+	static_folder=os.path.join(
+		os.path.abspath(os.curdir), 'source/static'),
+	template_folder=os.path.join(
+		os.path.abspath(os.curdir), 'source/templates')
 )
 
 # Routes import
 from blueprints.base import landing
-from blueprints.base import sign
+from blueprints.base import account
 
 
 # HTTP_400_BAD_REQUEST

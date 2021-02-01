@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Blueprint module to handle examination catalog routes.
+Blueprint module to handle testing catalog routes.
 """
 
 # Standard libraries import
@@ -13,7 +13,7 @@ import logging
 
 # Application modules import
 from blueprints import application
-from blueprints.examination import blueprint
+from blueprints.testing import blueprint
 from blueprints.__paginator__ import get_pagination
 from blueprints.__args__ import get_string
 from blueprints.__args__ import get_boolean
@@ -109,10 +109,11 @@ class ExaminationForm(FlaskForm):
 
 @blueprint.route('/', methods=('GET', 'POST'))
 @blueprint.route('/catalog/', methods=('GET', 'POST'))
-def get_examination_catalog():
+def get_catalog():
 	"""
 	Return examination catalog page.
 	"""
+
 	delete_uid = request.args.get('delete_uid')
 	if delete_uid:
 		delete_alert = Alert(
@@ -159,7 +160,7 @@ def get_examination_catalog():
 			(examination, ExaminationProgress(examination))
 		]
 	return render_template(
-		'examination/catalog/catalog.html',
+		'testing/catalog/catalog.html',
 		filter=filter,
 		examinations_with_progress=examinations_with_progress,
 		pagination=pagination,

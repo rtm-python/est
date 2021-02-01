@@ -1,0 +1,18 @@
+<div class="accordion" id="accordionFilter">
+  <div class="card" style="border: none;">
+    <div class="card-header p-0 m-0" id="headingFilter">
+    	<div class="row m-0">
+	      <button class="btn btn-block btn-outline-dark m-0" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne" style="border: none; border-radius: 0;">
+	        {{ __('Filter') }}
+	      </button>
+	    </div>
+    </div>
+    <div id="collapseOne" class="collapse hide" aria-labelledby="headingFilter" data-parent="#accordionFilter" style="background: dimgrey;">
+      <div class="card-body">
+      	{%- block filter -%}
+      		!!!
+      	{%- endblock -%}
+      </div>
+    </div>
+  </div>
+</div>

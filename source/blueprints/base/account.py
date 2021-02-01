@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Blueprint module to handle sign routes.
+Blueprint module to handle account routes.
 """
 
 # Standard libraries import
@@ -103,7 +103,21 @@ class SignInForm(FlaskForm):
 	submit = SubmitField()
 
 
-@blueprint.route('/sign/in/', methods=('GET', 'POST'))
+@blueprint.route('/account/', methods=('GET',))
+@blueprint.route('/account/profile/', methods=('GET',))
+def get_profile():
+	"""
+	Return profile page.
+	"""
+	if not current_user.is_authenticated:
+		return redirect(url_for('base.sign_in'))
+	return render_template(
+		'base/profile.html',
+		nav_active='account'
+	)
+
+
+@blueprint.route('/account/sign-in/', methods=('GET', 'POST'))
 def sign_in():
 	"""
 	Return sign-in page and login user.
@@ -133,11 +147,12 @@ def sign_in():
 	sign_in.usercode.value = bot.create_usercode()
 	return render_template(
 		'base/sign_in.html',
-		sign_in=sign_in
+		sign_in=sign_in,
+		nav_active='account'
 	)
 
 
-@blueprint.route('/sign/out/', methods=('GET',))
+@blueprint.route('/account/sign-out/', methods=('GET',))
 def sign_out():
 	"""
 	Return sign-out  page.

@@ -1,0 +1,64 @@
+{%- extends "layout_list.html" -%}
+{% set title -%}{{ __('Catalog') }}{%- endset %}
+{%- block style -%}
+	<style>
+  	@media (max-width: 768px) {
+			.card-columns {
+	  	  column-count: 1;
+	    }
+	  }
+	</style>
+{%- endblock -%}
+{%- block filter -%}
+	<form method="post" actions="">
+		{{ filter.csrf_token }}
+		<div class="form-row">
+			<div class="col-12 col-md-4 mb-2">
+				<small>{{ __('Name') }}</small>
+				<input type="text" class="form-control form-control-sm" id="filter_name" name="filter_name" placeholder="{{ __('Name') }}" value="{{ filter.filter_name.data|default('', True) }}" />	
+			</div>
+			<div class="col-12 col-md-4 mb-2">
+				<small>{{ __('Plugin') }}</small>
+				<input type="text" class="form-control form-control-sm" id="filter_plugin" name="filter_plugin" placeholder="{{ __('Plugin') }}" value="{{ filter.filter_plugin.data|default('', True) }}" />
+			</div>
+			<div class="col-12 col-md-2 mb-2">
+				<small>{{ __('Hide global') }}</small>
+				<input type="checkbox" class="form-control form-control-sm" id="filter_hide_global" name="filter_hide_global" style="width: auto;" {%- if (filter.filter_hide_global.data == 'true' or filter.filter_hide_global.data == 'True') or filter.filter_hide_global.data is true -%}checked{%- endif -%} />
+			</div>
+			<div class="col-12 col-md-2 my-2">
+				<div class="form-row">
+					<div class="mb-2 col-6 col-md-12">
+						<button type="submit" class="btn btn-sm btn-block btn-outline-dark">{{ __('Apply') }}</button>
+					</div>
+					<div class="mb-2 col-6 col-md-12">
+						<a href="#" class="btn btn-sm btn-block btn-outline-dark">{{ __('Reset') }}</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>
+{%- endblock -%}
+{%- block list_content -%}
+	<div class="card-columns">
+		<div class="card p-2 shadow-sm mb-3 rounded text-center">
+			<blockquote class="blockquote mb-0 card-body">
+				<div class="d-flex w-100 justify-content-between">
+					<small class="text-muted">{{ 'Ariphmetic' }}</small>
+					<small>
+						<a class="text-muted p-1" href="#"><span class="oi oi-pencil"></span></a>
+						<a class="text-muted p-1" href="#"><span class="oi oi-x"></span></a>
+					</small>
+				</div>
+				<h4 class="card-title p-4"><strong>{{ 'My own test' }}</strong></h4>
+				<a href="#" class="btn btn-outline-dark w-50">{{ __('Start') }}</a>
+			</blockquote>
+		</div>
+		<div class="card p-2 shadow-sm mb-3 rounded text-center">
+			<blockquote class="blockquote mb-0 card-body">
+				<p class="fs-6 fst-italic card-text">{{ __('You also can add your own test based on installed plugins') }}</p>
+				<a href="#" class="btn btn-outline-dark m-1 pl-4 pr-4">{{ __('Add test') }}</a>
+				<a href="#" class="btn btn-outline-dark m-1 pl-4 pr-4">{{ __('Show more') }}</a>
+			</blockquote>
+		</div>
+	</div>
+{%- endblock -%}

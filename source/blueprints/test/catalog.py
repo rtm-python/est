@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Blueprint module to handle testing catalog routes.
+Blueprint module to handle test catalog routes.
 """
 
 # Standard libraries import
@@ -13,7 +13,7 @@ import logging
 
 # Application modules import
 from blueprints import application
-from blueprints.testing import blueprint
+from blueprints.test import blueprint
 from blueprints.__paginator__ import get_pagination
 from blueprints.__args__ import get_string
 from blueprints.__args__ import get_boolean
@@ -51,22 +51,33 @@ class FilterForm(FlaskForm):
 		"""
 		Set form fields to values from request.
 		"""
-		if not get_boolean('filter_reset'):
-			self.filter_name.data = get_string('filter_name')
-			self.filter_plugin.data = get_string('filter_plugin')
-			self.filter_hide_global.data = get_boolean('filter_hide_global')
+		if not get_boolean('filterReset'):
+			self.filter_name.data = get_string('filterName')
+			self.filter_plugin.data = get_string('filterPlugin')
+			self.filter_hide_global.data = get_boolean('filterHideGlobal')
 		else:
-			set_value('filter_name', None)
-			set_value('filter_plugin', None)
-			set_value('filter_hide_global', None)
+			set_value('filterName', None)
+			set_value('filterPlugin', None)
+			set_value('filterHideGlobal', None)
 
 	def store_fields(self) -> None:
 		"""
 		Set form fields to values from request.
 		"""
-		set_value('filter_name', self.filter_name.data)
-		set_value('filter_plugin', self.filter_plugin.data)
-		set_value('filter_hide_global', self.filter_hide_global.data)
+		set_value('filterName', self.filter_name.data)
+		set_value('filterPlugin', self.filter_plugin.data)
+		set_value('filterHideGlobal', self.filter_hide_global.data)
+
+	def url_for_with_fields(self, endpoint: str) -> object:
+		"""
+		Return url_for with defined form fields
+		"""
+		return url_for(
+			endpoint,
+			filterName=filter.filter_name.data,
+			filterPlugin=filter.filter_plugin.data,
+			filterHideGlobal=filter.filter_hide_global.data
+		)
 
 
 class ExaminationForm(FlaskForm):
@@ -111,7 +122,7 @@ class ExaminationForm(FlaskForm):
 @blueprint.route('/catalog/', methods=('GET', 'POST'))
 def get_catalog():
 	"""
-	Return examination catalog page.
+	Return test catalog page.
 	"""
 
 	delete_uid = request.args.get('delete_uid')
@@ -129,16 +140,13 @@ def get_catalog():
 		)
 	else:
 		delete_alert = None
+	# Handle filter form
 	filter = FilterForm()
-	if filter.validate_on_submit():
+	if filter.validate_on_submit(): # Valid post request
 		filter.store_fields()
-		return redirect(url_for(
-			'examination.get_examination_catalog',
-			filter_name=filter.filter_name.data,
-			filter_plugin=filter.filter_plugin.data,
-			filter_hide_global=filter.filter_hide_global.data
-		))
+		return redirect(filter.url_for_with_fields('test.get_catalog'))
 	filter.define_fields()
+	# Prepare list data
 	pagination = get_pagination(
 		 ExaminationStore.count_list(
 			filter.filter_name.data,
@@ -146,7 +154,7 @@ def get_catalog():
 			filter.filter_hide_global.data
 		)
 	)
-	pagination['endpoint'] = 'examination.get_examination_catalog'
+	pagination['endpoint'] = 'test.get_catalog'
 	examinations =  ExaminationStore.read_list(
 		(pagination['page_index'] - 1) * pagination['per_page'],
 		pagination['per_page'],
@@ -160,11 +168,10 @@ def get_catalog():
 			(examination, ExaminationProgress(examination))
 		]
 	return render_template(
-		'testing/catalog/catalog.html',
+		'test/catalog/catalog.html',
 		filter=filter,
-		examinations_with_progress=examinations_with_progress,
+		testing=examinations_with_progress,
 		pagination=pagination,
-		alert=delete_alert,
 		nav_active='catalog'
 	)
 

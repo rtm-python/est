@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Initial blueprint module to initiate testing blueprint.
+Initial blueprint module to initiate test blueprint.
 """
 
 # Standard libraries import
@@ -14,11 +14,11 @@ from flask import Blueprint
 
 # Initiate Blueprint object
 blueprint = Blueprint(
-	'testing', __name__,
+	'test', __name__,
 	static_folder='',
 	template_folder=''
 )
 
 # Routes import
-from blueprints.testing import catalog
+from blueprints.test import catalog
 #from blueprints.examination import process

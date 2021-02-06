@@ -12,9 +12,15 @@
 		  {%- endif -%}
 	  </small>
 	  <small>
-		  <a href="#" class="text-muted p-1"><span class="oi oi-chevron-left"></span></a>
-		  <a href="#" class="text-muted p-1 ml-2 mr-2" style="text-decoration: none;" data-toggle="collapse" data-target="#collapsePaginator" aria-expanded="true" aria-controls="collapsePaginator">{{ __('Page') }} 1</a>
-		  <a href="#" class="text-muted p-1"><span class="oi oi-chevron-right"></span></a>
+	  	{%- if pagination.page_index > 1 -%}
+			  <a href="{{ url_for('test.get_catalog', page_index=pagination.page_index - 1) }}" class="text-muted p-1"><span class="oi oi-chevron-left"></span></a>
+	  	{%- endif -%}
+  		{%- if pagination.page_count > 1 -%}
+			  <a href="#" class="text-muted p-1 ml-2 mr-2" style="text-decoration: none;" data-toggle="collapse" data-target="#collapsePaginator" aria-expanded="true" aria-controls="collapsePaginator">{{ __('Page') + ' %d' % pagination.page_index }}</a>
+	  	{%- endif -%}
+	  	{%- if pagination.page_index < pagination.page_count -%}
+			  <a href="{{ url_for('test.get_catalog', page_index=pagination.page_index + 1) }}" class="text-muted p-1"><span class="oi oi-chevron-right"></span></a>
+	  	{%- endif -%}
 	  </small>
   </div>
   <div class="mb-3">
@@ -31,11 +37,15 @@
 	  <div class="collapse" id="collapsePaginator">
 	    <div class="card p-2 shadow-sm rounded text-center">
 	    	<small>
-					<a href="#" class="text-muted p-2">1</a>
-					<a href="#" class="text-muted p-2">2</a>
-					<a href="#" class="text-muted p-2">3</a>
-					<a href="#" class="text-muted p-2">4</a>
-					<a href="#" class="text-muted p-2">5</a>
+	    		{%- set first = [1, pagination.page_index - 3]|max -%}
+	    		{%- set last = [pagination.page_count, first + 7]|min -%}
+					{%- for index in range(first, last + 1) -%}
+						{%- if index == pagination.page_index -%}
+							<a href="#" class="text-muted p-2" style="text-decoration: none; background: whitesmoke;">{{ index }}</a>
+						{%- else -%}
+							<a href="{{ url_for('test.get_catalog', page_index=index) }}" class="text-muted p-2" style="text-decoration: none;">{{ index }}</a>
+						{%- endif -%}
+					{%- endfor -%}
 				</small>
 	    </div>
 	  </div>

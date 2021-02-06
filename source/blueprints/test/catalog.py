@@ -240,7 +240,7 @@ def create(plugin: str):
 @blueprint.route('/catalog/update/<uid>/', methods=('GET', 'POST'))
 def update(uid: str):
 	"""
-	Return examination update page.
+	Return test update page.
 	"""
 	test = TestStore.read(uid)
 	if test is None:

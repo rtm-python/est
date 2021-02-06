@@ -17,175 +17,109 @@ DIVISION_TIME_PER_BIT = 1
 # Plugin options
 options = [
 	{
-		'name':	'limit',
-		'label': 'Maximum number limit',
-		'width': 2,
-		'type': 'select',
-		'data': [
-			{
-				'value': '10',
-				'label': '10'
-			},
-			{
-				'value': '20',
-				'label': '20'
-			},
-			{
-				'value': '30',
-				'label': '30'
-			},
-			{
-				'value': '40',
-				'label': '40'
-			},
-			{
-				'value': '50',
-				'label': '50'
-			},
-			{
-				'value': '100',
-				'label': '100'
-			},
-			{
-				'value': '500',
-				'label': '500'
-			},
-			{
-				'value': '1000',
-				'label': '1000'
-			},
-			{
-				'value': '5000',
-				'label': '5000'
-			},
-			{
-				'value': '10000',
-				'label': '10000'
-			},
-			{
-				'value': '100000',
-				'label': '100000'
-			},
-			{
-				'value': '1000000',
-				'label': '1000000'
-			}
+		'name':	'max_limit',
+		'label': {'text': 'maxLimit'},
+		'description': 'Maximum limit',
+		'choices': [
+			('10', '10'),	('20', '20'),	('30', '30'),	('40', '40'),	('50', '50'),
+			('100', '100'),	('500', '500'),	('1000', '1000'),	('5000', '5000'),
+			('10000', '10000'),	('100000', '100000'),	('1000000', '1000000')
 		]
-	},
-	{
-		'name':	'add',
-		'label': 'Additions',
-		'width': 2,
-		'type': 'bool'
-	},
-	{
-		'name':	'subs',
-		'label': 'Substractions',
-		'width': 2,
-		'type': 'bool'
-	},
-	{
-		'name':	'mult',
-		'label': 'Multiplications',
-		'width': 2,
-		'type': 'bool'
-	},
-	{
-		'name':	'div',
-		'label': 'Divisions',
-		'width': 2,
-		'type': 'bool'
 	},
 	{
 		'name':	'vars_count',
-		'label': 'Number of variables',
-		'width': 1,
-		'type': 'select',
-		'data': [
-			{
-				'value': '2',
-				'label': '2'
-			},
-			{
-				'value': '3',
-				'label': '3'
-			},
-			{
-				'value': '4',
-				'label': '4'
-			}
-		]
+		'label': {'text': 'varsCount'},
+		'description': 'Number of variables',
+		'choices': [('2', '2'), ('3', '3'), ('4', '4')]
 	},
 	{
 		'name':	'result_only',
-		'label': 'Only result is unknown',
-		'width': 1,
-		'type': 'bool'
+		'label': {'text': 'resultOnly'},
+		'description': 'Only result is unknown',
+		'choices': [('yes', 'Yes'), ('no', 'No')]
+	},
+	{
+		'name':	'additions',
+		'label': {'text': 'additions'},
+		'description': 'Additions',
+		'choices': [('use', 'Use'), ('skip', 'Skip')]
+	},
+	{
+		'name':	'substractions',
+		'label': {'text': 'substractions'},
+		'description': 'Substractions',
+		'choices': [('use', 'Use'), ('skip', 'Skip')]
+	},
+	{
+		'name':	'multiplications',
+		'label': {'text': 'multiplications'},
+		'description': 'Multiplications',
+		'choices': [('use', 'Use'), ('skip', 'Skip')]
+	},
+	{
+		'name':	'divisions',
+		'label': {'text': 'divisions'},
+		'description': 'Divisions',
+		'choices': [('use', 'Use'), ('skip', 'Skip')]
 	}
 ]
 
 # Map option name to valid data
 valid_data_dict = {}
 for option in options:
-	data = []
-	if option['type'] == 'select':
-		for item in option['data']:
-			data += [item['value']]
-	elif option['type'] == 'bool':
-		data += ['true', 'false']
-	valid_data_dict[option['name']] = data
+	valid_data_dict[option['name']] = \
+		[choice[0] for choice in option['choices']]
 
 
-def get_valid_value(request_form, name: str) -> str:
+def get_valid_value(request_form, label_text: str, name: str) -> str:
 	"""
 	Validate and return value from request form.
 	"""
-	value = request_form['option_%s' % name]
+	value = request_form.get(label_text)
 	if value in valid_data_dict[name]:
 		return value
 	raise ValueError('Not valid data.')
 
 
-def parse_options(request_form) -> str:
+def parse_options(request_form, indent=None) -> str:
 	"""
 	Return text string representation of options dictionary.
 	"""
 	return json.dumps(
 		{
-			'limit': get_valid_value(request_form, 'limit'),
-			'add': get_valid_value(request_form, 'add'),
-			'subs': get_valid_value(request_form, 'subs'),
-			'mult': get_valid_value(request_form, 'mult'),
-			'div': get_valid_value(request_form, 'div'),
-			'vars_count': get_valid_value(request_form, 'vars_count'),
-			'result_only': get_valid_value(request_form, 'result_only')
+			'max_limit': get_valid_value(request_form, 'maxLimit', 'max_limit'),
+			'vars_count': get_valid_value(request_form, 'varsCount', 'vars_count'),
+			'result_only': get_valid_value(request_form, 'resultOnly', 'result_only'),
+			'additions': get_valid_value(request_form, 'additions', 'additions'),
+			'substractions': get_valid_value(request_form, 'substractions', 'substractions'),
+			'multiplications': get_valid_value(request_form, 'multiplications', 'multiplications'),
+			'divisions': get_valid_value(request_form, 'divisions', 'divisions')
 		},
-		indent=2
+		indent=indent
 	)
 
 
-def form_options(values: str, is_mandatory: bool=False) -> dict:
+def form_options(values: str, validate: bool=False) -> dict:
 	"""
 	Return options with defined values.
 	"""
 	try:
 		values_dict = json.loads(values)
-		if is_mandatory:
-			# Validate plugin values
-			if values_dict['add'] == 'false' and values_dict['subs'] == 'false' and \
-					values_dict['mult'] == 'false' and values_dict['div'] == 'false':
+		if validate:
+			if values_dict['additions'] == 'skip' and \
+					values_dict['substractions'] == 'skip' and \
+					values_dict['multiplications'] == 'skip' and \
+					values_dict['divisions'] == 'skip':
 				raise ValueError()
-			limit = int(values_dict['limit'])
+			max_limit = int(values_dict['max_limit'])
 			vars_count = int(values_dict['vars_count'])
-			if not values_dict['result_only'] in ['false', 'true']:
-				raise ValueError()
 	except:
-		if is_mandatory:
+		if validate:
 			raise ValueError()
 		values_dict = {}
 	result = []
 	for option in options:
-		option['value'] = values_dict.get(option['name'], '')
+		option['data'] = values_dict.get(option['name'], '')
 		result += [option]
 	return result
 

@@ -3,7 +3,13 @@
 	<div class="d-flex w-100 justify-content-between mb-2">
 		<small>
 		  <a href="#" class="text-muted p-1" style="text-decoration: none;" data-toggle="collapse" data-target="#collapseFilter" aria-expanded="true" aria-controls="collapseFilter"><span class="oi oi-magnifying-glass mr-1"></span>{{ __('Filter') }}</a>
-		  <a href="#" class="text-muted p-1" style="text-decoration: none;"><span class="oi oi-plus ml-2 mr-1"></span>{{ __('Add') }}</a>
+		  {%- if create_link -%}
+		  	{%- if create_link == '#' -%}
+				  <a href="#" class="text-muted p-1" style="text-decoration: none;" data-toggle="collapse" data-target="#collapseCreator" aria-expanded="true" aria-controls="collapseCreator"><span class="oi oi-plus ml-2 mr-1"></span>{{ __('Create') }}</a>
+		  	{%- else -%}
+			  	<a href="{{ create_link }}" class="text-muted p-1" style="text-decoration: none;"><span class="oi oi-plus ml-2 mr-1"></span>{{ __('Create') }}</a>
+		  	{%- endif -%}
+		  {%- endif -%}
 	  </small>
 	  <small>
 		  <a href="#" class="text-muted p-1"><span class="oi oi-chevron-left"></span></a>
@@ -15,6 +21,11 @@
 	  <div class="collapse" id="collapseFilter">
 	    <div class="card p-2 shadow-sm rounded">
 	    	{%- block filter -%}{%- endblock -%}
+	    </div>
+	  </div>
+	  <div class="collapse" id="collapseCreator">
+	    <div class="card p-2 shadow-sm rounded">
+	    	{%- block creator -%}{%- endblock -%}
 	    </div>
 	  </div>
 	  <div class="collapse" id="collapsePaginator">
@@ -35,12 +46,19 @@
 {%- block body_script -%}
 	<script type="text/javascript">
 		var $collapseFilter = $('#collapseFilter');
+		var $collapseCreator = $('#collapseCreator');
 		var $collapsePaginator = $('#collapsePaginator');
 		$collapseFilter.on('show.bs.collapse', function () {
+			$collapseCreator.collapse('hide');
+			$collapsePaginator.collapse('hide');
+  	});
+		$collapseCreator.on('show.bs.collapse', function () {
+			$collapseFilter.collapse('hide');
 			$collapsePaginator.collapse('hide');
   	});
 		$collapsePaginator.on('show.bs.collapse', function () {
 			$collapseFilter.collapse('hide');
+			$collapseCreator.collapse('hide');
   	});
 	</script>
 {%- endblock -%}

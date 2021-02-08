@@ -57,7 +57,8 @@ class FilterForm(FlaskForm):
 		super(FilterForm, self).__init__()
 		for field in self:
 			if field.name != 'csrf_token':
-				field.data = request.form.get(field.label.text)
+				data = request.form.get(field.label.text)
+				field.data = data if data is not None and len(data) > 0 else None
 
 	def define_fields(self) -> None:
 		"""
@@ -107,7 +108,6 @@ def verify_process_owner(process: Process) -> bool:
 	"""
 	if process is None:
 		return False
-	return True
 	if current_user.get_id() is not None and \
 			current_user.get_id() != process.user_uid:
 		return False

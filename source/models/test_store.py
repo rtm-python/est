@@ -17,13 +17,13 @@ class TestStore(Store):
 
 	@staticmethod
 	def create(name: str, plugin: str, plugin_options: str,
-						 repeat: int, speed: int) -> Test:
+						 repeat: int, speed: int, user_uid: str) -> Test:
 		"""
 		Create and return test.
 		"""
 		return super(TestStore, TestStore).create(
 			Test(
-				name, plugin, plugin_options, repeat, speed
+				name, plugin, plugin_options, repeat, speed, user_uid
 			)
 		)
 
@@ -63,22 +63,22 @@ class TestStore(Store):
 	@staticmethod
 	def read_list(offset: int, limit: int,
 								filter_name: str, filter_plugin: str,
-								filter_hide_global: bool) -> list:
+								filter_user_uid: str) -> list:
 		"""
 		Return list of tests by arguments.
 		"""
 		return _get_list_query(
-			filter_name, filter_plugin, filter_hide_global
+			filter_name, filter_plugin, filter_user_uid
 		).limit(limit).offset(offset).all()
 
 	@staticmethod
 	def count_list(filter_name: str, filter_plugin: str,
-								 filter_hide_global: bool) -> int:
+								 filter_user_uid: str) -> int:
 		"""
 		Return number of tests in list
 		"""
 		return Store.count(_get_list_query(
-			filter_name, filter_plugin, filter_hide_global
+			filter_name, filter_plugin, filter_user_uid
 		))
 
 	@staticmethod
@@ -92,7 +92,7 @@ class TestStore(Store):
 
 
 def _get_list_query(filter_name: str, filter_plugin: str,
-										filter_hide_global: bool):
+										filter_user_uid: str):
 	"""
 	Return query object for test.
 	"""
@@ -103,6 +103,8 @@ def _get_list_query(filter_name: str, filter_plugin: str,
 			Test.name.contains(filter_name),
 		True if filter_plugin is None else \
 			Test.plugin.contains(filter_plugin),
+		True if filter_user_uid is None else \
+			Test.user_uid == filter_user_uid,
 		Test.deleted_utc == None
 	).order_by(
 		Test.modified_utc.desc()

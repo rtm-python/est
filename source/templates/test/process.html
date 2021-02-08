@@ -65,11 +65,16 @@
 					<div class="card-title p-4">
 						<h4 class="m-0"><strong>{{ test.name }}</strong></h4>
 						{%- if process.result -%}
+							<small class="text-muted">{{ __('result') }}: </small>
 							<h4 class="m-0">{{ process.result }}%</h4>
+						{%- else -%}
+							<small class="text-muted">{{ __('progress') }}: </small>
+							<p class="m-0">{{ process.correct_count }} ({{ process.answer_count }} / {{ test.repeat }})</p>
 						{%- endif -%}
 					</div>
 					{%- if process.result -%}
-						<a href="{{ url_for('test.get_result', uid=process.uid) }}" class="btn btn-outline-dark w-75">{{ __('Result') }}</a>
+						<a href="{{ url_for('test.get_result', uid=process.uid) }}" class="btn btn-outline-dark w-75">{{ __('Details') }}</a>
+						<a href="{{ url_for('test.start', uid=test.uid) }}" class="mt-2 btn btn-outline-dark w-75">{{ __('Restart') }}</a>
 					{%- else -%}
 						<a href="{{ url_for('test.play', uid=process.uid) }}" class="btn btn-outline-dark w-75">{{ __('Continue') }}</a>
 					{%- endif -%}

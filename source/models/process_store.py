@@ -143,11 +143,11 @@ class ProcessStore(Store):
 		binded_count = 0
 		while True:
 			process_list = ProcessStore.read_list(
-				0, 100, None, None, anonymous_token)
+				0, 100, None, None, None, None, anonymous_token)
 			if len(process_list) == 0:
 				break
 			else:
-				for process in process_list:
+				for process, test in process_list:
 					process.user_uid = user_uid
 					process.anonymous_token = None
 					super(ProcessStore, ProcessStore).update(process)
@@ -183,6 +183,11 @@ def _get_list_query(filter_name: str, filter_plugin: str,
 	"""
 	Return query object for process.
 	"""
+	print()
+	print(filter_name)
+	print(filter_plugin)
+	print(filter_hide_completed)
+	print()
 	return database.session.query(
 		Process, Test
 	).join(
@@ -194,7 +199,7 @@ def _get_list_query(filter_name: str, filter_plugin: str,
 			filter_plugin == Test.plugin,
 		True if filter_hide_completed is None or \
 			filter_hide_completed is False else \
-			Process.result is None,
+			Process.result == None,
 		True if user_uid is None else \
 			user_uid == Process.user_uid,
 		True if anonymous_token is None else \

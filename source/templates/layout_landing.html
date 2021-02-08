@@ -27,9 +27,9 @@
 		      <nav class="nav nav-masthead justify-content-center">
 		        <a class="nav-link" href="{{ url_for('test.get_catalog') }}">{{ __('Catalog') }}</a>
 		        <a class="nav-link" href="{{ url_for('test.get_process') }}">{{ __('Test') }}</a>
-		        <a class="nav-link" href="{{ url_for('results.get_top') }}">{{ __('Scoreboard') }}</a>
+		        <a class="nav-link" href="#">{{ __('Scoreboard') }}</a>
 		        {%- if current_user.is_authenticated -%}
-			        <a class="nav-link" href="{{ url_for('base.get_profile') }}"><span class="oi oi-person"></span></a>
+			        <a class="nav-link" href="#"><span class="oi oi-person"></span></a>
 			      {%- else -%}
 			        <a class="nav-link" href="{{ url_for('base.sign_in') }}"><span class="oi oi-account-login"></span></a>
 			      {%- endif -%}

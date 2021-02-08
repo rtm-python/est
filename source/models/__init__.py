@@ -28,6 +28,7 @@ database = SQLAlchemy(application)
 migrate = Migrate(application, database, directory=database_folder)
 
 # Entity modules import (prevent circular import)
-from models.entity import examination
+from models.entity import user
+from models.entity import test
 from models.entity import process
 from models.entity import task

@@ -56,5 +56,3 @@ class UrlPrefix(Enum):
 	"""
 	base = '/'
 	test = '/test/'
-	cabinet = '/cabinet/'
-	results = '/results/'

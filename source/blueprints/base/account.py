@@ -11,6 +11,7 @@ import logging
 # Application modules import
 from blueprints import application
 from blueprints.base import blueprint
+from blueprints.__locale__ import __
 from identica import telegram as bot
 from models.process_store import ProcessStore
 from models.user_store import UserStore
@@ -24,11 +25,13 @@ from flask_login import login_user
 from flask_login import logout_user
 from flask_login import current_user
 from flask import session
+from flask import request
 from flask import redirect
 from flask import url_for
 from flask import render_template
 from flask_wtf import FlaskForm
 from wtforms import StringField
+from wtforms import SelectField
 from wtforms import SubmitField
 from wtforms import validators
 
@@ -96,23 +99,79 @@ def load_user(user_id):
 
 class SignInForm(FlaskForm):
 	"""
-	This is a  SignInForm class to retrieve form data.
+	This is a SignInForm class to retrieve form data.
 	"""
 	usercode = StringField()
 	passcode = StringField(validators=[validators.DataRequired()])
 	submit = SubmitField()
 
 
-@blueprint.route('/account/', methods=('GET',))
-@blueprint.route('/account/profile/', methods=('GET',))
+class ProfileForm(FlaskForm):
+	"""
+	This is a ProfileForm class to retrieve form data.
+	"""
+	notification_profile = SelectField('notificationProfile', validators=[validators.DataRequired()])
+	notification_test_start = SelectField('notificationTestStart', validators=[validators.DataRequired()])
+	notification_test_complete = SelectField('notificationTestComplete', validators=[validators.DataRequired()])
+	submit = SubmitField()
+
+	def __init__(self, user: object = None) -> "ProfileForm":
+		"""
+		Inititate object with choices.
+		"""
+		super(ProfileForm, self).__init__()
+		self.notification_profile.choices = [
+			('yes', __('Send notification')),
+			('no', __('Keep silence')),
+		]
+		self.notification_test_start.choices = [
+			('yes', __('Send notification')),
+			('no', __('Keep silence')),
+		]
+		self.notification_test_complete.choices = [
+			('yes', __('Send notification')),
+			('no', __('Keep silence')),
+		]
+		if user:
+			self.notification_profile.data = 'yes' \
+				if user.notification_profile else 'no'
+			self.notification_test_start.data = 'yes' \
+				if user.notification_test_start else 'no'
+			self.notification_test_complete.data = 'yes' \
+				if user.notification_test_complete else 'no'
+		else:
+			for field in self:
+				if field.name != 'csrf_token':
+					field.data = request.form.get(field.label.text)
+
+
+@blueprint.route('/account/', methods=('GET', 'POST'))
+@blueprint.route('/account/profile/', methods=('GET', 'POST'))
 def get_profile():
 	"""
 	Return profile page.
 	"""
 	if not current_user.is_authenticated:
 		return redirect(url_for('base.sign_in'))
+	if request.method == 'GET':
+		if current_user.user.notification_profile:
+			bot.send_message(
+				current_user.user.from_id,
+				__('Your profile page just opened')
+			)
+		profiler = ProfileForm(current_user.user)
+	else:
+		profiler = ProfileForm()
+	if profiler.validate_on_submit(): # Valid post request
+		UserStore.update_notifications(
+			current_user.user.uid,
+			profiler.notification_profile.data == 'yes',
+			profiler.notification_test_start.data == 'yes',
+			profiler.notification_test_complete.data == 'yes'
+		)
 	return render_template(
 		'base/profile.html',
+		editor=profiler,
 		nav_active='account'
 	)
 
@@ -122,7 +181,8 @@ def sign_in():
 	"""
 	Return sign-in page and login user.
 	"""
-	# TODO: verify for signed in user
+	if current_user.is_authenticated:
+		return redirect(url_for('base.get_profile'))
 	sign_in = SignInForm()
 	if sign_in.validate_on_submit():
 		usercode_item = bot.verify_usercode(

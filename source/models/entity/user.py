@@ -19,6 +19,9 @@ class User(Entity):
 	__tablename__ = 'user'
 	from_id = Column(database.String, index=True, nullable=False)
 	name = Column(database.String, index=True, nullable=True)
+	notification_profile = Column(database.Boolean, index=True, nullable=True)
+	notification_test_start = Column(database.Boolean, index=True, nullable=True)
+	notification_test_complete = Column(database.Boolean, index=True, nullable=True)
 
 	def __init__(self, from_id: str, name: str) -> "User":
 		'''

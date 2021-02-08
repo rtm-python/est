@@ -1,29 +1,63 @@
 {%- extends "layout_inner.html" -%}
 {% set title -%}{{ __('Profile') }}{%- endset %}
-{%- block style -%}
-
-{%- endblock -%}
 {%- block body_content -%}
-	<h5 class="mt-3">{{ current_user.user.name }}</h5>
-	<small>{{ __('Profiles') }}</small>
-	<div class="card-columns">
-		<div class="card p-3">
-			<blockquote class="blockquote mb-0 card-body">
-				<form>
-					<small>{{ __('Name') }}</small>
-					<input type="text" placeholder="{{ __('Name') }}" />
-					<a class="btn btn-light">{{ __('Add Profile...') }}</a>
-				</form>
-			</blockquote>
-		</div>
-		<div class="card p-3">
-			<blockquote class="blockquote mb-0 card-body">
-				<form>
-					<small>{{ __('Name') }}</small>
-					<input type="text" placeholder="{{ __('Name') }}" value="Son 1" />
-					<a class="btn btn-light">{{ __('Update Profile...') }}</a>
-				</form>
-			</blockquote>
+	<div class="row">
+		<div class="col-12 col-sm-6 offset-sm-3 col-lg-4 offset-lg-4">
+			<div class="card p-2 shadow-sm mb-3 rounded">
+				<blockquote class="blockquote mb-0 card-body">
+					<form method="post" actions="">
+						{{ editor.csrf_token }}
+						<div class="form-row">
+							<div class="col-12">
+								<small>{{ __('Viewing Profile') }}</small>
+								<select class="custom-select{%- if editor.notification_profile.erros -%}{{ ' is-invalid' }}{%- endif -%}" id="{{ editor.notification_profile.label.text }}" name="{{ editor.notification_profile.label.text }}">
+									<option{%- if editor.notification_profile.data == '' -%}{{ ' selected' }}{%- endif -%}>{{ __('Choose..') }}</option>
+									{%- for choice in editor.notification_profile.choices -%}
+										<option value="{{ choice[0] }}"{%- if editor.notification_profile.data == choice[0] -%}{{ ' selected' }}{%- endif -%}>{{ choice[1] }}</option>
+									{%- endfor -%}
+								</select>
+								{%- for error in editor.notification_profile.errors -%}
+									<div class="invalid-feedback">
+										{{ __(error) }}
+									</div>
+								{%- endfor -%}
+							</div>
+							<div class="col-12">
+								<small>{{ __('Starting Test Process') }}</small>
+								<select class="custom-select{%- if editor.notification_test_start.erros -%}{{ ' is-invalid' }}{%- endif -%}" id="{{ editor.notification_test_start.label.text }}" name="{{ editor.notification_test_start.label.text }}">
+									<option{%- if editor.notification_test_start.data == '' -%}{{ ' selected' }}{%- endif -%}>{{ __('Choose..') }}</option>
+									{%- for choice in editor.notification_test_start.choices -%}
+										<option value="{{ choice[0] }}"{%- if editor.notification_test_start.data == choice[0] -%}{{ ' selected' }}{%- endif -%}>{{ choice[1] }}</option>
+									{%- endfor -%}
+								</select>
+								{%- for error in editor.notification_test_start.errors -%}
+									<div class="invalid-feedback">
+										{{ __(error) }}
+									</div>
+								{%- endfor -%}
+							</div>
+							<div class="col-12">
+								<small>{{ __('Completing Test Process') }}</small>
+								<select class="custom-select{%- if editor.notification_test_complete.erros -%}{{ ' is-invalid' }}{%- endif -%}" id="{{ editor.notification_test_complete.label.text }}" name="{{ editor.notification_test_complete.label.text }}">
+									<option{%- if editor.notification_test_complete.data == '' -%}{{ ' selected' }}{%- endif -%}>{{ __('Choose..') }}</option>
+									{%- for choice in editor.notification_test_complete.choices -%}
+										<option value="{{ choice[0] }}"{%- if editor.notification_test_complete.data == choice[0] -%}{{ ' selected' }}{%- endif -%}>{{ choice[1] }}</option>
+									{%- endfor -%}
+								</select>
+								{%- for error in editor.notification_test_complete.errors -%}
+									<div class="invalid-feedback">
+										{{ __(error) }}
+									</div>
+								{%- endfor -%}
+							</div>
+							<div class="col-12 my-2">
+								<button type="submit" class="btn btn-block btn-outline-dark">{{ __('Save') }}</button>
+								<a href="{{ url_for('base.get_landing') }}" class="btn btn-block btn-outline-dark">{{ __('Cancel') }}</a>
+							</div>
+						</div>
+					</form>
+				</blockquote>
+			</div>
 		</div>
 	</div>
 {%- endblock -%}

@@ -97,7 +97,7 @@ class UserStore(Store):
 	@staticmethod
 	def get_or_create_user(from_id: str, name: str) -> User:
 		"""
-		Return user by from_id (only not deleted)
+		Return user by from_id (only not deleted).
 		"""
 		user = database.session.query(
 			User
@@ -110,6 +110,21 @@ class UserStore(Store):
 		else:
 			UserStore.update(user.uid, from_id, name)
 		return user
+
+	@staticmethod
+	def update_notifications(uid: str, profile: bool, test_start: bool,
+													 test_complete: bool) -> User:
+		"""
+		Set notifications and return user.
+		"""
+		user = UserStore.read(uid)
+		user.notification_profile = profile
+		user.notification_test_start = test_start
+		user.notification_test_complete = test_complete
+		return super(UserStore, UserStore).update(
+			user
+		)
+
 
 def _get_list_query(filter_name: str):
 	"""

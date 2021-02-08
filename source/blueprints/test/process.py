@@ -167,7 +167,8 @@ def start(uid: str):
 	process = ProcessStore.create(
 		test.id, current_user.get_id(), current_user.get_token()
 	)
-	if current_user.is_authenticated:
+	if current_user.is_authenticated and \
+			current_user.user.notification_test_start:
 		bot.send_message(
 			current_user.user.from_id,
 			__('Test process "%s (%s)" just started') % (test.name, test.plugin)
@@ -205,7 +206,8 @@ def play(uid: str):
 			task = TaskStore.set_answer(task.uid, user_answer)
 			process = ProcessStore.add_answer(process.uid, task)
 			if process.result is not None:
-				if current_user.is_authenticated:
+				if current_user.is_authenticated and \
+						current_user.user.notification_test_start:
 					bot.send_message(
 						current_user.user.from_id,
 						__('Test process "%s (%s)" just completed with result %s') % \

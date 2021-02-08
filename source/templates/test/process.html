@@ -42,11 +42,6 @@
 		</div>
 	</form>
 {%- endblock -%}
-{% set extra_link -%}{{ '#' }}{%- endset %}
-{% set extra_text -%}<span class="oi oi-media-play ml-2 mr-1"></span>{{ __('Start') }}{%- endset %}
-{%- block extra -%}
-
-{%- endblock -%}
 {%- block list_content -%}
 	<div class="card-columns">
 		{%- for process, test in processes -%}

@@ -18,13 +18,12 @@ from blueprints.__paginator__ import get_pagination
 from blueprints.__args__ import get_string
 from blueprints.__args__ import get_boolean
 from blueprints.__args__ import set_value
-from blueprints.__alert__ import AlertType
-from blueprints.__alert__ import AlertButton
-from blueprints.__alert__ import Alert
+from blueprints.__locale__ import __
 from models.process_store import ProcessStore
 from models.test_store import TestStore
 from models.task_store import TaskStore
 from models.entity.process import Process
+from identica import telegram as bot
 
 # Additional libraries import
 from flask import render_template
@@ -168,6 +167,11 @@ def start(uid: str):
 	process = ProcessStore.create(
 		test.id, current_user.get_id(), current_user.get_token()
 	)
+	if current_user.is_authenticated:
+		bot.send_message(
+			current_user.user.from_id,
+			__('Test process "%s (%s)" just started') % (test.name, test.plugin)
+		)
 	return redirect(url_for('test.play', uid=process.uid))
 
 
@@ -201,6 +205,12 @@ def play(uid: str):
 			task = TaskStore.set_answer(task.uid, user_answer)
 			process = ProcessStore.add_answer(process.uid, task)
 			if process.result is not None:
+				if current_user.is_authenticated:
+					bot.send_message(
+						current_user.user.from_id,
+						__('Test process "%s (%s)" just completed with result %s') % \
+							(test.name, test.plugin, process.result) + '%'
+					)
 				return redirect(url_for('test.get_result', uid=uid))
 			passed_tasks = [task] + passed_tasks
 			task = TaskStore.create(process.id, json.dumps(data))

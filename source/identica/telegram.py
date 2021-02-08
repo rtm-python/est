@@ -241,16 +241,22 @@ def verify_usercode(usercode: str, passcode: str) -> dict:
 					usercode_item = None # indvalid (timed out) usercode
 				return usercode_item
 	except:
-		logging.error('Verification: %s / %s' % (usercode, passcode), err_info=1)
+		logging.error('Verification: %s / %s' % (usercode, passcode), exc_info=1)
 
 
-def send_message(chat_id: int, message: str) -> None:
+def send_message(chat_id: int, message: str, from_website: bool = True) -> None:
 	"""
 	Send message to chat by chat_id.
 	"""
 	response = requests.post(
 		data['url_send_message'],
-		json={'chat_id': chat_id,	'text': message}
+		json={
+			'chat_id': chat_id,
+			'text': '%s%s' % (
+				(data['website'] + ':\n\n') if from_website else '',
+				message
+			)
+		}
 	)
 
 

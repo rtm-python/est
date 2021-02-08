@@ -1,0 +1,56 @@
+{%- extends "layout_inner.html" -%}
+{% set title -%}{{ test.name }}{%- endset %}
+{%- block body_content -%}
+	<div class="row">
+		<div class="col-12 col-sm-6 offset-sm-3 col-lg-4 offset-lg-4">
+			<div class="card p-2 shadow-sm mb-3 rounded text-center">
+				<blockquote class="blockquote mb-0 card-body">
+					<div class="d-flex w-100 justify-content-between">
+						<small class="text-muted">{{ process.answer_count + 1 }} {{ __('task') }}</small>
+						<small class="text-muted">{{ __('total') }}: {{ test.repeat }}</small>
+					</div>
+					<div class="progress" style="height: 3px;">
+						<div class="progress-bar" role="progressbar" style="width: {{ (process.answer_count + 1) / test.repeat * 100 }}%" area-valuenow="{{ (process.answer_count + 1) / test.repeat * 100 }}" area-valuemin="0" area-valuemax="100"></div>
+					</div>
+					<div class="mt-3 mb-3">
+						{%- include 'plugin/' + test.plugin + '.html' -%}
+					</div>
+					<form class="col-12 col-sm-8 offset-sm-2 col-md-6 offset-md-3" actions="" method="post">
+						{{ player.csrf_token }}
+						<div class="form-row">
+							<div class="text-left col-12 mb-2">
+								<small>{{ __('Answer') }}</small>
+								<input autofocus id="answer" type="text" class="w-100 form-control{%- if player.answer.errors -%}{{ ' is-invalid' }}{%- endif -%}" name="answer" placeholder="{{ __('Answer') }}" value="{{ player.answer.data|default('', True) }}" autocomplete="off" />
+								{%- for error in player.answer.errors -%}
+									<div class="invalid-feedback">
+										{{ __(error) }}
+									</div>
+								{%- endfor -%}
+							</div>	
+							<div class="col-12 my-2">
+								<button type="submit" class="btn btn-block btn-outline-dark">{{ __('Submit') }}</button>
+							</div>
+						</div>
+					</form>
+				</div>
+				{%- for passed_task in passed_tasks -%}
+					{%- set passed_data = __dict(passed_task.data) -%}
+					<div class="card p-2 shadow-sm mb-3 rounded text-center" style="background: {%- if passed_task.correct_answer -%}lightgreen{%- else -%}lightcoral{%- endif -%};">
+						<blockquote class="blockquote mb-0 card-body">
+							<div class="d-flex w-100 justify-content-between mb-1">
+								{%- if passed_task.correct_answer -%}
+									<small class="text-muted">{{ __('Correct answer') }}</small>
+								{%- else -%}
+									<small class="text-muted">{{ __('Incorrect answer:') }}</small>
+								{%- endif -%}
+								<small class="text-muted">{{ passed_task.answer }}</small>
+							</div>
+							<h3 class="m-0">{{ passed_data.task }}</h3>
+							<h3 class="m-0">{{ passed_data.answer }}</h3>
+						</blockquote>
+					</div>
+				{%- endfor -%}
+			</div>
+		</div>
+	</div>
+{%- endblock -%}

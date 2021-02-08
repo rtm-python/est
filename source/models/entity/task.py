@@ -24,6 +24,7 @@ class Task(Entity):
 	)
 	data = Column(database.String, index=True, nullable=False)
 	answer = Column(database.String, index=True, nullable=True)
+	correct_answer = Column(database.Boolean, index=True, nullable=True)
 
 	def __init__(self, process_id: int, data: str) -> "Task":
 		'''

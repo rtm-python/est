@@ -10,9 +10,9 @@ import json
 # Application modules import
 from models import database
 from models.__base__ import Store
-from models.entity.task import Task
 from models.entity.process import Process
-from models.entity.examination import Examination
+from models.entity.test import Test
+from models.entity.task import Task
 
 
 class ProcessStore(Store):
@@ -21,20 +21,13 @@ class ProcessStore(Store):
 	"""
 
 	@staticmethod
-	def create(examination_id: int,
-						 plugin: str, plugin_options: str,
-						 name: str, repeat: int, performance: int,
-						 user_uid: str, anonymous_token: str
-						 ) -> Process:
+	def create(test_id: int, user_uid: str, anonymous_token: str) -> Process:
 		"""
 		Create and return process.
 		"""
 		return super(ProcessStore, ProcessStore).create(
 			Process(
-				examination_id,
-				plugin, plugin_options,
-				name, repeat, performance,
-				user_uid, anonymous_token
+				test_id, user_uid, anonymous_token
 			)
 		)
 
@@ -48,30 +41,22 @@ class ProcessStore(Store):
 		)
 
 	@staticmethod
-	def update(uid: str, examination_id: int,
-						 plugin: str, plugin_options: str,
-						 name: str, repeat: int, performance: int,
+	def update(uid: str, test_id: int,
 						 user_uid: str, anonymous_token: str,
 						 answer_count: int, correct_count: int,
-						 total_answer_time: int, performance_time: int,
-						 result: int
-						 ) -> Process:
+						 total_answer_time: int, speed_time: int,
+						 result: int) -> Process:
 		"""
 		Update and return process.
 		"""
 		process = ProcessStore.read(uid)
-		process.examination_id = examination_id
-		process.plugin = plugin
-		process.plugin_options = plugin_options
-		process.name = name
-		process.repeat = repeat
-		process.performance = performance
+		process.test_id = test_id
 		process.user_uid = user_uid
 		process.anonymous_token = anonymous_token
 		process.answer_count = answer_count
 		process.correct_count = correct_count
 		process.total_answer_time = total_answer_time
-		process.performance_time = performance_time
+		process.speed_time = speed_time
 		process.result = result
 		return super(ProcessStore, ProcessStore).update(
 			process
@@ -88,25 +73,27 @@ class ProcessStore(Store):
 
 	@staticmethod
 	def read_list(offset: int, limit: int,
-								filter_examination_id: int,
-								user_uid: str, anonymous_token: str
-								) -> list:
+								filter_name: str, filter_plugin: str,
+								filter_hide_completed: bool,
+								user_uid: str, anonymous_token: str) -> list:
 		"""
 		Return list of processes by arguments.
 		"""
 		return _get_list_query(
-			filter_examination_id, user_uid, anonymous_token
+			filter_name, filter_plugin, filter_hide_completed,
+			user_uid, anonymous_token
 		).limit(limit).offset(offset).all()
 
 	@staticmethod
-	def count_list(filter_examination_id: int,
-								 user_uid: str, anonymous_token: str
-								 ) -> int:
+	def count_list(filter_name: str, filter_plugin: str,
+								 filter_hide_completed: bool,
+								 user_uid: str, anonymous_token: str) -> int:
 		"""
 		Return number of processes in list.
 		"""
 		return Store.count(_get_list_query(
-			filter_examination_id, user_uid, anonymous_token
+			filter_name, filter_plugin, filter_hide_completed,
+			user_uid, anonymous_token
 		))
 
 	@staticmethod
@@ -114,31 +101,30 @@ class ProcessStore(Store):
 		"""
 		Return process after increment answer count and
 		if answer is correct then insrement correct count.
-		Also calculate answer and performance time.
+		Also calculate answer and speed time.
 		"""
-		process = ProcessStore.read(uid)
+		process, test = ProcessStore.read_with_test(uid)
 		process.answer_count += 1
 		data = json.loads(task.data)
-		if task.answer == data['answer']:
+		if task.answer == task.correct_answer:
 			process.correct_count += 1
 		process.total_answer_time += \
 			int((task.modified_utc - task.created_utc).total_seconds())
-		process.performance_time += \
-			int(data['performance_time'] / process.performance * 100)
-		print('\r\n\%s' % process.performance_time)
-		if process.answer_count >= process.repeat:
+		process.speed_time += \
+			int(data['speed_time'] / test.speed * 100)
+		if process.answer_count >= test.repeat:
 			correctness = int(process.correct_count / process.answer_count * 100)
-			performance = \
-				int(process.performance_time / process.total_answer_time * 100)
-			if performance > 100:
-				performance = 100
-			process.result = int(correctness * performance / 100)
+			speed = \
+				int(process.speed_time / process.total_answer_time * 100)
+			if speed > 100:
+				speed = 100
+			process.result = int(correctness * speed / 100)
 		return super(ProcessStore, ProcessStore).update(
 			process
 		)
 
 	@staticmethod
-	def calculate_result(uid: str, result: int) -> Process:
+	def set_result(uid: str, result: int) -> Process:
 		"""
 		Set result and return process.
 		"""
@@ -177,23 +163,43 @@ class ProcessStore(Store):
 			Process, id
 		)
 
-def _get_list_query(filter_examination_id: int,
+	@staticmethod
+	def read_with_test(uid: str):
+		"""
+		Return process with test data.
+		"""
+		return database.session.query(
+			Process, Test
+		).join(
+			Test
+		).filter(
+ 			uid == Process.uid
+		).first()
+
+
+def _get_list_query(filter_name: str, filter_plugin: str,
+										filter_hide_completed: bool,
 										user_uid: str, anonymous_token: str):
 	"""
 	Return query object for process.
 	"""
 	return database.session.query(
-		Process
+		Process, Test.name, Test.plugin, Test.plugin_options,
+		Test.repeat, Test.speed
 	).join(
-		Examination
+		Test
 	).filter(
-		True if filter_examination_id is None else \
-			filter_examination_id == Examination.id,
+		True if filter_name is None else \
+			filter_name == Test.name,
+		True if filter_plugin is None else \
+			filter_plugin == Test.plugin,
+		True if filter_hide_completed is None or \
+			filter_hide_completed is False else \
+			Process.result is None,
 		True if user_uid is None else \
 			user_uid == Process.user_uid,
 		True if anonymous_token is None else \
 			anonymous_token == Process.anonymous_token,
-		Examination.deleted_utc == None,
 		Process.deleted_utc == None
 	).order_by(
 		Process.modified_utc.desc()

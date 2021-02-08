@@ -140,13 +140,13 @@ def get_random_operation(options: dict) -> list:
 	Return random accessible operation.
 	"""
 	operations = []
-	if options['add'] == 'true':
+	if options['additions'] == 'use':
 		operations += [get_addition]
-	if options['subs'] == 'true':
+	if options['substractions'] == 'use':
 		operations += [get_substraction]
-	if options['mult'] == 'true':
+	if options['multiplications'] == 'use':
 		operations += [get_multiplication]
-	if options['div'] == 'true':
+	if options['divisions'] == 'use':
 		operations += [get_division]
 	return operations[randint(0, len(operations) - 1)]
 
@@ -207,19 +207,19 @@ def get_data(options: dict) -> dict:
 	operation = get_random_operation(options)
 	preset = None
 	for i in range(int(options['vars_count']) - 1):
-		preset = operation(int(options['limit']), preset)
+		preset = operation(int(options['max_limit']), preset)
 	# Calculate performance for preset
-	performance_time = 0
+	speed_time = 0
 	for var in preset[1:]:
-		performance_time += len(var)
+		speed_time += len(var)
 	if operation is get_addition:
-		performance_time *= ADDITION_TIME_PER_BIT
+		speed_time *= ADDITION_TIME_PER_BIT
 	if operation is get_substraction:
-		performance_time *= SUBSTRACTION_TIME_PER_BIT
+		speed_time *= SUBSTRACTION_TIME_PER_BIT
 	if operation is get_multiplication:
-		performance_time *= MULTIPLICATION_TIME_PER_BIT
+		speed_time *= MULTIPLICATION_TIME_PER_BIT
 	if operation is get_division:
-		performance_time *= DIVISION_TIME_PER_BIT
+		speed_time *= DIVISION_TIME_PER_BIT
 	# Replace one of the vars with question mark
 	hide_index = randint(1, len(preset) - 1) \
 		if options['result_only'] == 'false' else len(preset) - 1
@@ -227,7 +227,7 @@ def get_data(options: dict) -> dict:
 		if preset[hide_index] != 0 and '0' in preset:
 			hide_index = len(preset) - 1
 	if hide_index < len(preset) - 1:
-		performance_time *= 1.05
+		speed_time *= 1.05
 	# Prepare data
 	answer = preset[hide_index]
 	preset[hide_index] = '?'
@@ -235,5 +235,5 @@ def get_data(options: dict) -> dict:
 		'task': '%s = %s' % \
 			((' %s ' % preset[0]).join(preset[1: -1]), preset[-1]),
 		'answer': answer,
-		'performance_time': int(performance_time)
+		'speed_time': int(speed_time)
 	}

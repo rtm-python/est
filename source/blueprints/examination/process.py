@@ -36,6 +36,37 @@ from wtforms import validators
 from flask_login import current_user
 
 
+class FilterForm(FlaskForm):
+	"""
+	This is FilterForm class to retrieve form data.
+	"""
+	filter_name = StringField()
+	filter_plugin = StringField()
+	filter_hide_global = BooleanField()
+	submit = SubmitField()
+
+	def define_fields(self) -> None:
+		"""
+		Set form fields to values from request.
+		"""
+		if not get_boolean('filter_reset'):
+			self.filter_name.data = get_string('filter_name')
+			self.filter_plugin.data = get_string('filter_plugin')
+			self.filter_hide_global.data = get_boolean('filter_hide_global')
+		else:
+			set_value('filter_name', None)
+			set_value('filter_plugin', None)
+			set_value('filter_hide_global', None)
+
+	def store_fields(self) -> None:
+		"""
+		Set form fields to values from request.
+		"""
+		set_value('filter_name', self.filter_name.data)
+		set_value('filter_plugin', self.filter_plugin.data)
+		set_value('filter_hide_global', self.filter_hide_global.data)
+
+
 class StarterForm(FlaskForm):
 	"""
 	This is a StarterForm class to retrieve form data.

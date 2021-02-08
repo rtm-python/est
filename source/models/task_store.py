@@ -4,6 +4,9 @@
 Store module for Task entity.
 '''
 
+# Standard libraries import
+import json
+
 # Application modules import
 from models import database
 from models.__base__ import Store
@@ -35,7 +38,7 @@ class TaskStore(Store):
 		)
 
 	@staticmethod
-	def update(uid: str, process_id: int, data: str, answer: str) -> Task:
+	def update(uid: str, process_id: int, data: str, answer: str, correct_answer: bool) -> Task:
 		"""
 		Update and return task.
 		"""
@@ -43,6 +46,7 @@ class TaskStore(Store):
 		task.process_id = process_id
 		task.data = data
 		task.answer = answer
+		task.correct_answer = correct_answer
 		return super(TaskStore, TaskStore).update(
 			task
 		)
@@ -83,6 +87,8 @@ class TaskStore(Store):
 		"""
 		task = TaskStore.read(uid)
 		task.answer = answer
+		task.correct_answer = \
+			json.loads(task.data)['answer'] == answer
 		return super(TaskStore, TaskStore).update(
 			task
 		)
@@ -108,7 +114,6 @@ def _get_list_query(filter_process_id: int):
 	).filter(
 		True if filter_process_id is None else \
 			filter_process_id == Process.id,
-		Task.answer == None,
 		Process.deleted_utc == None,
 		Task.deleted_utc == None
 	).order_by(

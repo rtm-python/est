@@ -17,7 +17,7 @@ def get_pagination(entity_count: int) -> dict:
 	"""
 	# get page_index and per_page from request
 	page_index = get_integer('page_index', 1)
-	per_page = get_integer('per_page', 10)
+	per_page = get_integer('per_page', 12)
 	# calculate page_count
 	page_count = entity_count / per_page
 	page_count = int(page_count) + 1 \

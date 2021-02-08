@@ -17,14 +17,13 @@ class TestStore(Store):
 
 	@staticmethod
 	def create(name: str, plugin: str, plugin_options: str,
-						 default_repeat: int, default_speed: int) -> Test:
+						 repeat: int, speed: int) -> Test:
 		"""
 		Create and return test.
 		"""
 		return super(TestStore, TestStore).create(
 			Test(
-				name, plugin, plugin_options,
-				default_repeat, default_speed
+				name, plugin, plugin_options, repeat, speed
 			)
 		)
 
@@ -39,15 +38,15 @@ class TestStore(Store):
 
 	@staticmethod
 	def update(uid: str, name: str, plugin_options: str,
-						 default_repeat: int, default_speed: int) -> Test:
+						 repeat: int, speed: int) -> Test:
 		"""
 		Update and return test.
 		"""
 		test = TestStore.read(uid)
 		test.name = name
 		test.plugin_options = plugin_options
-		test.default_repeat = default_repeat
-		test.default_speed = default_speed
+		test.repeat = repeat
+		test.speed = speed
 		return super(TestStore, TestStore).update(
 			test
 		)

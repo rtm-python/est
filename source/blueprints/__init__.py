@@ -7,6 +7,7 @@ Initial blueprints module to define blueprints.
 # Standard libraries import
 import secrets
 import importlib
+import json
 
 # Application modules import
 from config import config
@@ -55,3 +56,20 @@ def redirect_on_invalid_session():
 	Return redirect on invalid session.
 	"""
 	return redirect(url_for('base.get_landing'))
+
+
+@application.context_processor
+def get_dictionary():
+	"""
+	Return dictionary from text string.
+	"""
+	def _dict(text: str) -> dict:
+		return __dict(text)
+	return dict(__dict=__dict)
+
+
+def __dict(text: str) -> dict:
+	"""
+	Return dictionary from text string.
+	"""
+	return json.loads(text)

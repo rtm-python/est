@@ -15,7 +15,7 @@
 					<input type="password" class="form-control" id="usercode" name="usercode" placeholder="{{ __('Usercode') }}" value="{{ sign_in.usercode.value|default('', True) }}" hidden />
 					<div class="col-12 mb-3">
 						<small>{{ __('Passcode') }}</small>
-						<input type="password" class="form-control" id="passcode" name="passcode" placeholder="{{ __('Passcode') }}" value="{{ sign_in.passcode.value|default('', True) }}" />
+						<input autofocus type="password" class="form-control" id="passcode" name="passcode" placeholder="{{ __('Passcode') }}" value="{{ sign_in.passcode.value|default('', True) }}" />
 					</div>
 					<div class="col-12 my-2">
 						<button type="submit" class="btn btn-sm btn-block btn-outline-light">{{ __('Confirm') }}</button>

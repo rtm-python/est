@@ -9,13 +9,14 @@
 	  }
 	</style>
 {%- endblock -%}
+{% set filter_link -%}{{ '#' }}{%- endset %}
 {%- block filter -%}
 	<form method="post" actions="">
 		{{ filter.csrf_token }}
 		<div class="form-row">
 			<div class="col-12 col-md-4 mb-2">
 				<small>{{ __('Name') }}</small>
-				<input type="text" class="form-control form-control-sm" id="{{ filter.name.label.text }}" name="{{ filter.name.label.text }}" placeholder="{{ __('Name') }}" value="{{ filter.name.data|default('', True) }}" />	
+				<input autofocus type="text" class="form-control form-control-sm" id="{{ filter.name.label.text }}" name="{{ filter.name.label.text }}" placeholder="{{ __('Name') }}" value="{{ filter.name.data|default('', True) }}" />	
 			</div>
 			<div class="col-12 col-md-4 mb-2">
 				<small>{{ __('Plugin') }}</small>
@@ -42,14 +43,15 @@
 	</form>
 {%- endblock -%}
 {%- if current_user.is_authenticated or True -%}
-	{% set create_link -%}{{ '#' }}{%- endset %}
-	{%- block creator -%}
+	{% set extra_link -%}{{ '#' }}{%- endset %}
+	{% set extra_text -%}<span class="oi oi-plus ml-2 mr-1"></span>{{ __('Create') }}{%- endset %}
+	{%- block extra -%}
 		<form method="post" actions="" class="col-12 col-sm-8 offset-sm-2 col-md-6 offset-md-3 col-lg-4 offset-lg-4">
 			{{ creator.csrf_token }}
 			<div class="form-row">
 				<div class="col-12 mb-2">
 					<small>{{ __('Plugin') }}</small>
-					<select class="custom-select" name="{{ creator.plugin.label.text }}" id="{{ creator.plugin.label.text }}" style="height: 1.9rem; font-size: 0.9rem;">
+					<select autofocus class="custom-select" name="{{ creator.plugin.label.text }}" id="{{ creator.plugin.label.text }}" style="height: 1.9rem; font-size: 0.9rem; padding-top: 3px;">
 						<option value="" selected>{{ __('Select Plugin') }}</option>
 						{%- for choice in creator.plugin.choices -%}
 							<option value="{{ choice[0] }}"{%- if creator.plugin.data == choice[0] -%}{{ ' selected' }}{%- endif -%}>{{ choice[1] }}</option>
@@ -69,7 +71,7 @@
 			<div class="card p-2 shadow-sm mb-3 rounded text-center">
 				<blockquote class="blockquote mb-0 card-body">
 					<div class="d-flex w-100 justify-content-between">
-						<small class="text-muted">{{ test.plugin_name }}</small>
+						<small class="text-muted">{{ test.plugin }}</small>
 						<small>
 							<a class="text-muted p-1" href="{{ url_for('test.update', uid=test.uid) }}"><span class="oi oi-pencil"></span></a>
 							<a class="text-muted p-1" href="#" data-toggle="collapse" data-target="#collapse-{{ test.uid }}" aria-expanded="true" aria-controls="collapse-{{ test.uid }}"><span class="oi oi-x"></span></a>
@@ -83,16 +85,23 @@
 						</div>
 					</div>
 					<h4 class="card-title p-4"><strong>{{ test.name }}</strong></h4>
-					<a href="#" class="btn btn-outline-dark w-50">{{ __('Start') }}</a>
+					<a href="{{ url_for('test.start', uid=test.uid) }}" class="btn btn-outline-dark w-75">{{ __('Start') }}</a>
 				</blockquote>
 			</div>
 		{% endfor %}
-		<div class="card p-2 shadow-sm mb-3 rounded text-center">
-			<blockquote class="blockquote mb-0 card-body">
-				<p class="card-text">{{ __('You can create your own test based on installed plugins') }}</p>
-				<a href="#" class="btn btn-outline-dark m-1 pl-4 pr-4">{{ __('Create') }}</a>
-				<a href="#" class="btn btn-outline-dark m-1 pl-4 pr-4">{{ __('Show more') }}</a>
-			</blockquote>
-		</div>
+		{% if tests|length == 0 %}
+			<div class="card p-2 shadow-sm mb-3 rounded text-center" style="background: whitesmoke;">
+				<blockquote class="blockquote mb-0 card-body">
+					<p class="card-text">{{ __('No tests found') }}</p>
+				</blockquote>
+			</div>
+		{%- endif -%}
+<!--		<div class="card p-2 shadow-sm mb-3 rounded text-center">-->
+<!--			<blockquote class="blockquote mb-0 card-body">-->
+<!--				<p class="card-text">{{ __('You can create your own test based on installed plugins') }}</p>-->
+<!--				<a href="#" class="btn btn-outline-dark m-1 pl-4 pr-4">{{ __('Create') }}</a>-->
+<!--				<a href="#" class="btn btn-outline-dark m-1 pl-4 pr-4">{{ __('Show more') }}</a>-->
+<!--			</blockquote>-->
+<!--		</div>-->
 	</div>
 {%- endblock -%}

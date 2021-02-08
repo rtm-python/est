@@ -21,11 +21,11 @@ class Test(Entity):
 	name = Column(database.String, index=True, nullable=False)
 	plugin = Column(database.String, index=True, nullable=False)
 	plugin_options = Column(database.String, index=True, nullable=False)
-	default_repeat = Column(database.Integer, index=True, nullable=False)
-	default_speed = Column(database.Integer, index=True, nullable=False)
+	repeat = Column(database.Integer, index=True, nullable=False)
+	speed = Column(database.Integer, index=True, nullable=False)
 
 	def __init__(self, name: str, plugin: str, plugin_options: str,
-							 default_repeat: int, default_speed: int) -> "Test":
+							 repeat: int, speed: int) -> "Test":
 		'''
 		Initiate object and stores Test's data.
 		'''
@@ -33,5 +33,5 @@ class Test(Entity):
 		self.name = name
 		self.plugin = plugin
 		self.plugin_options = plugin_options
-		self.default_repeat = default_repeat
-		self.default_speed = default_speed
+		self.repeat = repeat
+		self.speed = speed

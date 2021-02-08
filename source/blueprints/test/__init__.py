@@ -21,4 +21,4 @@ blueprint = Blueprint(
 
 # Routes import
 from blueprints.test import catalog
-#from blueprints.examination import process
+from blueprints.test import process

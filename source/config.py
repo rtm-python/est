@@ -19,9 +19,7 @@ LOCALE_PATH_KEY = 'EST_LOCALE_PATH'
 CONFIG_PATH = 'config/app.json'
 LOCALE_PATH = 'source/locale.json'
 PLUGIN_LIST = [
-	'arithmetic',
-	'word2word',
-	'image2word'
+	('arithmetic', 'Arithmetic')
 ]
 
 # Initiate configuration
@@ -60,4 +58,3 @@ class UrlPrefix(Enum):
 	test = '/test/'
 	cabinet = '/cabinet/'
 	results = '/results/'
-	examination = '/examination/'

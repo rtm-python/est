@@ -24,7 +24,6 @@ from blueprints.__alert__ import AlertButton
 from blueprints.__alert__ import Alert
 from config import PLUGIN_LIST
 from models.test_store import TestStore
-from blueprints.examination.process import ExaminationProgress
 
 # Additional libraries import
 from flask import render_template
@@ -102,11 +101,7 @@ class CreatorForm(FlaskForm):
 		Initiate object with plugin
 		"""
 		super(CreatorForm, self).__init__()
-		self.plugin.choices = [
-			('arithmetic', 'Arithmetic'),
-			('word2word', 'Word Translation'),
-			('image2word', 'Image Translation')
-		]
+		self.plugin.choices = PLUGIN_LIST
 		self.plugin.data = request.form.get(self.plugin.label.text)
 
 
@@ -136,28 +131,27 @@ class TestForm(FlaskForm):
 	"""
 	name = StringField('name', validators=[validators.DataRequired()])
 	options = PluginOptionsField('options')
-	default_repeat = SelectField('defaultRepeat', validators=[validators.DataRequired()])
-	default_speed = SelectField('defaultSpeed', validators=[validators.DataRequired()])
+	repeat = SelectField('repeat', validators=[validators.DataRequired()])
+	speed = SelectField('speed', validators=[validators.DataRequired()])
 	submit = SubmitField('submit')
 
 	def __init__(self, plugin_module: object, test: object = None) -> 'TestForm':
 		"""
-		Initiate object with plugin, default_repeat and
-		default_preformance choices.
+		Initiate object with plugin, repeat and preformance choices.
 		"""
 		super(TestForm, self).__init__()
-		self.default_repeat.choices = [
+		self.repeat.choices = [
 			('5', '5'), ('10', '10'), ('15', '15'),('25', '25'),('50', '50')
 		]
-		self.default_speed.choices = [
+		self.speed.choices = [
 			('25', __('Slow')), ('50', __('Normal')), ('100', __('Fast'))
 		]
 		self.options.plugin_module = plugin_module
 		if test:
 			self.name.data = test.name
 			self.options.data = test.plugin_options
-			self.default_repeat.data = str(test.default_repeat)
-			self.default_speed.data = str(test.default_speed)
+			self.repeat.data = str(test.repeat)
+			self.speed.data = str(test.speed)
 		else:
 			for field in self:
 				if field.name != 'csrf_token':
@@ -200,7 +194,7 @@ def get_catalog():
 		filter.hide_global.data
 	)
 	return render_template(
-		'test/catalog/catalog.html',
+		'test/catalog.html',
 		filter=filter,
 		creator=creator,
 		tests=tests,
@@ -225,12 +219,12 @@ def create(plugin: str):
 			creator.name.data,
 			plugin,
 			creator.options.data,
-			int(creator.default_repeat.data),
-			int(creator.default_speed.data)
+			int(creator.repeat.data),
+			int(creator.speed.data)
 		)
 		return redirect(url_for('test.get_catalog'))
 	return render_template(
-		'test/catalog/editor.html',
+		'test/editor.html',
 		type='create',
 		editor=creator,
 		nav_active='catalog'
@@ -259,12 +253,12 @@ def update(uid: str):
 			uid,
 			updater.name.data,
 			updater.options.data,
-			int(updater.default_repeat.data),
-			int(updater.default_speed.data)
+			int(updater.repeat.data),
+			int(updater.speed.data)
 		)
 		return redirect(url_for('test.get_catalog'))
 	return render_template(
-		'test/catalog/editor.html',
+		'test/editor.html',
 		type='update',
 		editor=updater,
 		nav_active='catalog'

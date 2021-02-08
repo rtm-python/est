@@ -18,15 +18,10 @@ class Process(Entity):
 	This is a class for Process entity.
 	'''
 	__tablename__ = 'process'
-	examination_id = Column(
-		database.Integer, ForeignKey('examination.id'),
+	test_id = Column(
+		database.Integer, ForeignKey('test.id'),
 		index=True, nullable=False
 	)
-	plugin = Column(database.String, index=True, nullable=False)
-	plugin_options = Column(database.String, index=True, nullable=False)
-	name = Column(database.String, index=True, nullable=False)
-	repeat = Column(database.Integer, index=True, nullable=False)
-	performance = Column(database.Integer, index=True, nullable=False)
 	answer_count = Column(
 		database.Integer, default=0,
 		index=True, nullable=False
@@ -39,7 +34,7 @@ class Process(Entity):
 		database.Integer, default=0,
 		index=True, nullable=False
 	)
-	performance_time = Column(
+	speed_time = Column(
 		database.Integer, default=0,
 		index=True, nullable=False
 	)
@@ -47,20 +42,12 @@ class Process(Entity):
 	user_uid = Column(database.String, index=True, nullable=True)
 	anonymous_token = Column(database.String, index=True, nullable=True)
 
-	def __init__(self, examination_id: int,
-							 plugin: str, plugin_options: str,
-							 name: str, repeat: int, performance: int,
-							 user_uid: str, anonymous_token: str
-							 ) -> "Process":
+	def __init__(self, test_id: int,
+							 user_uid: str, anonymous_token: str) -> "Process":
 		'''
 		Initiate object and stores Process' data.
 		'''
 		super().__init__()
-		self.examination_id = examination_id
-		self.plugin = plugin
-		self.plugin_options = plugin_options
-		self.name = name
-		self.repeat = repeat
-		self.performance = performance
+		self.test_id = test_id
 		self.user_uid = user_uid
 		self.anonymous_token = anonymous_token

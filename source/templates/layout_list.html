@@ -2,12 +2,14 @@
 {%- block body_content -%}
 	<div class="d-flex w-100 justify-content-between mb-2">
 		<small>
-		  <a href="#" class="text-muted p-1" style="text-decoration: none;" data-toggle="collapse" data-target="#collapseFilter" aria-expanded="true" aria-controls="collapseFilter"><span class="oi oi-magnifying-glass mr-1"></span>{{ __('Filter') }}</a>
-		  {%- if create_link -%}
-		  	{%- if create_link == '#' -%}
-				  <a href="#" class="text-muted p-1" style="text-decoration: none;" data-toggle="collapse" data-target="#collapseCreator" aria-expanded="true" aria-controls="collapseCreator"><span class="oi oi-plus ml-2 mr-1"></span>{{ __('Create') }}</a>
+		  {%- if filter_link -%}
+			  <a href="#" class="text-muted p-1" style="text-decoration: none;" data-toggle="collapse" data-target="#collapseFilter" aria-expanded="true" aria-controls="collapseFilter"><span class="oi oi-magnifying-glass mr-1"></span>{{ __('Filter') }}</a>
+		  {%- endif -%}
+		  {%- if extra_link -%}
+		  	{%- if extra_link == '#' -%}
+				  <a href="#" class="text-muted p-1" style="text-decoration: none;" data-toggle="collapse" data-target="#collapseExtra" aria-expanded="true" aria-controls="collapseExtra">{{ extra_text }}</a>
 		  	{%- else -%}
-			  	<a href="{{ create_link }}" class="text-muted p-1" style="text-decoration: none;"><span class="oi oi-plus ml-2 mr-1"></span>{{ __('Create') }}</a>
+			  	<a href="{{ extra_link }}" class="text-muted p-1" style="text-decoration: none;">{{ extra_text }}</a>
 		  	{%- endif -%}
 		  {%- endif -%}
 	  </small>
@@ -29,9 +31,9 @@
 	    	{%- block filter -%}{%- endblock -%}
 	    </div>
 	  </div>
-	  <div class="collapse" id="collapseCreator">
+	  <div class="collapse" id="collapseExtra">
 	    <div class="card p-2 shadow-sm rounded">
-	    	{%- block creator -%}{%- endblock -%}
+	    	{%- block extra -%}{%- endblock -%}
 	    </div>
 	  </div>
 	  <div class="collapse" id="collapsePaginator">
@@ -56,19 +58,19 @@
 {%- block body_script -%}
 	<script type="text/javascript">
 		var $collapseFilter = $('#collapseFilter');
-		var $collapseCreator = $('#collapseCreator');
+		var $collapseExtra = $('#collapseExtra');
 		var $collapsePaginator = $('#collapsePaginator');
 		$collapseFilter.on('show.bs.collapse', function () {
-			$collapseCreator.collapse('hide');
+			$collapseExtra.collapse('hide');
 			$collapsePaginator.collapse('hide');
   	});
-		$collapseCreator.on('show.bs.collapse', function () {
+		$collapseExtra.on('show.bs.collapse', function () {
 			$collapseFilter.collapse('hide');
 			$collapsePaginator.collapse('hide');
   	});
 		$collapsePaginator.on('show.bs.collapse', function () {
 			$collapseFilter.collapse('hide');
-			$collapseCreator.collapse('hide');
+			$collapseExtra.collapse('hide');
   	});
 	</script>
 {%- endblock -%}

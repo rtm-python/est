@@ -67,9 +67,11 @@ class TaskStore(Store):
 		"""
 		Return list of tasks by arguments.
 		"""
-		return _get_list_query(
+		list_query = _get_list_query(
 			filter_process_id
-		).limit(limit).offset(offset).all()
+		)
+		return list_query.limit(limit).offset(offset).all() \
+			if offset > 0 and limit > 0 else list_query.all()
 
 	@staticmethod
 	def count_list(filter_process_id: int) -> int:

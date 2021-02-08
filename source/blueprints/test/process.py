@@ -180,13 +180,15 @@ def play(uid: str):
 	process, test = ProcessStore.read_with_test(uid)
 	if not verify_process_owner(process):
 		return redirect(url_for('test.get_process'))
+	if process.result is not None:
+		return redirect(url_for('test.get_result', uid=uid))
 	# Import plugin module and get data
 	plugin_module = importlib.import_module('plugins.%s' % test.plugin)
 	data = plugin_module.get_data(json.loads(test.plugin_options))
 	# Read previous tasks
 	task = None
 	passed_tasks = TaskStore.read_list(
-		offset=0, limit=test.repeat, filter_process_id=process.id)
+		offset=0, limit=0, filter_process_id=process.id)
 	if passed_tasks and passed_tasks[0].answer is None:
 		# Continue on existing task
 		task = passed_tasks[0]
@@ -198,7 +200,9 @@ def play(uid: str):
 		validation_errors = plugin_module.validate_answer(user_answer)
 		if not validation_errors: # Plugin should validate anwser
 			task = TaskStore.set_answer(task.uid, user_answer)
-			ProcessStore.add_answer(process.uid, task)
+			process = ProcessStore.add_answer(process.uid, task)
+			if process.result is not None:
+				return redirect(url_for('test.get_result', uid=uid))
 			passed_tasks = [task] + passed_tasks
 			task = TaskStore.create(process.id, json.dumps(data))
 			player.answer.data = None
@@ -222,39 +226,23 @@ def play(uid: str):
 	)
 
 
-@blueprint.route('/process/<uid>/stop/', methods=('GET',))
-def stop_process(uid: str):
-	"""
-	Remove current task and redirect to start examination page.
-	"""
-	process = ProcessStore.read(uid)
-	if not verify_process_owner(process):
-		examination = ExaminationStore.get(process.examination_id)
-		return redirect(url_for(
-			'examination.start_examination', uid=examination.uid))
-	tasks = TaskStore.read_list(
-		offset=0, limit=1, filter_process_id=process.id
-	)
-	if len(tasks) == 1:
-		task = tasks[0]
-		TaskStore.delete(task.uid)
-	examination = ExaminationStore.get(process.examination_id)
-	return redirect(
-		url_for('examination.start_examination', uid=examination.uid)
-	)
-
-
 @blueprint.route('/process/<uid>/result/', methods=('GET',))
-def show_process_result(uid: str):
+def get_result(uid: str):
 	"""
-	Return process result page.
+	Return test process result page.
 	"""
-	process = ProcessStore.read(uid)
+	process, test = ProcessStore.read_with_test(uid)
 	if not verify_process_owner(process):
-		examination = ExaminationStore.get(process.examination_id)
-		return redirect(url_for(
-			'examination.start_examination', uid=examination.uid))
+		return redirect(url_for('test.get_process', uid=uid))
+	if process.result is None:
+		return redirect(url_for('test.play'))
+	# Read previous tasks
+	passed_tasks = TaskStore.read_list(
+		offset=0, limit=0, filter_process_id=process.id)
 	return render_template(
-		'examination/process/result.html',
-		process=process
+		'test/result.html',
+		process=process,
+		test=test,
+		passed_tasks=passed_tasks,
+		nav_active='test'
 	)

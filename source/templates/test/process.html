@@ -49,17 +49,30 @@
 {%- endblock -%}
 {%- block list_content -%}
 	<div class="card-columns">
-		{%- for process in processes -%}
+		{%- for process, test in processes -%}
 			<div class="card p-2 shadow-sm mb-3 rounded text-center">
 				<blockquote class="blockquote mb-0 card-body">
 					<div class="d-flex w-100 justify-content-between">
-						<small class="text-muted">{{ process.plugin }}</small>
-						<small>
-							progress
+						<small class="text-muted">{{ test.plugin }}</small>
+						<small class="text-muted">
+							{%- if process.result -%}
+								{{ __('completed') }}
+							{%- else -%}
+								{{ __('in process') }}
+							{%- endif -%}
 						</small>
 					</div>
-					<h4 class="card-title p-4"><strong>{{ process.name }}</strong></h4>
-					<a href="#" class="btn btn-outline-dark w-75">{{ __('Continue') }}</a>
+					<div class="card-title p-4">
+						<h4 class="m-0"><strong>{{ test.name }}</strong></h4>
+						{%- if process.result -%}
+							<h4 class="m-0">{{ process.result }}%</h4>
+						{%- endif -%}
+					</div>
+					{%- if process.result -%}
+						<a href="{{ url_for('test.get_result', uid=process.uid) }}" class="btn btn-outline-dark w-75">{{ __('Result') }}</a>
+					{%- else -%}
+						<a href="{{ url_for('test.play', uid=process.uid) }}" class="btn btn-outline-dark w-75">{{ __('Continue') }}</a>
+					{%- endif -%}
 				</blockquote>
 			</div>
 		{% endfor %}

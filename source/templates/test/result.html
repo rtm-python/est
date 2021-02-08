@@ -1,0 +1,32 @@
+{%- extends "layout_inner.html" -%}
+{% set title -%}{{ test.name }}{%- endset %}
+{%- block body_content -%}
+	<div class="row">
+		<div class="col-12 col-sm-6 offset-sm-3 col-lg-4 offset-lg-4">
+			<div class="card p-2 shadow-sm mb-3 rounded text-center">
+				<blockquote class="blockquote mb-0 card-body">
+					<h1 class="m-2"><strong>{{ process.result }}%</strong></h1>
+					<p class="m-0"><small class="text-muted">{{ __('Correctness:') }}</small> {{ process.correct_count }} / {{ process.answer_count }} <small>{{ answers }}</small></p>
+					<p class="m-0"><small class="text-muted">{{ __('Spent Time:') }}</small> {{ process.total_answer_time }} / {{ process.speed_time }} <small>{{ __('seconds') }}</small></p>
+				</div>
+				{%- for passed_task in passed_tasks -%}
+					{%- set passed_data = __dict(passed_task.data) -%}
+					<div class="card p-2 shadow-sm mb-3 rounded text-center" style="background: {%- if passed_task.correct_answer -%}lightgreen{%- else -%}lightcoral{%- endif -%};">
+						<blockquote class="blockquote mb-0 card-body">
+							<div class="d-flex w-100 justify-content-between mb-1">
+								{%- if passed_task.correct_answer -%}
+									<small class="text-muted">{{ __('Correct answer') }}</small>
+								{%- else -%}
+									<small class="text-muted">{{ __('Incorrect answer:') }}</small>
+								{%- endif -%}
+								<small class="text-muted">{{ passed_task.answer }}</small>
+							</div>
+							<h3 class="m-0">{{ passed_data.task }}</h3>
+							<h3 class="m-0">{{ passed_data.answer }}</h3>
+						</blockquote>
+					</div>
+				{%- endfor -%}
+			</div>
+		</div>
+	</div>
+{%- endblock -%}

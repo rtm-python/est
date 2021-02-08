@@ -106,7 +106,7 @@ class ProcessStore(Store):
 		process, test = ProcessStore.read_with_test(uid)
 		process.answer_count += 1
 		data = json.loads(task.data)
-		if task.answer == task.correct_answer:
+		if task.correct_answer:
 			process.correct_count += 1
 		process.total_answer_time += \
 			int((task.modified_utc - task.created_utc).total_seconds())
@@ -184,8 +184,7 @@ def _get_list_query(filter_name: str, filter_plugin: str,
 	Return query object for process.
 	"""
 	return database.session.query(
-		Process, Test.name, Test.plugin, Test.plugin_options,
-		Test.repeat, Test.speed
+		Process, Test
 	).join(
 		Test
 	).filter(

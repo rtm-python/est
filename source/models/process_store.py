@@ -183,11 +183,6 @@ def _get_list_query(filter_name: str, filter_plugin: str,
 	"""
 	Return query object for process.
 	"""
-	print()
-	print(filter_name)
-	print(filter_plugin)
-	print(filter_hide_completed)
-	print()
 	return database.session.query(
 		Process, Test
 	).join(

@@ -24,6 +24,7 @@ from blueprints.__alert__ import AlertButton
 from blueprints.__alert__ import Alert
 from config import PLUGIN_LIST
 from models.test_store import TestStore
+from models.entity.test import Test
 
 # Additional libraries import
 from flask import render_template
@@ -36,6 +37,7 @@ from wtforms import BooleanField
 from wtforms import SelectField
 from wtforms import SubmitField
 from wtforms import validators
+from flask_login import current_user
 
 
 class FilterForm(FlaskForm):
@@ -159,6 +161,19 @@ class TestForm(FlaskForm):
 					field.data = request.form.get(field.label.text)
 
 
+def verify_test_owner(test: Test) -> bool:
+	"""
+	Return True when current_user is the test owner,
+	otherwise return False
+	"""
+	if test is None:
+		return False
+	if current_user.get_id() is not None and \
+			current_user.get_id() != test.user_uid:
+		return False
+	return True
+
+
 @blueprint.route('/', methods=('GET', 'POST'))
 @blueprint.route('/catalog/', methods=('GET', 'POST'))
 def get_catalog():
@@ -174,16 +189,17 @@ def get_catalog():
 	filter.define_fields()
 	# Handle creator form
 	creator = CreatorForm()
-	if request.form.get('creatorSubmit') and \
-			creator.validate_on_submit(): # Valid post request
-		return redirect(url_for(
-			'test.create', plugin=creator.plugin.data))
+	if current_user.is_authenticated:
+		if request.form.get('creatorSubmit') and \
+				creator.validate_on_submit(): # Valid post request
+			return redirect(url_for(
+				'test.create', plugin=creator.plugin.data))
 	# Prepare list data
 	pagination = get_pagination(
 		 TestStore.count_list(
 			filter.name.data,
 			filter.plugin.data,
-			filter.hide_global.data
+			current_user.get_id() if filter.hide_global.data else None
 		)
 	)
 	pagination['endpoint'] = 'test.get_catalog'
@@ -192,7 +208,7 @@ def get_catalog():
 		pagination['per_page'],
 		filter.name.data,
 		filter.plugin.data,
-		filter.hide_global.data
+		current_user.get_id() if filter.hide_global.data else None
 	)
 	return render_template(
 		'test/catalog.html',
@@ -209,6 +225,8 @@ def create(plugin: str):
 	"""
 	Return create test page.
 	"""
+	if not current_user.is_authenticated:
+		return redirect(url_for('test.get_catalog'))
 	try:
 		plugin_module = importlib.import_module('plugins.%s' % plugin)
 	except:
@@ -221,7 +239,8 @@ def create(plugin: str):
 			plugin,
 			creator.options.data,
 			int(creator.repeat.data),
-			int(creator.speed.data)
+			int(creator.speed.data),
+			current_user.get_id()
 		)
 		return redirect(url_for('test.get_catalog'))
 	return render_template(
@@ -237,8 +256,10 @@ def update(uid: str):
 	"""
 	Return test update page.
 	"""
+	if not current_user.is_authenticated:
+		return redirect(url_for('test.get_catalog'))
 	test = TestStore.read(uid)
-	if test is None:
+	if not verify_test_owner(test):
 		return reidrect(url_for('test.get_catalog'))
 	try:
 		plugin_module = importlib.import_module('plugins.%s' % test.plugin)
@@ -271,5 +292,8 @@ def delete(uid: str):
 	"""
 	Delete test and redirect to test catalog.
 	"""
+	test = TestStore.read(uid)
+	if not verify_test_owner(test):
+		return reidrect(url_for('test.get_catalog'))
 	TestStore.delete(uid)
 	return redirect(url_for('test.get_catalog'))

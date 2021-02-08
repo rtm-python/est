@@ -42,7 +42,7 @@
 		</div>
 	</form>
 {%- endblock -%}
-{%- if current_user.is_authenticated or True -%}
+{%- if current_user.is_authenticated -%}
 	{% set extra_link -%}{{ '#' }}{%- endset %}
 	{% set extra_text -%}<span class="oi oi-plus ml-2 mr-1"></span>{{ __('Create') }}{%- endset %}
 	{%- block extra -%}
@@ -72,18 +72,22 @@
 				<blockquote class="blockquote mb-0 card-body">
 					<div class="d-flex w-100 justify-content-between">
 						<small class="text-muted">{{ test.plugin }}</small>
-						<small>
-							<a class="text-muted p-1" href="{{ url_for('test.update', uid=test.uid) }}"><span class="oi oi-pencil"></span></a>
-							<a class="text-muted p-1" href="#" data-toggle="collapse" data-target="#collapse-{{ test.uid }}" aria-expanded="true" aria-controls="collapse-{{ test.uid }}"><span class="oi oi-x"></span></a>
-						</small>
+						{%- if current_user.get_id() == test.user_uid -%}
+							<small>
+								<a class="text-muted p-1" href="{{ url_for('test.update', uid=test.uid) }}"><span class="oi oi-pencil"></span></a>
+								<a class="text-muted p-1" href="#" data-toggle="collapse" data-target="#collapse-{{ test.uid }}" aria-expanded="true" aria-controls="collapse-{{ test.uid }}"><span class="oi oi-x"></span></a>
+							</small>
+						{%- endif -%}
 					</div>
-					<div class="collapse mt-2 shadow-sm" id="collapse-{{ test.uid }}">
-						<div class="alert alert-danger text-center p-3" role="alert">
-							<p><small>{{ __('Do you really want to delete test from catalog?') }}</small></p>
-							<a class="btn btn-sm btn-outline-danger" href="{{ url_for('test.delete', uid=test.uid) }}">{{ __('Delete') }}</a>
-							<a class="btn btn-sm btn-outline-dark" href="#" data-toggle="collapse" data-target="#collapse-{{ test.uid }}" aria-expanded="true" aria-controls="collapse-{{ test.uid }}">{{ __('Cancel') }}</a>
+					{%- if current_user.get_id() == test.user_uid -%}
+						<div class="collapse mt-2 shadow-sm" id="collapse-{{ test.uid }}">
+							<div class="alert alert-danger text-center p-3" role="alert">
+								<p><small>{{ __('Do you really want to delete test from catalog?') }}</small></p>
+								<a class="btn btn-sm btn-outline-danger" href="{{ url_for('test.delete', uid=test.uid) }}">{{ __('Delete') }}</a>
+								<a class="btn btn-sm btn-outline-dark" href="#" data-toggle="collapse" data-target="#collapse-{{ test.uid }}" aria-expanded="true" aria-controls="collapse-{{ test.uid }}">{{ __('Cancel') }}</a>
+							</div>
 						</div>
-					</div>
+					{%- endif -%}
 					<h4 class="card-title p-4"><strong>{{ test.name }}</strong></h4>
 					<a href="{{ url_for('test.start', uid=test.uid) }}" class="btn btn-outline-dark w-75">{{ __('Start') }}</a>
 				</blockquote>

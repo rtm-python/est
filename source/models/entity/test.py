@@ -23,9 +23,10 @@ class Test(Entity):
 	plugin_options = Column(database.String, index=True, nullable=False)
 	repeat = Column(database.Integer, index=True, nullable=False)
 	speed = Column(database.Integer, index=True, nullable=False)
+	user_uid = Column(database.String, index=True, nullable=True)
 
 	def __init__(self, name: str, plugin: str, plugin_options: str,
-							 repeat: int, speed: int) -> "Test":
+							 repeat: int, speed: int, user_uid: str) -> "Test":
 		'''
 		Initiate object and stores Test's data.
 		'''
@@ -35,3 +36,4 @@ class Test(Entity):
 		self.plugin_options = plugin_options
 		self.repeat = repeat
 		self.speed = speed
+		self.user_uid = user_uid

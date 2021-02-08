@@ -220,25 +220,28 @@ def verify_usercode(usercode: str, passcode: str) -> dict:
 	Verify usercode and passcode pair,
 	return usercode data on success.
 	"""
-	if data['usercodes'].get(usercode) is not None:
-		if data['usercodes'][usercode]['passcode'] is not None:
-			if data['usercodes'][usercode]['valid_before'] > \
-					datetime.datetime.utcnow().timestamp():
-				usercode_item = data['usercodes'][usercode]
-				# Delete used usercode data and message
-				response = requests.post(
-					data['url_delete_message'],
-					json={
-						'chat_id': usercode_item['chat_id'],
-						'message_id': usercode_item['message_id']
-					}
-				)
-			else:
-				logging.debug('Usercode/passcode pair timed out for %d seconds' % \
-											data['usercodes'][usercode]['valid_before'] - \
-											datetime.datetime.utcnow().timestamp())
-				usercode_item = None # indvalid (timed out) usercode
-			return usercode_item
+	try:
+		if data['usercodes'].get(usercode) is not None:
+			if data['usercodes'][usercode]['passcode'] is not None:
+				if data['usercodes'][usercode]['valid_before'] > \
+						datetime.datetime.utcnow().timestamp():
+					usercode_item = data['usercodes'][usercode]
+					# Delete used usercode data and message
+					response = requests.post(
+						data['url_delete_message'],
+						json={
+							'chat_id': usercode_item['chat_id'],
+							'message_id': usercode_item['message_id']
+						}
+					)
+				else:
+					logging.debug('Usercode/passcode pair timed out for %d seconds' % \
+												data['usercodes'][usercode]['valid_before'] - \
+												datetime.datetime.utcnow().timestamp())
+					usercode_item = None # indvalid (timed out) usercode
+				return usercode_item
+	except:
+		logging.error('Verification: %s / %s' % (usercode, passcode), err_info=1)
 
 
 def send_message(chat_id: int, message: str) -> None:

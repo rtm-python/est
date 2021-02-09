@@ -12,5 +12,5 @@ from identica import telegram as bot
 if __name__ == '__main__':
 	bot.init(False)
 	bot.run()
-	application.run()
+	application.run('0.0.0.0')
 	bot.stop()

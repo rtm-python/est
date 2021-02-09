@@ -198,6 +198,7 @@ def play(uid: str):
 		task = passed_tasks[0]
 		passed_tasks = passed_tasks[1:]
 	# Handle filter form
+	sound_filename = None
 	player = PlayerForm()
 	if player.validate_on_submit():
 		user_answer = player.answer.data.strip()
@@ -214,6 +215,7 @@ def play(uid: str):
 							(test.name, test.plugin, process.result) + '%'
 					)
 				return redirect(url_for('test.get_result', uid=uid))
+			sound_filename = 'yay.mp3' if task.correct_answer else 'break.mp3'
 			passed_tasks = [task] + passed_tasks
 			task = TaskStore.create(process.id, json.dumps(data))
 			player.answer.data = None
@@ -233,6 +235,7 @@ def play(uid: str):
 		data=data,
 		passed_tasks=passed_tasks,
 		player=player,
+		sound_filename=sound_filename,
 		nav_active='test'
 	)
 
@@ -250,10 +253,16 @@ def get_result(uid: str):
 	# Read previous tasks
 	passed_tasks = TaskStore.read_list(
 		offset=0, limit=0, filter_process_id=process.id)
+	sound_filename = None
+	utcnow = datetime.datetime.utcnow()
+	if (utcnow - passed_tasks[0].modified_utc).total_seconds() < 5:
+		sound_filename = 'yay.mp3' \
+			if passed_tasks[0].correct_answer else 'break.mp3'
 	return render_template(
 		'test/result.html',
 		process=process,
 		test=test,
 		passed_tasks=passed_tasks,
+		sound_filename=sound_filename,
 		nav_active='test'
 	)

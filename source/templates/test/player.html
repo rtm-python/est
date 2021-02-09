@@ -53,4 +53,7 @@
 			</div>
 		</div>
 	</div>
+	{%- if sound_filename -%}
+		<audio src="{{ url_for('static', filename=sound_filename) }}" preload="auto" autoplay="true"></audio>
+	{%- endif -%}
 {%- endblock -%}

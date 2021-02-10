@@ -36,6 +36,7 @@ from wtforms import SubmitField
 from wtforms import validators
 
 # Constants
+profile_template = '<code>EVENT: </code><b>%s</b>'
 feedback_template = '<code>FROM: </code><b>%s</b>\n<i>%s</i>'
 link_template = 'tg://user?id=%s'
 
@@ -188,13 +189,13 @@ def get_profile():
 	if not current_user.is_authenticated:
 		return redirect(url_for('base.sign_in'))
 	if request.method == 'GET':
+		profiler = ProfilerForm(current_user.user)
+	else:
 		if current_user.user.notification_profile:
 			bot.send_message(
 				current_user.user.from_id,
-				__('Your profile page just opened')
+				profile_template % __('Profile updated')
 			)
-		profiler = ProfilerForm(current_user.user)
-	else:
 		profiler = ProfilerForm()
 	if request.form.get('profilerSubmit') and \
 			profiler.validate_on_submit(): # Valid post request

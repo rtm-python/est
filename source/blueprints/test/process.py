@@ -39,6 +39,11 @@ from wtforms import validators
 from flask_login import current_user
 
 
+# Global constants
+process_template = \
+	'<code>' + __('TEST') + ': </code><b>%s</b>\n' + \
+	'<code>' + __('STATUS') + ': </code><b>%s</b>'
+
 class FilterForm(FlaskForm):
 	"""
 	This is FilterForm class to retrieve form data.
@@ -171,7 +176,10 @@ def start(uid: str):
 			current_user.user.notification_test_start:
 		bot.send_message(
 			current_user.user.from_id,
-			__('Test process "%s (%s)" just started') % (test.name, test.plugin)
+			process_template % (
+				'%s (%s)' % (test.name, __(test.plugin)),
+				__('Started')
+			)
 		)
 	return redirect(url_for('test.play', uid=process.uid))
 
@@ -211,8 +219,10 @@ def play(uid: str):
 						current_user.user.notification_test_start:
 					bot.send_message(
 						current_user.user.from_id,
-						__('Test process "%s (%s)" just completed with result %s') % \
-							(test.name, test.plugin, process.result) + '%'
+						process_template % (
+							'%s (%s)' % (test.name, __(test.plugin)),
+							__('Completed with result %s') % process.result + '%'
+						)
 					)
 				return redirect(url_for('test.get_result', uid=uid))
 			sound_filename = 'yay.mp3' if task.correct_answer else 'break.mp3'

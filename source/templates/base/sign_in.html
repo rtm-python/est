@@ -6,8 +6,10 @@
 		<div class="row">
 			<div class="col-12 col-sm-6 mb-3">
 				<small>{{ __('Usercode') }}</small>
-				<h3 style="font-family: 'Roboto Mono', monospace;">{{ sign_in.usercode.value }}</h3>
-				<small>{{ __('Send usercode within chat message to @identica_bot') }}</small>
+				<div class="col-12 mb-3">
+					<h3 style="font-family: 'Roboto Mono', monospace; padding: 2px; border: 1px solid whitesmoke; border-radius: 5px;">{{ sign_in.usercode.value }}</h3>
+					<small>{{ __('Send usercode within chat message to ') }}<a href="https://t.me/identica_bot" style="background: darkgrey; padding: 3px 5px;">@identica_bot</a></small>
+					</div>
 			</div>
 			<div class="col-12 col-sm-6 mb-3">
 				<form method="post" actions="">

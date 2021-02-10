@@ -54,7 +54,7 @@
 					<select autofocus class="custom-select" name="{{ creator.plugin.label.text }}" id="{{ creator.plugin.label.text }}" style="height: 1.9rem; font-size: 0.9rem; padding-top: 3px;">
 						<option value="" selected>{{ __('Select Plugin') }}</option>
 						{%- for choice in creator.plugin.choices -%}
-							<option value="{{ choice[0] }}"{%- if creator.plugin.data == choice[0] -%}{{ ' selected' }}{%- endif -%}>{{ choice[1] }}</option>
+							<option value="{{ choice[0] }}"{%- if creator.plugin.data == choice[0] -%}{{ ' selected' }}{%- endif -%}>{{ __(choice[1]) }}</option>
 						{%- endfor -%}
 					</select>
 				</div>
@@ -71,7 +71,7 @@
 			<div class="card p-2 shadow-sm mb-3 rounded text-center">
 				<blockquote class="blockquote mb-0 card-body">
 					<div class="d-flex w-100 justify-content-between">
-						<small class="text-muted">{{ test.plugin }}</small>
+						<small class="text-muted">{{ __(test.plugin) }}</small>
 						{%- if current_user.get_id() == test.user_uid -%}
 							<small>
 								<a class="text-muted p-1" href="{{ url_for('test.update', uid=test.uid) }}"><span class="oi oi-pencil"></span></a>

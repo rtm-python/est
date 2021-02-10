@@ -29,6 +29,8 @@ clear_index = 120
 valid_seconds = 30
 sleep_seconds = 3
 message_limit = 100
+message_template = '<b>%s</b>\n\n%s'
+passcode_template = '<code>PASSCODE: </code><b>%s</b>'
 
 # Global Variables
 handle_thread = None
@@ -89,12 +91,9 @@ def handle(break_event: threading.Event, data: dict) -> None:
 					usercode_item['passcode'] = \
 						''.join(secrets.choice(alphabet) for i in range(code_length))
 					# Send passcode within chat message
-					response = requests.post(
-						data['url_send_message'],
-						json={
-							'chat_id': usercode_item['chat_id'],
-							'text': data['website'] + ':\n\n' + usercode_item['passcode']
-						}
+					response = send_message(
+						usercode_item['chat_id'],
+						passcode_template % usercode_item['passcode']
 					)
 					# Store message_id for futher deleting
 					if response.json()['ok']:
@@ -173,9 +172,11 @@ def init(hidden: bool = True) -> None:
 		if hidden:
 			os.remove(filename)
 		# Initiate shareable  data dictionary
-		data['website'], data['token'] = telegram_data.split('\n')
+		data['website'], data['token'], data['feedback_chat_id'] = \
+			telegram_data.split('\n')
 		data['website'] = data['website'].strip()
 		data['token'] = data['token'].strip()
+		data['feedback_chat_id'] = data['feedback_chat_id'].strip()
 		data['usercodes'] = {}
 		data['url_get_updates'] = \
 			url_telegram % data['token'] + cmd_get_updates + \
@@ -244,18 +245,17 @@ def verify_usercode(usercode: str, passcode: str) -> dict:
 		logging.error('Verification: %s / %s' % (usercode, passcode), exc_info=1)
 
 
-def send_message(chat_id: int, message: str, from_website: bool = True) -> None:
+def send_message(chat_id: int, message: str,
+								 from_website: bool = True) -> object:
 	"""
 	Send message to chat by chat_id.
 	"""
-	response = requests.post(
+	return requests.post(
 		data['url_send_message'],
 		json={
-			'chat_id': chat_id,
-			'text': '%s%s' % (
-				(data['website'] + ':\n\n') if from_website else '',
-				message
-			)
+			'chat_id': chat_id if chat_id is not None else data['feedback_chat_id'],
+			'text': message_template % (data['website'], message),
+			'parse_mode': 'HTML'
 		}
 	)
 

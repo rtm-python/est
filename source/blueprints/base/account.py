@@ -35,6 +35,10 @@ from wtforms import SelectField
 from wtforms import SubmitField
 from wtforms import validators
 
+# Constants
+feedback_template = '<code>FROM: </code><b>%s</b>\n<i>%s</i>'
+link_template = 'tg://user?id=%s'
+
 
 class SignedInUser(UserMixin):
 	"""
@@ -106,20 +110,29 @@ class SignInForm(FlaskForm):
 	submit = SubmitField()
 
 
-class ProfileForm(FlaskForm):
+class ProfilerForm(FlaskForm):
 	"""
 	This is a ProfileForm class to retrieve form data.
 	"""
-	notification_profile = SelectField('notificationProfile', validators=[validators.DataRequired()])
-	notification_test_start = SelectField('notificationTestStart', validators=[validators.DataRequired()])
-	notification_test_complete = SelectField('notificationTestComplete', validators=[validators.DataRequired()])
-	submit = SubmitField()
+	notification_profile = SelectField(
+		'profilerNotificationProfile',
+		validators=[validators.DataRequired()]
+	)
+	notification_test_start = SelectField(
+		'profilerNotificationTestStart',
+		validators=[validators.DataRequired()]
+	)
+	notification_test_complete = SelectField(
+		'profilerNotificationTestComplete',
+		validators=[validators.DataRequired()]
+	)
+	submit = SubmitField('profilerSubmit')
 
-	def __init__(self, user: object = None) -> "ProfileForm":
+	def __init__(self, user: object = None) -> "ProfilerForm":
 		"""
 		Inititate object with choices.
 		"""
-		super(ProfileForm, self).__init__()
+		super(ProfilerForm, self).__init__()
 		self.notification_profile.choices = [
 			('yes', __('Send notification')),
 			('no', __('Keep silence')),
@@ -145,6 +158,27 @@ class ProfileForm(FlaskForm):
 					field.data = request.form.get(field.label.text)
 
 
+class FeedbackerForm(FlaskForm):
+	"""
+	This is a FeedbackForm class to retrieve form data.
+	"""
+	message = StringField(
+		'feedbackerMessage',
+		validators=[validators.DataRequired()]
+	)
+	submit = SubmitField('feedbackerSubmit')
+
+	def __init__(self, post: bool) -> "ProfilerForm":
+		"""
+		Inititate object with choices.
+		"""
+		super(FeedbackerForm, self).__init__()
+		if post:
+			for field in self:
+				if field.name != 'csrf_token':
+					field.data = request.form.get(field.label.text)
+
+
 @blueprint.route('/account/', methods=('GET', 'POST'))
 @blueprint.route('/account/profile/', methods=('GET', 'POST'))
 def get_profile():
@@ -159,19 +193,39 @@ def get_profile():
 				current_user.user.from_id,
 				__('Your profile page just opened')
 			)
-		profiler = ProfileForm(current_user.user)
+		profiler = ProfilerForm(current_user.user)
 	else:
-		profiler = ProfileForm()
-	if profiler.validate_on_submit(): # Valid post request
+		profiler = ProfilerForm()
+	if request.form.get('profilerSubmit') and \
+			profiler.validate_on_submit(): # Valid post request
 		UserStore.update_notifications(
 			current_user.user.uid,
 			profiler.notification_profile.data == 'yes',
 			profiler.notification_test_start.data == 'yes',
 			profiler.notification_test_complete.data == 'yes'
 		)
+	feedbacker = FeedbackerForm(request.method == 'POST')
+	if request.form.get('feedbackerSubmit') and \
+			 feedbacker.validate_on_submit(): # Valid post request
+		bot.send_message(
+			current_user.user.from_id,
+			__('Thank you for your feedback!')
+		)
+		bot.send_message(
+			None,
+			feedback_template % (
+				'<a href="%s">%s</a>' % (
+					current_user.user.from_id,
+					current_user.user.name
+				),
+				feedbacker.message.data[:100]
+			)
+		)
+		return redirect(url_for('base.get_profile'))
 	return render_template(
 		'base/profile.html',
-		editor=profiler,
+		profiler=profiler,
+		feedbacker=feedbacker,
 		nav_active='account'
 	)
 
@@ -210,11 +264,3 @@ def sign_in():
 		sign_in=sign_in,
 		nav_active='account'
 	)
-
-
-@blueprint.route('/account/sign-out/', methods=('GET',))
-def sign_out():
-	"""
-	Return sign-out  page.
-	"""
-	return 'Sign-Out Page', 200

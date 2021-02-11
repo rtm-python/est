@@ -6,6 +6,7 @@ Store module for Process entity.
 
 # Standard libraries import
 import json
+import datetime
 
 # Application modules import
 from models import database
@@ -13,6 +14,10 @@ from models.__base__ import Store
 from models.entity.process import Process
 from models.entity.test import Test
 from models.entity.task import Task
+
+# Additional libraries import
+from sqlalchemy import func
+from sqlalchemy import or_
 
 
 class ProcessStore(Store):
@@ -124,17 +129,6 @@ class ProcessStore(Store):
 		)
 
 	@staticmethod
-	def set_result(uid: str, result: int) -> Process:
-		"""
-		Set result and return process.
-		"""
-		process = ProcessStore.read(uid)
-		process.result = result
-		return super(ProcessStore, ProcessStore).update(
-			process
-		)
-
-	@staticmethod
 	def bind_token(user_uid: str, anonymous_token: str) -> int:
 		"""
 		Bind (replace anonymous_token with user_uid) processes
@@ -175,6 +169,87 @@ class ProcessStore(Store):
 		).filter(
  			uid == Process.uid
 		).first()
+
+	@staticmethod
+	def get_chart_list(user_uid: str, anonymous_token: str) -> []:
+		"""
+		Return chart list.
+		"""
+		pre = database.session.query(
+			Test.id.label('test_id'), Process.modified_utc.label('modified_utc'),
+			func.strftime('%w', Process.modified_utc).label('weekday'),
+			func.count(Process.test_id).label('count'),
+			func.avg(Process.result).label('result')
+		).join(
+			Process
+		).filter(
+			True if user_uid is None else \
+				user_uid == Process.user_uid,
+			True if anonymous_token is None else \
+				anonymous_token == Process.anonymous_token,
+			Process.modified_utc >= \
+				(
+					datetime.datetime.utcnow() - datetime.timedelta(days=7)
+				).strftime('%Y-%m-%d'),
+			Test.deleted_utc == None
+		).group_by(
+			func.strftime('%w', Process.modified_utc)
+		).order_by(
+			Process.modified_utc.desc()
+		).subquery()
+		# Prepare queries for each weekday
+		weekday = int(datetime.datetime.utcnow().strftime('%w'))
+		weekdays = []
+		for index in range(7):
+			weekday = weekday + 1 if weekday < 6 else 0
+			weekdays += [
+				(
+					str(weekday),
+					database.session.query(
+						pre
+					).filter(
+						pre.c.weekday == str(weekday),
+					).order_by(
+						pre.c.modified_utc.desc()
+					).subquery()
+				)
+			]
+		return database.session.query(
+			Test.uid, Test.name, Test.plugin,
+			weekdays[0][0], weekdays[0][1].c.count, weekdays[0][1].c.result,
+			weekdays[1][0], weekdays[1][1].c.count, weekdays[1][1].c.result,
+			weekdays[2][0], weekdays[2][1].c.count, weekdays[2][1].c.result,
+			weekdays[3][0], weekdays[3][1].c.count, weekdays[3][1].c.result,
+			weekdays[4][0], weekdays[4][1].c.count, weekdays[4][1].c.result,
+			weekdays[5][0], weekdays[5][1].c.count, weekdays[5][1].c.result,
+			weekdays[6][0], weekdays[6][1].c.count, weekdays[6][1].c.result
+		).outerjoin(
+			weekdays[0][1], Test.id == weekdays[0][1].c.test_id
+		).outerjoin(
+			weekdays[1][1], Test.id == weekdays[1][1].c.test_id
+		).outerjoin(
+			weekdays[2][1], Test.id == weekdays[2][1].c.test_id
+		).outerjoin(
+			weekdays[3][1], Test.id == weekdays[3][1].c.test_id
+		).outerjoin(
+			weekdays[4][1], Test.id == weekdays[4][1].c.test_id
+		).outerjoin(
+			weekdays[5][1], Test.id == weekdays[5][1].c.test_id
+		).outerjoin(
+			weekdays[6][1], Test.id == weekdays[6][1].c.test_id
+		).filter(
+			or_(
+				weekdays[0][1].c.count != None,
+				weekdays[1][1].c.count != None,
+				weekdays[2][1].c.count != None,
+				weekdays[3][1].c.count != None,
+				weekdays[4][1].c.count != None,
+				weekdays[5][1].c.count != None,
+				weekdays[6][1].c.count != None
+			)
+		).order_by(
+			weekdays[6][1].c.modified_utc.desc()
+		).all()
 
 
 def _get_list_query(filter_name: str, filter_plugin: str,

@@ -1,0 +1,125 @@
+
+{%- extends "layout_list.html" -%}
+{% set title -%}{{ __('Scoreboard') }}{%- endset %}
+{%- block style -%}
+	<style>
+  	@media (max-width: 768px) {
+			.card-columns {
+	  	  column-count: 1;
+	    }
+	  }
+	</style>
+{%- endblock -%}
+{%- block script -%}
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
+{%- endblock -%}
+{% set filter_link -%}{{ '#' }}{%- endset %}
+{%- block filter -%}
+	<form method="post" actions="">
+		{{ filter.csrf_token }}
+		<div class="form-row">
+			<div class="col-12 col-md-4 mb-2">
+				<small>{{ __('Name') }}</small>
+				<input autofocus type="text" class="form-control form-control-sm" id="{{ filter.name.label.text }}" name="{{ filter.name.label.text }}" placeholder="{{ __('Name') }}" value="{{ filter.name.data|default('', True) }}" />	
+			</div>
+			<div class="col-12 col-md-4 mb-2">
+				<small>{{ __('Plugin') }}</small>
+				<input type="text" class="form-control form-control-sm" id="{{ filter.plugin.label.text }}" name="{{ filter.plugin.label.text }}" placeholder="{{ __('Plugin') }}" value="{{ filter.plugin.data|default('', True) }}" />
+			</div>
+			<div class="col-12 col-md-2 mb-2">
+				<small>{{ __('Completed') }}</small>
+				<div class="custom-control custom-checkbox mr-sm-2">
+					<input type="checkbox" class="custom-control-input" id="{{ filter.hide_completed.label.text }}" name="{{ filter.hide_completed.label.text }}" {%- if (filter.hide_completed.data == 'true' or filter.hide_completed.data == 'True') or filter.hide_completed.data == 'on' or filter.hide_completed.data is true -%}checked{%- endif -%}>
+					<label class="custom-control-label" for="{{ filter.hide_completed.label.text }}" style="font-size: smaller; padding-top: 2px; margin-top: 3px;">{{ __('Hide Completed Processes') }}</label>
+				</div>
+			</div>
+			<div class="col-12 col-md-2 my-2">
+				<div class="form-row">
+					<div class="mb-2 col-6 col-md-12">
+						<input type="submit" class="btn btn-sm btn-block btn-outline-dark" name="{{ filter.submit.label.text }}" id="{{ filter.submit.label.text }}" value="{{ __('Apply') }}" />
+					</div>
+					<div class="mb-2 col-6 col-md-12">
+						<a href="{{ url_for('test.get_process', filterReset='true') }}" class="btn btn-sm btn-block btn-outline-dark">{{ __('Reset') }}</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>
+{%- endblock -%}
+{%- block list_content -%}
+	{% set weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] %}
+	<div class="card-columns">
+		{%- for chart_data in chart_list  -%}
+			<div class="card p-2 shadow-sm mb-3 rounded text-center">
+				<blockquote class="blockquote mb-0 card-body">
+					<div class="d-flex w-100 justify-content-between">
+						<small class="text-muted">{{ chart_data[1] }}</small>
+						<small class="text-muted">{{ __(chart_data[2]) }}</small>
+					</div>
+					<canvas id="chart-{{ chart_data[0] }}" style="display: block; width: 800px; height: 400px;" width="800" height="400" class="chartjs-render-monitor"></canvas>
+					<script>
+						new Chart('chart-{{ chart_data[0] }}', {
+							type: 'line',
+							data: {
+								labels: [
+									'{{ __(weekdays[chart_data[3]]) }}',
+									'{{ __(weekdays[chart_data[6]]) }}',
+									'{{ __(weekdays[chart_data[9]]) }}',
+									'{{ __(weekdays[chart_data[12]]) }}',
+									'{{ __(weekdays[chart_data[15]]) }}',
+									'{{ __(weekdays[chart_data[18]]) }}',
+									'{{ __(weekdays[chart_data[21]]) }}'
+								],
+								datasets: [
+									{
+										data: [
+											{{ chart_data[4]|default(0, true) }},
+											{{ chart_data[7]|default(0, true) }},
+											{{ chart_data[10]|default(0, true) }},
+											{{ chart_data[13]|default(0, true) }},
+											{{ chart_data[16]|default(0, true) }},
+											{{ chart_data[19]|default(0, true) }},
+											{{ chart_data[22]|default(0, true) }}
+										],
+										label: '{{ __('Total Passed') }}',
+										fill: 'start',
+										background: (200, 200, 200, 0.75)
+									},
+									{
+										data: [
+											{{ chart_data[5]|default(0, true) * chart_data[4]|default(0, true) / 100 }},
+											{{ chart_data[8]|default(0, true) * chart_data[7]|default(0, true) / 100 }},
+											{{ chart_data[11]|default(0, true) * chart_data[10]|default(0, true) / 100 }},
+											{{ chart_data[14]|default(0, true) * chart_data[13]|default(0, true) / 100 }},
+											{{ chart_data[17]|default(0, true) * chart_data[16]|default(0, true) / 100 }},
+											{{ chart_data[20]|default(0, true) * chart_data[19]|default(0, true) / 100 }},
+											{{ chart_data[23]|default(0, true) * chart_data[22]|default(0, true) / 100 }}
+										],
+										label: '{{ __('Average Progress') }}',
+										fill: 'start',
+										background: (100, 100, 100, 0.75)
+									}
+								]
+							},
+							options: {
+								elements: {
+									line: {
+										tension: 0,
+										borderColor: (50, 50, 50, 0.75),
+										borderWidth: 3
+									},
+									point: {
+										radius: 1
+									}
+								},
+								legend: {
+									position: 'bottom'
+								}
+							}
+						});
+					</script>
+				</blockquote>
+			</div>
+		{%- endfor -%}
+	</div>
+{%- endblock -%}

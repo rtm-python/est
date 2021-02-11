@@ -56,3 +56,4 @@ class UrlPrefix(Enum):
 	"""
 	base = '/'
 	test = '/test/'
+	scoreboard = '/scoreboard/'

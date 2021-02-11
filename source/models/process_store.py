@@ -176,27 +176,36 @@ class ProcessStore(Store):
 		Return chart list.
 		"""
 		pre = database.session.query(
-			Test.id.label('test_id'), Process.modified_utc.label('modified_utc'),
+			Test.id.label('test_id'), Test.name.label('name'),
+			Process.modified_utc.label('modified_utc'),
 			func.strftime('%w', Process.modified_utc).label('weekday'),
-			func.count(Process.test_id).label('count'),
-			func.avg(Process.result).label('result')
+#			func.count(Process.test_id).label('count'),
+#			func.avg(Process.result).label('result')
+			Process.result.label('result')
 		).join(
-			Process
+			Process, Process.test_id == Test.id
 		).filter(
 			True if user_uid is None else \
 				user_uid == Process.user_uid,
 			True if anonymous_token is None else \
 				anonymous_token == Process.anonymous_token,
 			Process.modified_utc >= \
-				(
-					datetime.datetime.utcnow() - datetime.timedelta(days=7)
-				).strftime('%Y-%m-%d'),
+					datetime.datetime.utcnow() - datetime.timedelta(days=7),
 			Test.deleted_utc == None
-		).group_by(
-			func.strftime('%w', Process.modified_utc)
+#		).group_by(
+#			func.strftime('%w', Process.modified_utc)
 		).order_by(
 			Process.modified_utc.desc()
 		).subquery()
+		print()
+		print(
+			database.session.query(
+				pre
+			).order_by(
+				pre.c.modified_utc.desc()
+			).all()
+		)
+		print()
 		# Prepare queries for each weekday
 		weekday = int(datetime.datetime.utcnow().strftime('%w'))
 		weekdays = []
@@ -206,7 +215,10 @@ class ProcessStore(Store):
 				(
 					str(weekday),
 					database.session.query(
-						pre
+						pre.c.test_id, pre.c.modified_utc,
+#						func.count(pre.c.result).label('count'),
+#						func.avg(pre.c.result).label('result')
+						pre.c.result
 					).filter(
 						pre.c.weekday == str(weekday),
 					).order_by(
@@ -214,15 +226,32 @@ class ProcessStore(Store):
 					).subquery()
 				)
 			]
+			print(weekday)
+			print(
+				database.session.query(
+					weekdays[-1][1]
+				).order_by(
+					weekdays[-1][1].c.modified_utc.desc()
+				).all()
+			)
+			print()
+
 		return database.session.query(
 			Test.uid, Test.name, Test.plugin,
-			weekdays[0][0], weekdays[0][1].c.count, weekdays[0][1].c.result,
-			weekdays[1][0], weekdays[1][1].c.count, weekdays[1][1].c.result,
-			weekdays[2][0], weekdays[2][1].c.count, weekdays[2][1].c.result,
-			weekdays[3][0], weekdays[3][1].c.count, weekdays[3][1].c.result,
-			weekdays[4][0], weekdays[4][1].c.count, weekdays[4][1].c.result,
-			weekdays[5][0], weekdays[5][1].c.count, weekdays[5][1].c.result,
-			weekdays[6][0], weekdays[6][1].c.count, weekdays[6][1].c.result
+			weekdays[0][0],
+			func.count(weekdays[0][1].c.result), func.avg(weekdays[0][1].c.result),
+			weekdays[1][0],
+			func.count(weekdays[1][1].c.result), func.avg(weekdays[1][1].c.result),
+			weekdays[2][0],
+			func.count(weekdays[2][1].c.result), func.avg(weekdays[2][1].c.result),
+			weekdays[3][0],
+			func.count(weekdays[3][1].c.result), func.avg(weekdays[3][1].c.result),
+			weekdays[4][0],
+			func.count(weekdays[4][1].c.result), func.avg(weekdays[4][1].c.result),
+			weekdays[5][0],
+			func.count(weekdays[5][1].c.result), func.avg(weekdays[5][1].c.result),
+			weekdays[6][0],
+			func.count(weekdays[6][1].c.result), func.avg(weekdays[6][1].c.result)
 		).outerjoin(
 			weekdays[0][1], Test.id == weekdays[0][1].c.test_id
 		).outerjoin(
@@ -239,14 +268,16 @@ class ProcessStore(Store):
 			weekdays[6][1], Test.id == weekdays[6][1].c.test_id
 		).filter(
 			or_(
-				weekdays[0][1].c.count != None,
-				weekdays[1][1].c.count != None,
-				weekdays[2][1].c.count != None,
-				weekdays[3][1].c.count != None,
-				weekdays[4][1].c.count != None,
-				weekdays[5][1].c.count != None,
-				weekdays[6][1].c.count != None
+				weekdays[0][1].c.result != None,
+				weekdays[1][1].c.result != None,
+				weekdays[2][1].c.result != None,
+				weekdays[3][1].c.result != None,
+				weekdays[4][1].c.result != None,
+				weekdays[5][1].c.result != None,
+				weekdays[6][1].c.result != None
 			)
+		).group_by(
+			Test.id
 		).order_by(
 			weekdays[6][1].c.modified_utc.desc()
 		).all()

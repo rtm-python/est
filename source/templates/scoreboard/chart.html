@@ -18,20 +18,13 @@
 	<form method="post" actions="">
 		{{ filter.csrf_token }}
 		<div class="form-row">
-			<div class="col-12 col-md-4 mb-2">
+			<div class="col-12 col-md-5 mb-2">
 				<small>{{ __('Name') }}</small>
 				<input autofocus type="text" class="form-control form-control-sm" id="{{ filter.prefix + filter.name.label.text }}" name="{{ filter.prefix + filter.name.label.text }}" placeholder="{{ __('Name') }}" value="{{ filter.name.data|default('', True) }}" />	
 			</div>
-			<div class="col-12 col-md-4 mb-2">
+			<div class="col-12 col-md-5 mb-2">
 				<small>{{ __('Plugin') }}</small>
 				<input type="text" class="form-control form-control-sm" id="{{ filter.prefix + filter.plugin.label.text }}" name="{{ filter.prefix + filter.plugin.label.text }}" placeholder="{{ __('Plugin') }}" value="{{ filter.plugin.data|default('', True) }}" />
-			</div>
-			<div class="col-12 col-md-2 mb-2">
-				<small>{{ __('Completed') }}</small>
-				<div class="custom-control custom-checkbox mr-sm-2">
-					<input type="checkbox" class="custom-control-input" id="{{ filter.prefix + filter.hide_completed.label.text }}" name="{{ filter.prefix + filter.hide_completed.label.text }}" {%- if (filter.hide_completed.data == 'true' or filter.hide_completed.data == 'True') or filter.hide_completed.data == 'on' or filter.hide_completed.data is true -%}checked{%- endif -%}>
-					<label class="custom-control-label" for="{{ filter.prefix + filter.hide_completed.label.text }}" style="font-size: smaller; padding-top: 2px; margin-top: 3px;">{{ __('Hide Completed Processes') }}</label>
-				</div>
 			</div>
 			<div class="col-12 col-md-2 my-2">
 				<div class="form-row">
@@ -39,7 +32,7 @@
 						<input type="submit" class="btn btn-sm btn-block btn-outline-dark" name="{{ filter.prefix + filter.submit.label.text }}" id="{{ filter.prefix + filter.submit.label.text }}" value="{{ __('Apply') }}" />
 					</div>
 					<div class="mb-2 col-6 col-md-12">
-						<a href="{{ url_for('test.get_process', chartFilterReset='true') }}" class="btn btn-sm btn-block btn-outline-dark">{{ __('Reset') }}</a>
+						<a href="{{ url_for('scoreboard.get_chart', chartFilterReset='true') }}" class="btn btn-sm btn-block btn-outline-dark">{{ __('Reset') }}</a>
 					</div>
 				</div>
 			</div>
@@ -49,37 +42,37 @@
 {%- block list_content -%}
 	{% set weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] %}
 	<div class="card-columns">
-		{%- for chart_data in chart_list  -%}
+		{%- for chart in charts  -%}
 			<div class="card p-2 shadow-sm mb-3 rounded text-center">
 				<blockquote class="blockquote mb-0 card-body">
 					<div class="d-flex w-100 justify-content-between">
-						<small class="text-muted">{{ chart_data[1] }}</small>
-						<small class="text-muted">{{ __(chart_data[2]) }}</small>
+						<small class="text-muted">{{ chart[1] }}</small>
+						<small class="text-muted">{{ __(chart[2]) }}</small>
 					</div>
-					<canvas id="chart-{{ chart_data[0] }}" style="display: block; width: 800px; height: 400px;" width="800" height="400" class="chartjs-render-monitor"></canvas>
+					<canvas id="chart-{{ chart[0] }}" style="display: block; width: 800px; height: 400px;" width="800" height="400" class="chartjs-render-monitor"></canvas>
 					<script>
-						new Chart('chart-{{ chart_data[0] }}', {
+						new Chart('chart-{{ chart[0] }}', {
 							type: 'line',
 							data: {
 								labels: [
-									'{{ __(weekdays[chart_data[3]]) }}',
-									'{{ __(weekdays[chart_data[6]]) }}',
-									'{{ __(weekdays[chart_data[9]]) }}',
-									'{{ __(weekdays[chart_data[12]]) }}',
-									'{{ __(weekdays[chart_data[15]]) }}',
-									'{{ __(weekdays[chart_data[18]]) }}',
-									'{{ __(weekdays[chart_data[21]]) }}'
+									'{{ __(weekdays[chart[3]]) }}',
+									'{{ __(weekdays[chart[6]]) }}',
+									'{{ __(weekdays[chart[9]]) }}',
+									'{{ __(weekdays[chart[12]]) }}',
+									'{{ __(weekdays[chart[15]]) }}',
+									'{{ __(weekdays[chart[18]]) }}',
+									'{{ __(weekdays[chart[21]]) }}'
 								],
 								datasets: [
 									{
 										data: [
-											{{ chart_data[4]|default(0, true) }},
-											{{ chart_data[7]|default(0, true) }},
-											{{ chart_data[10]|default(0, true) }},
-											{{ chart_data[13]|default(0, true) }},
-											{{ chart_data[16]|default(0, true) }},
-											{{ chart_data[19]|default(0, true) }},
-											{{ chart_data[22]|default(0, true) }}
+											{{ chart[4]|default(0, true) }},
+											{{ chart[7]|default(0, true) }},
+											{{ chart[10]|default(0, true) }},
+											{{ chart[13]|default(0, true) }},
+											{{ chart[16]|default(0, true) }},
+											{{ chart[19]|default(0, true) }},
+											{{ chart[22]|default(0, true) }}
 										],
 										label: '{{ __('Total Passed') }}',
 										fill: 'start',
@@ -87,13 +80,13 @@
 									},
 									{
 										data: [
-											{{ chart_data[5]|default(0, true) * chart_data[4]|default(0, true) / 100 }},
-											{{ chart_data[8]|default(0, true) * chart_data[7]|default(0, true) / 100 }},
-											{{ chart_data[11]|default(0, true) * chart_data[10]|default(0, true) / 100 }},
-											{{ chart_data[14]|default(0, true) * chart_data[13]|default(0, true) / 100 }},
-											{{ chart_data[17]|default(0, true) * chart_data[16]|default(0, true) / 100 }},
-											{{ chart_data[20]|default(0, true) * chart_data[19]|default(0, true) / 100 }},
-											{{ chart_data[23]|default(0, true) * chart_data[22]|default(0, true) / 100 }}
+											{{ chart[5]|default(0, true) * chart[4]|default(0, true) / 100 }},
+											{{ chart[8]|default(0, true) * chart[7]|default(0, true) / 100 }},
+											{{ chart[11]|default(0, true) * chart[10]|default(0, true) / 100 }},
+											{{ chart[14]|default(0, true) * chart[13]|default(0, true) / 100 }},
+											{{ chart[17]|default(0, true) * chart[16]|default(0, true) / 100 }},
+											{{ chart[20]|default(0, true) * chart[19]|default(0, true) / 100 }},
+											{{ chart[23]|default(0, true) * chart[22]|default(0, true) / 100 }}
 										],
 										label: '{{ __('Average Progress') }}',
 										fill: 'start',

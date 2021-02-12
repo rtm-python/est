@@ -21,7 +21,7 @@ def get_pagination(prefix: str, entity_count: int,
 	prefix_per_page = '%sPerPage' % prefix
 	# Get page_index and per_page from request
 	page_index = get_integer(prefix_page_index, 1)
-	per_page = get_integer(prefix_per_page, 12)
+	per_page = get_integer(prefix_per_page, default_per_page)
 	# Calculate page_count
 	page_count = entity_count / per_page
 	page_count = int(page_count) + 1 \

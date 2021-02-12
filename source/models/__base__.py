@@ -66,4 +66,4 @@ class Store():
 		"""
 		return database.session.execute(
 			query.statement.with_only_columns([func.count()]).order_by(None)
-		).scalar()
+		).scalar() or 0

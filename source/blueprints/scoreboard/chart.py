@@ -46,7 +46,6 @@ class ChartFilterForm(FilterForm):
 	"""
 	name = StringField('FilterName')
 	plugin = StringField('FilterPlugin')
-	hide_completed = BooleanField('FilterHideCompleted')
 	submit = SubmitField('FilterSubmit')
 
 	def __init__(self) -> 'ChartFilterForm':
@@ -54,30 +53,6 @@ class ChartFilterForm(FilterForm):
 		Initiate object with values from request
 		"""
 		super(ChartFilterForm, self).__init__('chart')
-
-
-class PlayerForm(FlaskForm):
-	"""
-	This is a PlayerForm class to retrieve form data.
-	"""
-	answer = StringField(validators=[validators.DataRequired()])
-	submit = SubmitField()
-
-
-def verify_process_owner(process: Process) -> bool:
-	"""
-	Return True when current_user is the process owner,
-	otherwise return False.
-	"""
-	if process is None:
-		return False
-	if current_user.get_id() is not None and \
-			current_user.get_id() != process.user_uid:
-		return False
-	if current_user.get_token() is not None and \
-			current_user.get_token() != process.anonymous_token:
-		return False
-	return True
 
 
 @blueprint.route('/chart/', methods=('GET', 'POST'))
@@ -90,38 +65,32 @@ def get_chart():
 	if filter.is_submit(filter.submit.label.text) and \
 			filter.validate_on_submit(): # Valid post request
 		filter.store_fields()
-		return redirect(filter.url_for_with_fields('test.get_process'))
+		return redirect(filter.url_for_with_fields('scoreboard.get_chart'))
 	filter.define_fields()
 	# Prepare list data
 	pagination = get_pagination(
 		'chart',
-		ProcessStore.count_list(
+		ProcessStore.count_charts(
 			filter.name.data,
 			filter.plugin.data,
-			filter.hide_completed.data,
 			current_user.get_id(),
 			current_user.get_token()
 		)
 	)
-	pagination['endpoint'] = 'test.get_process'
+	pagination['endpoint'] = 'scoreboard.get_chart'
 	pagination['prefix'] = 'chart'
-	processes = ProcessStore.read_list(
+	charts = ProcessStore.read_charts(
 		(pagination['page_index'] - 1) * pagination['per_page'],
 		pagination['per_page'],
 		filter.name.data,
 		filter.plugin.data,
-		filter.hide_completed.data,
-		current_user.get_id(),
-		current_user.get_token()
-	)
-	chart_list = ProcessStore.get_chart_list(
 		current_user.get_id(),
 		current_user.get_token()
 	)
 	return render_template(
 		'scoreboard/chart.html',
 		filter=filter,
-		chart_list=chart_list,
+		charts=charts,
 		pagination=pagination,
 		nav_active='scoreboard'
 	)

@@ -171,6 +171,29 @@ class ProcessStore(Store):
 		).first()
 
 	@staticmethod
+	def read_charts(offset: int, limit: int,
+								  filter_name: str, filter_plugin: str,
+								  user_uid: str, anonymous_token: str) -> list:
+		"""
+		Return list of process charts by arguments.
+		"""
+		return _get_charts_query(
+			filter_name, filter_plugin,
+			user_uid, anonymous_token
+		).limit(limit).offset(offset).all()
+
+	@staticmethod
+	def count_charts(filter_name: str, filter_plugin: str,
+								   user_uid: str, anonymous_token: str) -> int:
+		"""
+		Return number of process charts in list.
+		"""
+		return Store.count(_get_charts_query(
+			filter_name, filter_plugin,
+			user_uid, anonymous_token
+		))
+
+	@staticmethod
 	def get_chart_list(user_uid: str, anonymous_token: str) -> []:
 		"""
 		Return chart list.
@@ -308,4 +331,101 @@ def _get_list_query(filter_name: str, filter_plugin: str,
 		Process.deleted_utc == None
 	).order_by(
 		Process.modified_utc.desc()
+	)
+
+
+def _get_charts_query(filter_name: str, filter_plugin: str,
+										  user_uid: str, anonymous_token: str):
+	"""
+	Return query object for process charts.
+	"""
+	pre = database.session.query(
+		Test.id.label('test_id'), Test.name.label('name'),
+		Process.modified_utc.label('modified_utc'),
+		func.strftime('%w', Process.modified_utc).label('weekday'),
+		Process.result.label('result')
+	).join(
+		Process, Process.test_id == Test.id
+	).filter(
+		True if filter_name is None else \
+			Test.name.ilike('%' + filter_name + '%'),
+		True if filter_plugin is None else \
+			Test.plugin.ilike('%' + filter_plugin + '%'),
+		True if user_uid is None else \
+			user_uid == Process.user_uid,
+		True if anonymous_token is None else \
+			anonymous_token == Process.anonymous_token,
+		Process.modified_utc >= \
+				datetime.datetime.utcnow() - datetime.timedelta(days=7),
+		Test.deleted_utc == None
+	).order_by(
+		Process.modified_utc.desc()
+	).subquery()
+	# Prepare queries for each weekday
+	weekday = int(datetime.datetime.utcnow().strftime('%w'))
+	weekdays = []
+	for index in range(7):
+		weekday = weekday + 1 if weekday < 6 else 0
+		weekdays += [
+			(
+				str(weekday),
+				database.session.query(
+					pre.c.test_id, pre.c.modified_utc, pre.c.result
+				).filter(
+					pre.c.weekday == str(weekday),
+				).order_by(
+					pre.c.modified_utc.desc()
+				).subquery()
+			)
+		]
+	return database.session.query(
+		Test.uid, Test.name, Test.plugin,
+		weekdays[0][0],
+		func.count(weekdays[0][1].c.result), func.avg(weekdays[0][1].c.result),
+		weekdays[1][0],
+		func.count(weekdays[1][1].c.result), func.avg(weekdays[1][1].c.result),
+		weekdays[2][0],
+		func.count(weekdays[2][1].c.result), func.avg(weekdays[2][1].c.result),
+		weekdays[3][0],
+		func.count(weekdays[3][1].c.result), func.avg(weekdays[3][1].c.result),
+		weekdays[4][0],
+		func.count(weekdays[4][1].c.result), func.avg(weekdays[4][1].c.result),
+		weekdays[5][0],
+		func.count(weekdays[5][1].c.result), func.avg(weekdays[5][1].c.result),
+		weekdays[6][0],
+		func.count(weekdays[6][1].c.result), func.avg(weekdays[6][1].c.result)
+	).outerjoin(
+		weekdays[0][1], Test.id == weekdays[0][1].c.test_id
+	).outerjoin(
+		weekdays[1][1], Test.id == weekdays[1][1].c.test_id
+	).outerjoin(
+		weekdays[2][1], Test.id == weekdays[2][1].c.test_id
+	).outerjoin(
+		weekdays[3][1], Test.id == weekdays[3][1].c.test_id
+	).outerjoin(
+		weekdays[4][1], Test.id == weekdays[4][1].c.test_id
+	).outerjoin(
+		weekdays[5][1], Test.id == weekdays[5][1].c.test_id
+	).outerjoin(
+		weekdays[6][1], Test.id == weekdays[6][1].c.test_id
+	).filter(
+		or_(
+			weekdays[0][1].c.result != None,
+			weekdays[1][1].c.result != None,
+			weekdays[2][1].c.result != None,
+			weekdays[3][1].c.result != None,
+			weekdays[4][1].c.result != None,
+			weekdays[5][1].c.result != None,
+			weekdays[6][1].c.result != None
+		)
+	).group_by(
+		Test.id
+	).order_by(
+		weekdays[6][1].c.modified_utc.desc(),
+		weekdays[5][1].c.modified_utc.desc(),
+		weekdays[4][1].c.modified_utc.desc(),
+		weekdays[3][1].c.modified_utc.desc(),
+		weekdays[2][1].c.modified_utc.desc(),
+		weekdays[1][1].c.modified_utc.desc(),
+		weekdays[6][1].c.modified_utc.desc()
 	)

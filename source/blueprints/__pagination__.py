@@ -28,9 +28,9 @@ def get_pagination(prefix: str, entity_count: int,
 		if int(page_count) < page_count else int(page_count)
 	# Check page_index and per_page validity
 	if (page_index < 1 or page_index > page_count) and page_index != 1:
-		raise ValueError('Requested page_index out of range!')
+		 page_index = 1
 	if per_page < 1:
-		raise ValueError('Requested per_page out of range!')
+		per_page = 1
 	# Store arguments in session
 	set_value(prefix_page_index, page_index)
 	set_value(prefix_per_page, per_page)

@@ -42,7 +42,7 @@
 {%- block list_content -%}
 	{% set weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] %}
 	<div class="card-columns">
-		{%- for chart in charts  -%}
+		{%- for chart  in charts  -%}
 			<div class="card p-2 shadow-sm mb-3 rounded text-center">
 				<blockquote class="blockquote mb-0 card-body">
 					<div class="d-flex w-100 justify-content-between">
@@ -55,13 +55,13 @@
 							type: 'line',
 							data: {
 								labels: [
-									'{{ __(weekdays[chart[3]]) }}',
-									'{{ __(weekdays[chart[6]]) }}',
-									'{{ __(weekdays[chart[9]]) }}',
-									'{{ __(weekdays[chart[12]]) }}',
-									'{{ __(weekdays[chart[15]]) }}',
-									'{{ __(weekdays[chart[18]]) }}',
-									'{{ __(weekdays[chart[21]]) }}'
+									'{{ __(weekdays[chart[3]|int]) }}',
+									'{{ __(weekdays[chart[6]|int]) }}',
+									'{{ __(weekdays[chart[9]|int]) }}',
+									'{{ __(weekdays[chart[12]|int]) }}',
+									'{{ __(weekdays[chart[15]|int]) }}',
+									'{{ __(weekdays[chart[18]|int]) }}',
+									'{{ __(weekdays[chart[21]|int]) }}'
 								],
 								datasets: [
 									{

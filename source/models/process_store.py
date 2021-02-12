@@ -245,10 +245,10 @@ def _get_charts_query(filter_name: str, filter_plugin: str,
 			Test.name.ilike('%' + filter_name + '%'),
 		True if filter_plugin is None else \
 			Test.plugin.ilike('%' + filter_plugin + '%'),
-#		True if user_uid is None else \
-#			user_uid == Process.user_uid,
-#		True if anonymous_token is None else \
-#			anonymous_token == Process.anonymous_token,
+		True if user_uid is None else \
+			user_uid == Process.user_uid,
+		True if anonymous_token is None else \
+			anonymous_token == Process.anonymous_token,
 		Process.modified_utc >= \
 				datetime.datetime.utcnow() - datetime.timedelta(days=7),
 		Test.deleted_utc == None

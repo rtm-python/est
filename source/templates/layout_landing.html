@@ -23,7 +23,10 @@
     <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
 		  <header class="masthead mb-auto">
 		    <div class="inner">
-		      <a class="navbar-brand" href="{{ url_for('base.get_landing') }}"><h5 class="masthead-brand"><strong>{{ __('Elementary School Tutor') }}</strong></h5></a>
+		      <a class="navbar-brand p-0 m-0" href="{{ url_for('base.get_landing') }}">
+		      	<img class="d-inline align-middle mr-2" src="{{ url_for('static', filename='est.png') }}" width="25" height="25">
+		      	<strong>{{ __('Elementary School Tutor') }}</strong>
+		      </a>
 		      <nav class="nav nav-masthead justify-content-center">
 		        <a class="nav-link" href="{{ url_for('test.get_catalog') }}">{{ __('Catalog') }}</a>
 		        <a class="nav-link" href="{{ url_for('test.get_process') }}">{{ __('Test') }}</a>
@@ -45,7 +48,6 @@
 		    </div>
 		  </footer>
 		</div>
-	  {%- include "alert.html" -%}
 	  {%- block body_script -%}{%- endblock -%}
 	</body>
 {%- endblock -%}

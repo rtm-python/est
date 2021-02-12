@@ -63,22 +63,22 @@ class FilterForm(FlaskForm):
 		"""
 		Set form fields to values from request.
 		"""
-		if not get_boolean('filterReset'):
-			self.name.data = get_string('filterName')
-			self.plugin.data = get_string('filterPlugin')
-			self.hide_global.data = get_boolean('filterHideGlobal')
+		if not get_boolean('catalogFilterReset'):
+			self.name.data = get_string('catalogFilterName')
+			self.plugin.data = get_string('catalogFilterPlugin')
+			self.hide_global.data = get_boolean('catalogFilterHideGlobal')
 		else:
-			set_value('filterName', None)
-			set_value('filterPlugin', None)
-			set_value('filterHideGlobal', None)
+			set_value('catalogFilterName', None)
+			set_value('catalogFilterPlugin', None)
+			set_value('catalogFilterHideGlobal', None)
 
 	def store_fields(self) -> None:
 		"""
 		Set form fields to values from request.
 		"""
-		set_value('filterName', self.name.data)
-		set_value('filterPlugin', self.plugin.data)
-		set_value('filterHideGlobal', self.hide_global.data)
+		set_value('catalogFilterName', self.name.data)
+		set_value('catalogFilterPlugin', self.plugin.data)
+		set_value('catalogFilterHideGlobal', self.hide_global.data)
 
 	def url_for_with_fields(self, endpoint: str) -> object:
 		"""
@@ -86,9 +86,9 @@ class FilterForm(FlaskForm):
 		"""
 		return url_for(
 			endpoint,
-			filterName=self.name.data,
-			filterPlugin=self.plugin.data,
-			filterHideGlobal=self.hide_global.data
+			catalogFilterName=self.name.data,
+			catalogFilterPlugin=self.plugin.data,
+			catalogFilterHideGlobal=self.hide_global.data
 		)
 
 
@@ -196,6 +196,7 @@ def get_catalog():
 				'test.create', plugin=creator.plugin.data))
 	# Prepare list data
 	pagination = get_pagination(
+		'catalog',
 		 TestStore.count_list(
 			filter.name.data,
 			filter.plugin.data,
@@ -203,6 +204,7 @@ def get_catalog():
 		)
 	)
 	pagination['endpoint'] = 'test.get_catalog'
+	pagination['prefix'] = 'catalog'
 	tests =  TestStore.read_list(
 		(pagination['page_index'] - 1) * pagination['per_page'],
 		pagination['per_page'],

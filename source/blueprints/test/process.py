@@ -67,22 +67,22 @@ class FilterForm(FlaskForm):
 		"""
 		Set form fields to values from request.
 		"""
-		if not get_boolean('filterReset'):
-			self.name.data = get_string('filterName')
-			self.plugin.data = get_string('filterPlugin')
-			self.hide_completed.data = get_boolean('filterHideCompleted')
+		if not get_boolean('processFilterReset'):
+			self.name.data = get_string('processFilterName')
+			self.plugin.data = get_string('processFilterPlugin')
+			self.hide_completed.data = get_boolean('processFilterHideCompleted')
 		else:
-			set_value('filterName', None)
-			set_value('filterPlugin', None)
-			set_value('filterHideCompleted', None)
+			set_value('processFilterName', None)
+			set_value('processFilterPlugin', None)
+			set_value('processFilterHideCompleted', None)
 
 	def store_fields(self) -> None:
 		"""
 		Set form fields to values from request.
 		"""
-		set_value('filterName', self.name.data)
-		set_value('filterPlugin', self.plugin.data)
-		set_value('filterHideCompleted', self.hide_completed.data)
+		set_value('processFfilterName', self.name.data)
+		set_value('processFilterPlugin', self.plugin.data)
+		set_value('processFilterHideCompleted', self.hide_completed.data)
 
 	def url_for_with_fields(self, endpoint: str) -> object:
 		"""
@@ -90,9 +90,9 @@ class FilterForm(FlaskForm):
 		"""
 		return url_for(
 			endpoint,
-			filterName=self.name.data,
-			filterPlugin=self.plugin.data,
-			filterHideCompleted=self.hide_completed.data
+			processFilterName=self.name.data,
+			processFilterPlugin=self.plugin.data,
+			processFilterHideCompleted=self.hide_completed.data
 		)
 
 
@@ -134,6 +134,7 @@ def get_process():
 	filter.define_fields()
 	# Prepare list data
 	pagination = get_pagination(
+		'process',
 		ProcessStore.count_list(
 			filter.name.data,
 			filter.plugin.data,
@@ -143,6 +144,7 @@ def get_process():
 		)
 	)
 	pagination['endpoint'] = 'test.get_process'
+	pagination['prefix'] = 'process'
 	processes = ProcessStore.read_list(
 		(pagination['page_index'] - 1) * pagination['per_page'],
 		pagination['per_page'],

@@ -14,14 +14,12 @@ import logging
 # Application modules import
 from blueprints import application
 from blueprints.test import blueprint
+from blueprints.__filter__ import FilterForm
 from blueprints.__locale__ import __
-from blueprints.__paginator__ import get_pagination
+from blueprints.__pagination__ import get_pagination
 from blueprints.__args__ import get_string
 from blueprints.__args__ import get_boolean
 from blueprints.__args__ import set_value
-from blueprints.__alert__ import AlertType
-from blueprints.__alert__ import AlertButton
-from blueprints.__alert__ import Alert
 from config import PLUGIN_LIST
 from models.test_store import TestStore
 from models.entity.test import Test
@@ -40,56 +38,20 @@ from wtforms import validators
 from flask_login import current_user
 
 
-class FilterForm(FlaskForm):
+class CatalogFilterForm(FilterForm):
 	"""
-	This is FilterForm class to retrieve form data.
+	This is CatalogFilterForm class to retrieve form data.
 	"""
-	name = StringField('filterName')
-	plugin = StringField('filterPlugin')
-	hide_global = BooleanField('filterHideGlobal')
-	submit = SubmitField('filterSubmit')
+	name = StringField('FilterName')
+	plugin = StringField('FilterPlugin')
+	hide_global = BooleanField('FilterHideGlobal')
+	submit = SubmitField('FilterSubmit')
 
-	def __init__(self) -> 'FilterForm':
+	def __init__(self) -> 'CatalogFilterForm':
 		"""
 		Initiate object with values from request
 		"""
-		super(FilterForm, self).__init__()
-		for field in self:
-			if field.name != 'csrf_token':
-				data = request.form.get(field.label.text)
-				field.data = data if data is not None and len(data) > 0 else None
-
-	def define_fields(self) -> None:
-		"""
-		Set form fields to values from request.
-		"""
-		if not get_boolean('catalogFilterReset'):
-			self.name.data = get_string('catalogFilterName')
-			self.plugin.data = get_string('catalogFilterPlugin')
-			self.hide_global.data = get_boolean('catalogFilterHideGlobal')
-		else:
-			set_value('catalogFilterName', None)
-			set_value('catalogFilterPlugin', None)
-			set_value('catalogFilterHideGlobal', None)
-
-	def store_fields(self) -> None:
-		"""
-		Set form fields to values from request.
-		"""
-		set_value('catalogFilterName', self.name.data)
-		set_value('catalogFilterPlugin', self.plugin.data)
-		set_value('catalogFilterHideGlobal', self.hide_global.data)
-
-	def url_for_with_fields(self, endpoint: str) -> object:
-		"""
-		Return url_for with defined form fields
-		"""
-		return url_for(
-			endpoint,
-			catalogFilterName=self.name.data,
-			catalogFilterPlugin=self.plugin.data,
-			catalogFilterHideGlobal=self.hide_global.data
-		)
+		super(CatalogFilterForm, self).__init__('catalog')
 
 
 class CreatorForm(FlaskForm):
@@ -181,8 +143,8 @@ def get_catalog():
 	Return test catalog page.
 	"""
 	# Handle filter form
-	filter = FilterForm()
-	if request.form.get('filterSubmit') and \
+	filter = CatalogFilterForm()
+	if filter.is_submit(filter.submit.label.text) and \
 			filter.validate_on_submit(): # Valid post request
 		filter.store_fields()
 		return redirect(filter.url_for_with_fields('test.get_catalog'))

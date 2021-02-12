@@ -14,11 +14,12 @@ import logging
 # Application modules import
 from blueprints import application
 from blueprints.test import blueprint
-from blueprints.__paginator__ import get_pagination
+from blueprints.__filter__ import FilterForm
+from blueprints.__locale__ import __
+from blueprints.__pagination__ import get_pagination
 from blueprints.__args__ import get_string
 from blueprints.__args__ import get_boolean
 from blueprints.__args__ import set_value
-from blueprints.__locale__ import __
 from models.process_store import ProcessStore
 from models.test_store import TestStore
 from models.task_store import TaskStore
@@ -38,62 +39,26 @@ from wtforms import SubmitField
 from wtforms import validators
 from flask_login import current_user
 
-
 # Global constants
 process_template = \
 	'<code>' + __('TEST') + ': </code><b>%s</b>\n' + \
 	'<code>' + __('STATUS') + ': </code><b>%s</b>'
 
-class FilterForm(FlaskForm):
+
+class ProcessFilterForm(FilterForm):
 	"""
-	This is FilterForm class to retrieve form data.
+	This is ProcessFilterForm class to retrieve form data.
 	"""
 	name = StringField('filterName')
 	plugin = StringField('filterPlugin')
 	hide_completed = BooleanField('filterHideCompleted')
 	submit = SubmitField('filterSubmit')
 
-	def __init__(self) -> 'FilterForm':
+	def __init__(self) -> 'ProcessFilterForm':
 		"""
 		Initiate object with values from request
 		"""
-		super(FilterForm, self).__init__()
-		for field in self:
-			if field.name != 'csrf_token':
-				data = request.form.get(field.label.text)
-				field.data = data if data is not None and len(data) > 0 else None
-
-	def define_fields(self) -> None:
-		"""
-		Set form fields to values from request.
-		"""
-		if not get_boolean('processFilterReset'):
-			self.name.data = get_string('processFilterName')
-			self.plugin.data = get_string('processFilterPlugin')
-			self.hide_completed.data = get_boolean('processFilterHideCompleted')
-		else:
-			set_value('processFilterName', None)
-			set_value('processFilterPlugin', None)
-			set_value('processFilterHideCompleted', None)
-
-	def store_fields(self) -> None:
-		"""
-		Set form fields to values from request.
-		"""
-		set_value('processFfilterName', self.name.data)
-		set_value('processFilterPlugin', self.plugin.data)
-		set_value('processFilterHideCompleted', self.hide_completed.data)
-
-	def url_for_with_fields(self, endpoint: str) -> object:
-		"""
-		Return url_for with defined form fields
-		"""
-		return url_for(
-			endpoint,
-			processFilterName=self.name.data,
-			processFilterPlugin=self.plugin.data,
-			processFilterHideCompleted=self.hide_completed.data
-		)
+		super(ProcessFilterForm, self).__init__('process')
 
 
 class PlayerForm(FlaskForm):
@@ -126,8 +91,8 @@ def get_process():
 	Return test process page.
 	"""
 	# Handle filter form
-	filter = FilterForm()
-	if request.form.get('filterSubmit') and \
+	filter = ProcessFilterForm()
+	if filter.is_submit(filter.submit.label.text) and \
 			filter.validate_on_submit(): # Valid post request
 		filter.store_fields()
 		return redirect(filter.url_for_with_fields('test.get_process'))

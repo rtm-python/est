@@ -295,9 +295,9 @@ def _get_list_query(filter_name: str, filter_plugin: str,
 		Test
 	).filter(
 		True if filter_name is None else \
-			filter_name == Test.name,
+			Test.name.ilike('%' + filter_name + '%'),
 		True if filter_plugin is None else \
-			filter_plugin == Test.plugin,
+			Test.plugin.ilike('%' + filter_plugin + '%'),
 		True if filter_hide_completed is None or \
 			filter_hide_completed is False else \
 			Process.result == None,

@@ -100,9 +100,9 @@ def _get_list_query(filter_name: str, filter_plugin: str,
 		Test
 	).filter(
 		True if filter_name is None else \
-			Test.name.contains(filter_name),
+			Test.name.ilike('%' + filter_name + '%'),
 		True if filter_plugin is None else \
-			Test.plugin.contains(filter_plugin),
+			Test.plugin.ilike('%' + filter_plugin + '%'),
 		True if filter_user_uid is None else \
 			Test.user_uid == filter_user_uid,
 		Test.deleted_utc == None

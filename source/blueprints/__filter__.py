@@ -55,7 +55,6 @@ class FilterForm(FlaskForm):
 					set_value(self.prefix + field.label.text, None)
 		else:
 			for field in self:
-				print(type(field), type(StringField),  type(field) is StringField)
 				if type(field) is StringField:
 					field.data = get_string(self.prefix + field.label.text)
 				elif type(field) is SelectField:

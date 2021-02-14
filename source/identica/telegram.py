@@ -262,8 +262,8 @@ def send_message(chat_id: int, message: str,
 
 if __name__ == '__main__':
 	init(False)
-	usercode = create_usercode()
-	print(usercode)
+#	usercode = create_usercode()
+#	print(usercode)
 
 	run()
 	try:
@@ -273,9 +273,9 @@ if __name__ == '__main__':
 		pass
 	stop()
 
-	print(json.dumps(data, indent=2))
-	usercode_item = verify_usercode(usercode, data['usercodes'][usercode]['passcode'])
-	if usercode_item is not None:
-		print(json.dumps(usercode_item,	indent=2))
-		if usercode_item['chat_id'] is not None:
-			send_message(usercode_item['chat_id'], 'Добро пожаловать!')
+#	print(json.dumps(data, indent=2))
+#	usercode_item = verify_usercode(usercode, data['usercodes'][usercode]['passcode'])
+#	if usercode_item is not None:
+#		print(json.dumps(usercode_item,	indent=2))
+#		if usercode_item['chat_id'] is not None:
+#			send_message(usercode_item['chat_id'], 'Добро пожаловать!')

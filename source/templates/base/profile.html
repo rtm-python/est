@@ -9,9 +9,9 @@
 						{{ profiler.csrf_token }}
 						<div class="form-row">
 							<div class="col-12">
-								<small>{{ __('Viewing Profile') }}</small>
+								<small>{{ __('Updating Profile') }}</small>
 								<select class="custom-select{%- if profiler.notification_profile.erros -%}{{ ' is-invalid' }}{%- endif -%}" id="{{ profiler.notification_profile.label.text }}" name="{{ profiler.notification_profile.label.text }}">
-									<option{%- if profiler.notification_profile.data == '' -%}{{ ' selected' }}{%- endif -%}>{{ __('Choose..') }}</option>
+									<option{%- if profiler.notification_profile.data == '' -%}{{ ' selected' }}{%- endif -%}>{{ __('Choose') }}</option>
 									{%- for choice in profiler.notification_profile.choices -%}
 										<option value="{{ choice[0] }}"{%- if profiler.notification_profile.data == choice[0] -%}{{ ' selected' }}{%- endif -%}>{{ choice[1] }}</option>
 									{%- endfor -%}
@@ -25,7 +25,7 @@
 							<div class="col-12">
 								<small>{{ __('Starting Test Process') }}</small>
 								<select class="custom-select{%- if profiler.notification_test_start.erros -%}{{ ' is-invalid' }}{%- endif -%}" id="{{ profiler.notification_test_start.label.text }}" name="{{ profiler.notification_test_start.label.text }}">
-									<option{%- if profiler.notification_test_start.data == '' -%}{{ ' selected' }}{%- endif -%}>{{ __('Choose..') }}</option>
+									<option{%- if profiler.notification_test_start.data == '' -%}{{ ' selected' }}{%- endif -%}>{{ __('Choose') }}</option>
 									{%- for choice in profiler.notification_test_start.choices -%}
 										<option value="{{ choice[0] }}"{%- if profiler.notification_test_start.data == choice[0] -%}{{ ' selected' }}{%- endif -%}>{{ choice[1] }}</option>
 									{%- endfor -%}
@@ -39,7 +39,7 @@
 							<div class="col-12">
 								<small>{{ __('Completing Test Process') }}</small>
 								<select class="custom-select{%- if profiler.notification_test_complete.erros -%}{{ ' is-invalid' }}{%- endif -%}" id="{{ profiler.notification_test_complete.label.text }}" name="{{ profiler.notification_test_complete.label.text }}">
-									<option{%- if profiler.notification_test_complete.data == '' -%}{{ ' selected' }}{%- endif -%}>{{ __('Choose..') }}</option>
+									<option{%- if profiler.notification_test_complete.data == '' -%}{{ ' selected' }}{%- endif -%}>{{ __('Choose') }}</option>
 									{%- for choice in profiler.notification_test_complete.choices -%}
 										<option value="{{ choice[0] }}"{%- if profiler.notification_test_complete.data == choice[0] -%}{{ ' selected' }}{%- endif -%}>{{ choice[1] }}</option>
 									{%- endfor -%}

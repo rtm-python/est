@@ -10,7 +10,7 @@
 			</ol>
 			<div class="carousel-inner">
 				{%- for info_template in info_templates -%}
-				  <div class="carousel-item{%- if loop.index0 == 0 -%}{{ ' active' }}{%- endif -%}">
+				  <div class="carousel-item{%- if loop.index0 == 0 -%}{{ ' active' }}{%- endif -%}" data-interval="10000">
 						{%- include info_template -%}
 				  </div>
 				{%- endfor -%}

@@ -16,6 +16,132 @@
 		"endpoint": null,
 		"ru": "Зубрилка"
 	},
+	"Catalog": {
+		"endpoint": null,
+		"ru": "Каталог"
+	},
+	"Test": {
+		"endpoint": null,
+		"ru": "Тест"
+	},
+	"Scoreboard": {
+		"endpoint": null,
+		"ru": "Результаты"
+	},
+	"Profile": {
+		"endpoint": null,
+		"ru": "Профиль"
+	},
+
+	"Filter": {
+		"endpoint": null,
+		"ru": "Фильтр"
+	},
+	"Name": {
+		"endpoint": null,
+		"ru": "Наименование"
+	},
+	"Plugin": {
+		"endpoint": null,
+		"ru": "Плагин"
+	},
+	"Author": {
+		"endpoint": null,
+		"ru": "Автор"
+	},
+	"Hide Global Tests": {
+		"endpoint": null,
+		"ru": "Скрыть общие тесты"
+	},
+	"Hide Completed Processes": {
+		"endpoint": null,
+		"ru": "Скрыть завершенные процессы"
+	},
+	"Apply": {
+		"endpoint": null,
+		"ru": "Применить"
+	},
+	"Reset": {
+		"endpoint": null,
+		"ru": "Сбросить"
+	},
+	"No tests found": {
+		"endpoint": null,
+		"ru": "Тесты не найдены"
+	},
+
+	"Create": {
+		"endpoint": null,
+		"ru": "Создать"
+	},
+
+	"Page": {
+		"endpoint": null,
+		"ru": "Страница"
+	},
+	"total": {
+		"endpoint": null,
+		"ru": "всего"
+	},
+	"elements": {
+		"endpoint": null,
+		"ru": "элементов"
+	},
+	"Do you really want to delete test from catalog?": {
+		"endpoint": null,
+		"ru": "Вы действительно желаете удалить тест из каталога?"
+	},
+	"Delete": {
+		"endpoint": null,
+		"ru": "Удалить"
+	},
+
+	"Start": {
+		"endpoint": null,
+		"ru": "Начать"
+	},
+	"Restart": {
+		"endpoint": null,
+		"ru": "Повторить"
+	},
+	"Continue": {
+		"endpoint": null,
+		"ru": "Продолжить"
+	},
+	"Details": {
+		"endpoint": null,
+		"ru": "Подробнее"
+	},
+	"Close": {
+		"endpoint": null,
+		"ru": "Закрыть"
+	},
+
+	"task": {
+		"endpoint": null,
+		"ru": "Задача"
+	},
+	"Type number for question mark...": {
+		"endpoint": null,
+		"ru": "Укажите число для вопросительного знака..."
+	},
+	"Answer": {
+		"endpoint": null,
+		"ru": "Ответ"
+	},
+	"Submit": {
+		"endpoint": null,
+		"ru": "Отправить"
+	},
+	"Correct answer": {
+		"endpoint": null,
+		"ru": "Правильный ответ"
+	},
+	"Incorrect answer": {
+		"endpoint": null,
+		"ru": "Неправильный ответ"
+	},
+
 	"Completed": {
 		"endpoint": null,
 		"ru": "Завершено"
@@ -23,5 +149,157 @@
 	"In process": {
 		"endpoint": null,
 		"ru": "В процессе"
+	},
+	"Progress": {
+		"endpoint": null,
+		"ru": "Результат"
+	},
+	"Total Passed": {
+		"endpoint": null,
+		"ru": "Всего пройдено"
+	},
+	"Average Progress": {
+		"endpoint": null,
+		"ru": "Средний результат"
+	},
+
+	"Select Plugin": {
+		"endpoint": null,
+		"ru": "Выберите плагин"
+	},
+	"Choose": {
+		"endpoint": null,
+		"ru": "Выберите"
+	},
+	"Create Test": {
+		"endpoint": null,
+		"ru": "Создать тест"
+	},
+	"Maximum limit": {
+		"endpoint": null,
+		"ru": "Макисмальное значение"
+	},
+	"Number of variables": {
+		"endpoint": null,
+		"ru": "Количество переменных"
+	},
+	"Only result is unknown": {
+		"endpoint": null,
+		"ru": "Только результат неизвестное"
+	},
+	"Addition": {
+		"endpoint": null,
+		"ru": "Сложение"
+	},
+	"Substraction": {
+		"endpoint": null,
+		"ru": "Вычитание"
+	},
+	"Multiplication": {
+		"endpoint": null,
+		"ru": "Умножение"
+	},
+	"Division": {
+		"endpoint": null,
+		"ru": "Деление"
+	},
+	"Repeat": {
+		"endpoint": null,
+		"ru": "Количество повторов"
+	},
+	"Speed": {
+		"endpoint": null,
+		"ru": "Скорость"
+	},
+	"Yes": {
+		"endpoint": null,
+		"ru": "Да"
+	},
+	"No": {
+		"endpoint": null,
+		"ru": "Нет"
+	},
+	"Use": {
+		"endpoint": null,
+		"ru": "Использовать"
+	},
+	"Skip": {
+		"endpoint": null,
+		"ru": "Пропустить"
+	},
+	"Slow": {
+		"endpoint": null,
+		"ru": "Медленно"
+	},
+	"Normal": {
+		"endpoint": null,
+		"ru": "Нормально"
+	},
+	"Fast": {
+		"endpoint": null,
+		"ru": "Быстро"
+	},
+	"Save": {
+		"endpoint": null,
+		"ru": "Сохранить"
+	},
+	"Cancel": {
+		"endpoint": null,
+		"ru": "Отмена"
+	},
+
+	"Updating Profile": {
+		"endpoint": null,
+		"ru": "Обновление профиля"
+	},
+	"Starting Test Process": {
+		"endpoint": null,
+		"ru": "Начало процесса тестирования"
+	},
+	"Completing Test Process": {
+		"endpoint": null,
+		"ru": "Завершение процесса тестирования"
+	},
+	"Feedback": {
+		"endpoint": null,
+		"ru": "Отзыв"
+	},
+	"Keep silence": {
+		"endpoint": null,
+		"ru": "Ничего не отправлять"
+	},
+	"Send notification": {
+		"endpoint": null,
+		"ru": "Отправить уведомление"
+	},
+	"Message": {
+		"endpoint": null,
+		"ru": "Сообщение"
+	},
+	"Send": {
+		"endpoint": null,
+		"ru": "Отправить"
+	},
+
+	"Usercode": {
+		"endpoint": null,
+		"ru": "Код пользователя"
+	},
+	"Send usercode within chat message to": {
+		"endpoint": null,
+		"ru": "Отправьте код пользователя через сообщение в чате"
+	},
+	"Passcode": {
+		"endpoint": null,
+		"ru": "Код доступа"
+	},
+	"Confirm": {
+		"endpoint": null,
+		"ru": "Подтвердить"
+	},
+
+	"Answer should be a number.": {
+		"endpoint": null,
+		"ru": "Ответ должен быть числом."
 	}
 }

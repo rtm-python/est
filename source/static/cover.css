@@ -99,7 +99,7 @@ body {
 }
 
 @media (min-width: 576px) {
-  .card-img {
+  .img-middle {
   	top: 0;
   	bottom: 0;
   	margin: auto ! important;

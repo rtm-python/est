@@ -67,6 +67,7 @@ try:
 			INFO_TEMPLATE_PATH_KEY, INFO_TEMPLATE_PATH)):
 		if filename.endswith('.html'):
 			INFO_TEMPLATE_LIST += [os.path.join('info', filename)]
+	INFO_TEMPLATE_LIST = sorted(INFO_TEMPLATE_LIST)
 except Exception as exc:
 	logging.error(getattr(exc, 'message', repr(exc)))
 	sys.exit(0)

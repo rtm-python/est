@@ -25,7 +25,7 @@
 								<div class="col-12">
 									<small>{{ __(option.description) }}</small>
 									<select class="custom-select" name="{{ option.label.text }}">
-										<option{%- if option.data == '' -%}{{ ' selected' }}{%- endif -%}>{{ __('Choose...') }}</option>
+										<option{%- if option.data == '' -%}{{ ' selected' }}{%- endif -%}>{{ __('Choose') }}</option>
 										{%- for choice in option.choices -%}
 											<option value="{{ choice[0] }}"{%- if option.data == choice[0] -%}{{ ' selected' }}{%- endif -%}>{{ __(choice[1]) }}</option>
 										{%- endfor -%}
@@ -49,7 +49,7 @@
 							<div class="col-12">
 								<small>{{ __('Speed') }}</small>
 								<select class="custom-select{%- if editor.speed.erros -%}{{ ' is-invalid' }}{%- endif -%}" id="{{ editor.speed.label.text }}" name="{{ editor.speed.label.text }}">
-									<option{%- if editor.speed.data == '' -%}{{ ' selected' }}{%- endif -%}>{{ __('Choose...') }}</option>
+									<option{%- if editor.speed.data == '' -%}{{ ' selected' }}{%- endif -%}>{{ __('Choose') }}</option>
 									{%- for choice in editor.speed.choices -%}
 										<option value="{{ choice[0] }}"{%- if editor.speed.data == choice[0] -%}{{ ' selected' }}{%- endif -%}>{{ __(choice[1]) }}</option>
 									{%- endfor -%}

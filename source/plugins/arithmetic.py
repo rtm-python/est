@@ -39,27 +39,27 @@ options = [
 		'choices': [('yes', 'Yes'), ('no', 'No')]
 	},
 	{
-		'name':	'additions',
-		'label': {'text': 'additions'},
-		'description': 'Additions',
+		'name':	'addition',
+		'label': {'text': 'addition'},
+		'description': 'Addition',
 		'choices': [('use', 'Use'), ('skip', 'Skip')]
 	},
 	{
-		'name':	'substractions',
-		'label': {'text': 'substractions'},
-		'description': 'Substractions',
+		'name':	'substraction',
+		'label': {'text': 'substraction'},
+		'description': 'Substraction',
 		'choices': [('use', 'Use'), ('skip', 'Skip')]
 	},
 	{
-		'name':	'multiplications',
-		'label': {'text': 'multiplications'},
-		'description': 'Multiplications',
+		'name':	'multiplication',
+		'label': {'text': 'multiplication'},
+		'description': 'Multiplication',
 		'choices': [('use', 'Use'), ('skip', 'Skip')]
 	},
 	{
-		'name':	'divisions',
-		'label': {'text': 'divisions'},
-		'description': 'Divisions',
+		'name':	'division',
+		'label': {'text': 'division'},
+		'description': 'Division',
 		'choices': [('use', 'Use'), ('skip', 'Skip')]
 	}
 ]
@@ -90,10 +90,10 @@ def parse_options(request_form, indent=None) -> str:
 			'max_limit': get_valid_value(request_form, 'maxLimit', 'max_limit'),
 			'vars_count': get_valid_value(request_form, 'varsCount', 'vars_count'),
 			'result_only': get_valid_value(request_form, 'resultOnly', 'result_only'),
-			'additions': get_valid_value(request_form, 'additions', 'additions'),
-			'substractions': get_valid_value(request_form, 'substractions', 'substractions'),
-			'multiplications': get_valid_value(request_form, 'multiplications', 'multiplications'),
-			'divisions': get_valid_value(request_form, 'divisions', 'divisions')
+			'addition': get_valid_value(request_form, 'addition', 'addition'),
+			'substraction': get_valid_value(request_form, 'substraction', 'substraction'),
+			'multiplication': get_valid_value(request_form, 'multiplication', 'multiplication'),
+			'division': get_valid_value(request_form, 'division', 'division')
 		},
 		indent=indent
 	)
@@ -106,10 +106,10 @@ def form_options(values: str, validate: bool=False) -> dict:
 	try:
 		values_dict = json.loads(values)
 		if validate:
-			if values_dict['additions'] == 'skip' and \
-					values_dict['substractions'] == 'skip' and \
-					values_dict['multiplications'] == 'skip' and \
-					values_dict['divisions'] == 'skip':
+			if values_dict['addition'] == 'skip' and \
+					values_dict['substraction'] == 'skip' and \
+					values_dict['multiplication'] == 'skip' and \
+					values_dict['division'] == 'skip':
 				raise ValueError()
 			max_limit = int(values_dict['max_limit'])
 			vars_count = int(values_dict['vars_count'])
@@ -140,13 +140,13 @@ def get_random_operation(options: dict) -> list:
 	Return random accessible operation.
 	"""
 	operations = []
-	if options['additions'] == 'use':
+	if options['addition'] == 'use':
 		operations += [get_addition]
-	if options['substractions'] == 'use':
+	if options['substraction'] == 'use':
 		operations += [get_substraction]
-	if options['multiplications'] == 'use':
+	if options['multiplication'] == 'use':
 		operations += [get_multiplication]
-	if options['divisions'] == 'use':
+	if options['division'] == 'use':
 		operations += [get_division]
 	return operations[randint(0, len(operations) - 1)]
 

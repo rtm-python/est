@@ -27,7 +27,7 @@
 									<select class="custom-select" name="{{ option.label.text }}">
 										<option{%- if option.data == '' -%}{{ ' selected' }}{%- endif -%}>{{ __('Choose...') }}</option>
 										{%- for choice in option.choices -%}
-											<option value="{{ choice[0] }}"{%- if option.data == choice[0] -%}{{ ' selected' }}{%- endif -%}>{{ choice[1] }}</option>
+											<option value="{{ choice[0] }}"{%- if option.data == choice[0] -%}{{ ' selected' }}{%- endif -%}>{{ __(choice[1]) }}</option>
 										{%- endfor -%}
 									</select>		
 								</div>
@@ -37,7 +37,7 @@
 								<select class="custom-select{%- if editor.repeat.erros -%}{{ ' is-invalid' }}{%- endif -%}" id="{{ editor.repeat.label.text }}" name="{{ editor.repeat.label.text }}">
 									<option{%- if editor.repeat.data == '' -%}{{ ' selected' }}{%- endif -%}>{{ __('Choose..') }}</option>
 									{%- for choice in editor.repeat.choices -%}
-										<option value="{{ choice[0] }}"{%- if editor.repeat.data == choice[0] -%}{{ ' selected' }}{%- endif -%}>{{ choice[1] }}</option>
+										<option value="{{ choice[0] }}"{%- if editor.repeat.data == choice[0] -%}{{ ' selected' }}{%- endif -%}>{{ __(choice[1]) }}</option>
 									{%- endfor -%}
 								</select>
 								{%- for error in editor.repeat.errors -%}
@@ -51,7 +51,7 @@
 								<select class="custom-select{%- if editor.speed.erros -%}{{ ' is-invalid' }}{%- endif -%}" id="{{ editor.speed.label.text }}" name="{{ editor.speed.label.text }}">
 									<option{%- if editor.speed.data == '' -%}{{ ' selected' }}{%- endif -%}>{{ __('Choose...') }}</option>
 									{%- for choice in editor.speed.choices -%}
-										<option value="{{ choice[0] }}"{%- if editor.speed.data == choice[0] -%}{{ ' selected' }}{%- endif -%}>{{ choice[1] }}</option>
+										<option value="{{ choice[0] }}"{%- if editor.speed.data == choice[0] -%}{{ ' selected' }}{%- endif -%}>{{ __(choice[1]) }}</option>
 									{%- endfor -%}
 								</select>
 								{%- for error in editor.speed.errors -%}

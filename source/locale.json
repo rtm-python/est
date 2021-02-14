@@ -2,8 +2,26 @@
 	"__": {
 		"supported_languages": ["kz", "ru", "en"]
 	},
-	"Catalog": {
+	"arithmetic": {
 		"endpoint": null,
-		"ru": "Каталог"
+		"en": "Arithmetic",
+		"ru": "Арифметика",
+		"kz": "Арифметика"
+	},
+	"language": {
+		"endpoint": null,
+		"ru": "язык"
+	},
+	"Crammer": {
+		"endpoint": null,
+		"ru": "Зубрилка"
+	},
+	"Completed": {
+		"endpoint": null,
+		"ru": "Завершено"
+	},
+	"In process": {
+		"endpoint": null,
+		"ru": "В процессе"
 	}
 }

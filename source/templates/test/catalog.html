@@ -54,7 +54,7 @@
 					<select autofocus class="custom-select" name="{{ creator.plugin.label.text }}" id="{{ creator.plugin.label.text }}" style="height: 1.9rem; font-size: 0.9rem; padding-top: 3px;">
 						<option value="" selected>{{ __('Select Plugin') }}</option>
 						{%- for choice in creator.plugin.choices -%}
-							<option value="{{ choice[0] }}"{%- if creator.plugin.data == choice[0] -%}{{ ' selected' }}{%- endif -%}>{{ __(choice[1]) }}</option>
+							<option value="{{ choice }}"{%- if creator.plugin.data == choice -%}{{ ' selected' }}{%- endif -%}>{{ __(choice) }}</option>
 						{%- endfor -%}
 					</select>
 				</div>
@@ -100,12 +100,5 @@
 				</blockquote>
 			</div>
 		{%- endif -%}
-<!--		<div class="card p-2 shadow-sm mb-3 rounded text-center">-->
-<!--			<blockquote class="blockquote mb-0 card-body">-->
-<!--				<p class="card-text">{{ __('You can create your own test based on installed plugins') }}</p>-->
-<!--				<a href="#" class="btn btn-outline-dark m-1 pl-4 pr-4">{{ __('Create') }}</a>-->
-<!--				<a href="#" class="btn btn-outline-dark m-1 pl-4 pr-4">{{ __('Show more') }}</a>-->
-<!--			</blockquote>-->
-<!--		</div>-->
 	</div>
 {%- endblock -%}

@@ -109,7 +109,7 @@ class TestForm(FlaskForm):
 			('5', '5'), ('10', '10'), ('15', '15'),('25', '25'),('50', '50')
 		]
 		self.speed.choices = [
-			('25', __('Slow')), ('50', __('Normal')), ('100', __('Fast'))
+			('25', 'Slow'), ('50', 'Normal'), ('100', 'Fast')
 		]
 		self.options.plugin_module = plugin_module
 		if test:

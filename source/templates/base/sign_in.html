@@ -1,12 +1,12 @@
 {%- extends "layout_landing.html" -%}
 {%- set title -%}{{ __('Sign in') }}{%- endset -%}
 {%- block body_content -%}
-	<div class="col-12 col-sm-10 offset-sm-1 col-md-10 offset-md-1 col-lg-8 offset-lg-2">
+	<div class="col-12 col-sm-10 offset-sm-1 col-md-10 offset-md-1 col-lg-8 offset-lg-2 text-center">
 		<div class="row">
 			<div class="col-12 col-sm-6 mb-3">
 				<small>{{ __('Usercode') }}</small>
 				<div class="col-12 mb-3">
-					<h3 style="font-family: 'Roboto Mono', monospace; padding: 2px; border: 1px solid whitesmoke; border-radius: 5px;">{{ sign_in.usercode.value }}</h3>
+					<h3 style="font-family: 'Roboto Mono', monospace; padding: 0 2px 2px 2px; border: 1px solid whitesmoke; border-radius: 5px;">{{ sign_in.usercode.value }}</h3>
 					<small>{{ __('Send usercode within chat message to ') }}<a href="https://t.me/identica_bot" style="background: darkgrey; padding: 3px 5px;">@identica_bot</a></small>
 					</div>
 			</div>

@@ -51,9 +51,9 @@
 						<small class="text-muted">{{ __(test.plugin) }}</small>
 						<small class="text-muted">
 							{%- if process.result != None -%}
-								{{ __('completed') }}
+								{{ __('Completed') }}
 							{%- else -%}
-								{{ __('in process') }}
+								{{ __('In process') }}
 							{%- endif -%}
 						</small>
 					</div>
@@ -76,5 +76,12 @@
 				</blockquote>
 			</div>
 		{% endfor %}
+		{% if processes|length == 0 %}
+			<div class="card p-2 shadow-sm mb-3 rounded text-center" style="background: whitesmoke;">
+				<blockquote class="blockquote mb-0 card-body">
+					<p class="card-text">{{ __('No tests found') }}</p>
+				</blockquote>
+			</div>
+		{%- endif -%}
 	</div>
 {%- endblock -%}

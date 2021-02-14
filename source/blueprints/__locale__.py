@@ -8,7 +8,7 @@ Helper module to handle localization.
 
 
 # Application modules import
-from config import locale
+from config import LOCALE
 from blueprints import application
 
 # Additional libraries import
@@ -23,7 +23,7 @@ def set_session_language():
 	Set session language from client request.
 	"""
 	session['language'] = request.accept_languages.best_match(
-		locale['__']['supported_languages']
+		LOCALE['__']['supported_languages']
 	)
 
 
@@ -41,7 +41,7 @@ def __(key: str) -> str:
 	"""
 	Return matching by key localized text string.
 	"""
-	value = locale.get(key)
+	value = LOCALE.get(key)
 	if value:
 		localized = value.get(session['language'])
 		if localized:

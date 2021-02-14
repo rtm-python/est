@@ -10,7 +10,7 @@ import importlib
 import json
 
 # Application modules import
-from config import config
+from config import CONFIG
 from config import UrlPrefix
 
 # Additional libraries import
@@ -21,7 +21,7 @@ from flask_paranoid import Paranoid
 
 # Initiate Flask object
 application = Flask(
-	config['name'],
+	CONFIG['name'],
 	static_url_path='',
 	static_folder='source/static',
 	template_folder='source/template'
@@ -72,3 +72,20 @@ def __dict(text: str) -> dict:
 	Return dictionary from text string.
 	"""
 	return json.loads(text)
+
+
+@application.context_processor
+def get_config():
+	"""
+	Return configuration data by key.
+	"""
+	def _config(key: str) -> object:
+		return __config(key)
+	return dict(__config=__config)
+
+
+def __config(key: str) -> object:
+	"""
+	Return configuration data by key.
+	"""
+	return CONFIG.get(key)

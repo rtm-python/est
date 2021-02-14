@@ -1,0 +1,43 @@
+<div class="card mb-3 bg-transparent" style="border: 0;">
+	<div class="row no-gutters">
+		<div class="col-12">
+			<div class="card-body pb-0">
+				<h5 class="card-title text-center">
+					<strong>
+						{%- if language == 'language' or language == 'язык' -%}
+							Заучивание учебного материала
+						{%- endif -%}
+					</strong>
+				</h5>
+			</div>
+		</div>
+		<div class="offset-2 col-8 offset-sm-0 col-sm-4" style="text-align: initital;">
+			<img src="{{ url_for('static', filename='brain.png') }}" class="p-3 card-img">
+		</div>
+		<div class="col-12 col-sm-8">
+			<div class="card-body">
+				<div class="card-text text-center">
+					{%- if language == 'language' or language == 'язык' -%}
+						<p>
+							Процесс запоминания информации практически напрямую связан с ее востребованностью, мы лучше помним только используемую информацию.
+						</p>
+						<p>
+							Мозг способен быстро запомнить и сформировать необходимые знания о некоторой сущности основываясь на частом повторении адаптированного материала.
+						</p>
+					{%- endif -%}
+				</div>
+			</div>
+		</div>
+		<div class="col-12">
+			<div class="card-body pt-0 pb-0">
+				<div class="card-text text-center">
+					{%- if language == 'language' or language == 'язык' -%}
+						<p>
+							<i>Этот ресурс для детей дошкольного возраста и учащихся начальных классов создан на основе предположения, что можно повысить эффективность заучивания учебного материала через ручной ввод ответов на вопросы в рамках изучаемого учебного материала, частую активацию системы внутреннего подкрепления мозга, создание зрительных и звуковых образов корректности ответов.</i>
+						</p>
+					{%- endif -%}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

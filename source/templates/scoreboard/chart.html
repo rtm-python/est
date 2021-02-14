@@ -114,5 +114,12 @@
 				</blockquote>
 			</div>
 		{%- endfor -%}
+		{% if charts|length == 0 %}
+			<div class="card p-2 shadow-sm mb-3 rounded text-center" style="background: whitesmoke;">
+				<blockquote class="blockquote mb-0 card-body">
+					<p class="card-text">{{ __('No tests found') }}</p>
+				</blockquote>
+			</div>
+		{%- endif -%}
 	</div>
 {%- endblock -%}

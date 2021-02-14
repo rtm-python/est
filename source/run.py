@@ -3,6 +3,8 @@
 """
 Main module to run application.
 """
+import sys
+sys.path.append('source')
 
 # Application modules import
 from blueprints import application

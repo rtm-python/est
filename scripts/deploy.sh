@@ -10,7 +10,7 @@
 	&& yes | cp config/app.json config/_app.json \
 	&& echo 'File "config/_app.json" - backup created!'
 
-config=$(jq '.data[] | select(.version == "'$*'")' secrets/deployment.json)
+config=$(jq '.data[] | select(.version == "'$*'")' deployment.json)
 if [ -z "$config" ];
 then
 	echo 'Define configuration version!' \
@@ -49,13 +49,13 @@ export FLASK_APP=source/run.py \
 
 # Serivce (WSGI)
 
-name=$(jq -r '.name' secrets/deployment.json)
-desc=$(jq -r '.desc' secrets/deployment.json)
+name=$(jq -r '.name' deployment.json)
+desc=$(jq -r '.desc' deployment.json)
 
-jq -r '.wsgi[]' secrets/deployment.json > config/app.ini \
+jq -r '.wsgi[]' deployment.json > config/app.ini \
 	&& echo 'WSGI "app.ini" - created!'
 
-output=$(jq -r '.service[]' secrets/deployment.json) \
+output=$(jq -r '.service[]' deployment.json) \
 	&& output=${output/\$desc/"$desc"} \
 	&& output=${output/\$user/$(whoami)} \
 	&& output=${output/\$workdir/$(pwd)} \
@@ -69,7 +69,7 @@ output=$(jq -r '.service[]' secrets/deployment.json) \
 name='identica'
 desc='handle identica bot messages'
 
-output=$(jq -r '.service[]' secrets/deployment.json) \
+output=$(jq -r '.service[]' deployment.json) \
 	&& output=${output/\$desc/"$desc"} \
 	&& output=${output/\$user/$(whoami)} \
 	&& output=${output/\$workdir/$(pwd)} \
@@ -77,3 +77,9 @@ output=$(jq -r '.service[]' secrets/deployment.json) \
 	&& output=${output/\$exec/$(pwd)"/.venv/bin/python source/identica/telegram.py"} \
 	&& echo "$output" > config/"$name".service \
 	&& echo 'Unit '"$name"'.service" - created!'
+
+# Clear deployment
+
+[ -f deployment.json ] \
+	&& yes | rm deployment.json \
+	&& echo 'Complete!'

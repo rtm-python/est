@@ -18,14 +18,15 @@ import os
 import requests
 
 # Global Constants
-filename = 'source/identica/telegram.txt'
+folder = 'source/identica/'
+filename = 'telegram.txt'
 url_telegram = 'https://api.telegram.org/bot%s/'
 cmd_get_updates = 'getUpdates'
 cmd_send_message = 'sendMessage'
 cmd_delete_message = 'deleteMessage'
 alphabet = string.ascii_lowercase + string.digits
 code_length = 4
-clear_index = 120
+clear_index = 60
 valid_seconds = 30
 sleep_seconds = 3
 message_limit = 100
@@ -68,18 +69,22 @@ def handle(break_event: threading.Event, data: dict) -> None:
 							'Ignoring invalid usercode: %s' % usercode
 						)
 						continue # skip to next on mismatch by code length
-					if data['usercodes'].get(usercode) is None:
+					# Read data from filesystem
+					usercode_filename = os.path.join(folder, '%s.data' % usercode)
+					if not os.path.isfile(usercode_filename):
 						logging.warning(
 							'Ignoring not existing usercode: %s' % usercode
 						)
 						continue # skip to next on usercode not found
-					usercode_item = data['usercodes'][usercode]
+					with open(usercode_filename, 'r') as usercode_file:
+						usercode_item = json.loads(usercode_file.read())
+					# Verify validity
 					if usercode_item['valid_before'] < timestamp:
 						logging.warning(
 							'Ignoring timed out for %d seconds usercode: %s' % \
 							(timestamp - usercode_item['valid_before'], usercode)
 						)
-						del data['usercodes'][usercode]
+						os.remove(usercode_filename)
 						continue # skip to next on invalid timestamp
 					# Fill passing userdata
 					usercode_item['from_id'] = item['message']['from']['id']
@@ -90,6 +95,9 @@ def handle(break_event: threading.Event, data: dict) -> None:
 					])
 					usercode_item['passcode'] = \
 						''.join(secrets.choice(alphabet) for i in range(code_length))
+					# Output data to json-file
+					with open(usercode_filename, 'w') as usercode_file:
+						usercode_file.write(json.dumps(usercode_item, indent=2))
 					# Send passcode within chat message
 					response = send_message(
 						usercode_item['chat_id'],
@@ -111,21 +119,14 @@ def handle(break_event: threading.Event, data: dict) -> None:
 			if repeat_index <= 0:
 				# Clear timed out usercodes
 				repeat_index = clear_index
-				usercode_list = [] # list of usercode (keys) to delete
-				for usercode in data['usercodes'].keys():
-					if data['usercodes'][usercode]['valid_before'] < timestamp:
-						usercode_list += [usercode]
-				# Iterate over usercodes to delete list item and message
-				for usercode in usercode_list:
-					if data['usercodes'][usercode].get('chat_id') is not None:
-						response = requests.post(
-							data['url_delete_message'],
-							json={
-								'chat_id': data['usercodes'][usercode]['chat_id'],
-								'message_id': data['usercodes'][usercode]['message_id']
-							}
-						)
-					del data['usercodes'][usercode]
+				for usercode_filename in os.listdir(folder):
+					usercode_filename = os.path.join(folder, usercode_filename)
+					if not usercode_filename.endswith('.data'):
+						continue # Skip on non usercode file
+					with open(usercode_filename, 'r') as usercode_file:
+						usercode_item = json.loads(usercode_file.read())
+					if usercode_item['valid_before'] < timestamp:
+						os.remove(usercode_filename)
 		except:
 			logging.error('Identica bot communication error', exc_info=1)
 	break_event.clear() # Indicate on thread function exiting
@@ -167,10 +168,11 @@ def init(hidden: bool = True) -> None:
 	global data
 	if data.get('token') is None or data.get('offset') is None:
 		# Read initiating data from file (name and token)
-		with open(filename, 'r') as telegram_file:
+		telegram_filename = os.path.join(folder, filename)
+		with open(telegram_filename, 'r') as telegram_file:
 			 telegram_data = telegram_file.read().strip()
 		if hidden:
-			os.remove(filename)
+			os.remove(telegram_filename)
 		# Initiate shareable  data dictionary
 		data['website'], data['token'], data['feedback_chat_id'] = \
 			telegram_data.split('\n')
@@ -203,16 +205,20 @@ def create_usercode() -> str:
 	while True:
 		usercode = ''.join(secrets.choice(alphabet) \
 											 for i in range(code_length))
-		if data['usercodes'].get(usercode) is None:
+		usercode_filename = os.path.join(folder, '%s.data' % usercode)
+		if not os.path.isfile(usercode_filename):
 			break # dublicates not found (success)
 	# Create usercode data item
-	data['usercodes'][usercode] = {
+	usercode_item = {
 		'passcode': None, 'name': None,
 		'from_id': None, 'message_id': None,
 		'valid_before': (
 			datetime.datetime.utcnow() + datetime.timedelta(seconds=valid_seconds)
 		).timestamp()
 	}
+	# Output data to json-file
+	with open(usercode_filename, 'w') as usercode_file:
+		usercode_file.write(json.dumps(usercode_item, indent=2))
 	return usercode
 
 
@@ -222,27 +228,29 @@ def verify_usercode(usercode: str, passcode: str) -> dict:
 	return usercode data on success.
 	"""
 	try:
-		if data['usercodes'].get(usercode) is not None:
-			if data['usercodes'][usercode]['passcode'] is not None:
-				if data['usercodes'][usercode]['valid_before'] > \
-						datetime.datetime.utcnow().timestamp():
-					usercode_item = data['usercodes'][usercode]
-					# Delete used usercode data and message
-					response = requests.post(
-						data['url_delete_message'],
-						json={
-							'chat_id': usercode_item['chat_id'],
-							'message_id': usercode_item['message_id']
-						}
-					)
-				else:
-					logging.debug('Usercode/passcode pair timed out for %d seconds' % \
-												data['usercodes'][usercode]['valid_before'] - \
-												datetime.datetime.utcnow().timestamp())
-					usercode_item = None # indvalid (timed out) usercode
-				return usercode_item
+		usercode_filename = os.path.join(folder, '%s.data' % usercode)
+		if not os.path.isfile(usercode_filename):
+			raise ValueError('Usercode data not found')
+		with open(usercode_filename, 'r') as usercode_file:
+			usercode_item = json.loads(usercode_file.read())
+		os.remove(usercode_filename)
+		if usercode_item['passcode'] is None:
+			raise ValueError('No passcode in usercode data')
+		if usercode_item['valid_before'] < \
+				datetime.datetime.utcnow().timestamp():
+			raise ValueError('Usercode data timed out')
+		# Delete used usercode data and message
+		response = requests.post(
+			data['url_delete_message'],
+			json={
+				'chat_id': usercode_item['chat_id'],
+				'message_id': usercode_item['message_id']
+			}
+		)
+		return usercode_item
 	except:
 		logging.error('Verification: %s / %s' % (usercode, passcode), exc_info=1)
+		return None
 
 
 def send_message(chat_id: int, message: str,
@@ -261,10 +269,7 @@ def send_message(chat_id: int, message: str,
 
 
 if __name__ == '__main__':
-	init(False)
-#	usercode = create_usercode()
-#	print(usercode)
-
+	init(True)
 	run()
 	try:
 		while True:
@@ -272,10 +277,3 @@ if __name__ == '__main__':
 	except KeyboardInterrupt:
 		pass
 	stop()
-
-#	print(json.dumps(data, indent=2))
-#	usercode_item = verify_usercode(usercode, data['usercodes'][usercode]['passcode'])
-#	if usercode_item is not None:
-#		print(json.dumps(usercode_item,	indent=2))
-#		if usercode_item['chat_id'] is not None:
-#			send_message(usercode_item['chat_id'], 'Добро пожаловать!')

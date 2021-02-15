@@ -63,3 +63,17 @@ output=$(jq -r '.service[]' secrets/deployment.json) \
 	&& output=${output/\$exec/$(pwd)"/.venv/bin/uwsgi --ini config/app.ini"} \
 	&& echo "$output" > config/"$name".service \
 	&& echo 'Unit '"$name"'.service" - created!'
+
+# Serivce (identica)
+
+name='identica'
+desc='handle identica bot messages'
+
+output=$(jq -r '.service[]' secrets/deployment.json) \
+	&& output=${output/\$desc/"$desc"} \
+	&& output=${output/\$user/$(whoami)} \
+	&& output=${output/\$workdir/$(pwd)} \
+	&& output=${output/\$bindir/$(pwd)"/.venv/bin"} \
+	&& output=${output/\$exec/$(pwd)"/.venv/bin/python source/identica/telegram.py"} \
+	&& echo "$output" > config/"$name".service \
+	&& echo 'Unit '"$name"'.service" - created!'

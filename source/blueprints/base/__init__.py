@@ -12,6 +12,7 @@ from blueprints import application
 
 # Additional libraries import
 from flask import Blueprint
+from flask import render_template
 
 # Initiate Blueprint object
 blueprint = Blueprint(
@@ -82,5 +83,7 @@ def handle_error(error):
 	Return error message.
 	"""
 	error_code = getattr(error, 'code', 0)
-	return str(error_code), \
-		error_code if 400 <= error_code < 500 else 200
+	return render_template(
+		'base/error.html',
+		error_code=error_code
+	)

@@ -298,6 +298,11 @@
 		"ru": "Подтвердить"
 	},
 
+	"Thank you for your feedback!": {
+		"endpoint": null,
+		"ru": "Благодарим Вас за отзыв!"
+	},
+
 	"Answer should be a number.": {
 		"endpoint": null,
 		"ru": "Ответ должен быть числом."

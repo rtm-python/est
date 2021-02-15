@@ -46,10 +46,10 @@
 			<div class="card p-2 shadow-sm mb-3 rounded text-center">
 				<blockquote class="blockquote mb-0 card-body">
 					<div class="d-flex w-100 justify-content-between">
-						<small class="text-muted">{{ chart[1] }}</small>
-						<small class="text-muted">{{ __(chart[2]) }}</small>
+						<small class="text-muted text-left">{{ chart[1] }}</small>
+						<small class="text-muted text-right">{{ __(chart[2]) }}</small>
 					</div>
-					<canvas id="chart-{{ chart[0] }}" style="display: block; width: 800px; height: 400px;" width="800" height="400" class="chartjs-render-monitor"></canvas>
+					<canvas id="chart-{{ chart[0] }}" style="display: block; width: 600px; height: 400px;" width="600" height="400" class="chartjs-render-monitor"></canvas>
 					<script>
 						new Chart('chart-{{ chart[0] }}', {
 							type: 'line',

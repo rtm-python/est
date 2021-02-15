@@ -197,14 +197,12 @@ def play(uid: str):
 			task = TaskStore.create(process.id, json.dumps(data))
 			player.answer.data = None
 		else:
-			task = TaskStore.update(
-				task.uid, process.id, json.dumps(data), None, None)
+			data = json.loads(task.data)
 			player.answer.errors = validation_errors
 	elif task is None:
 		task = TaskStore.create(process.id, json.dumps(data))
 	else:
-		task = TaskStore.update(
-			task.uid, process.id, json.dumps(data), None, None)
+		data = json.loads(task.data)
 	return render_template(
 		'test/player.html',
 		process=process,

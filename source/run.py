@@ -21,6 +21,6 @@ except:
 	logging.error('Bot initialization error', exc_info=1)
 
 if __name__ == '__main__':
-#	bot.run()
+	bot.run()
 	application.run('0.0.0.0')
 	bot.stop()

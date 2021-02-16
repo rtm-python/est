@@ -79,9 +79,9 @@
 		"endpoint": null,
 		"ru": "Страница"
 	},
-	"total": {
+	"Total": {
 		"endpoint": null,
-		"ru": "всего"
+		"ru": "Всего"
 	},
 	"elements": {
 		"endpoint": null,
@@ -117,9 +117,13 @@
 		"ru": "Закрыть"
 	},
 
-	"task": {
+	"Task": {
 		"endpoint": null,
 		"ru": "Задача"
+	},
+	"Result": {
+		"endpoint": null,
+		"ru": "Результат"
 	},
 	"Type number for question mark...": {
 		"endpoint": null,
@@ -140,6 +144,22 @@
 	"Incorrect answer": {
 		"endpoint": null,
 		"ru": "Неправильный ответ"
+	},
+	"Correct": {
+		"endpoint": null,
+		"ru": "Правильно"
+	},
+	"answers": {
+		"endpoint": null,
+		"ru": "ответов"
+	},
+	"Time": {
+		"endpoint": null,
+		"ru": "Время"
+	},
+	"seconds": {
+		"endpoint": null,
+		"ru": "секунд"
 	},
 
 	"Completed": {
@@ -280,6 +300,10 @@
 		"endpoint": null,
 		"ru": "Отправить"
 	},
+	"Sign Out": {
+		"endpoint": null,
+		"ru": "Выйти"
+	},
 
 	"Usercode": {
 		"endpoint": null,
@@ -296,6 +320,11 @@
 	"Confirm": {
 		"endpoint": null,
 		"ru": "Подтвердить"
+	},
+
+	"Error": {
+		"endpoint": null,
+		"ru": "Ошибка"
 	},
 
 	"Thank you for your feedback!": {

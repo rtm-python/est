@@ -247,7 +247,7 @@ def sign_in():
 			user = UserStore.get_or_create_user(
 				usercode_item['from_id'], usercode_item['name'])
 			logging.debug('Sign in as user %s (%s)' % (user.name, user.from_id))
-			login_user(SignedInUser(user))
+			login_user(SignedInUser(user), remember=True)
 			logging.debug(
 				'Defined user (%s) and token (%s)' % \
 				(current_user.get_id(), anonymous_token)
@@ -265,3 +265,12 @@ def sign_in():
 		sign_in=sign_in,
 		nav_active='account'
 	)
+
+@blueprint.route('/account/sign-out/', methods=('GET',))
+def sign_out():
+	"""
+	Return sign-in page and login user.
+	"""
+	if current_user.is_authenticated:
+		logout_user()
+	return redirect(url_for('base.get_profile'))

@@ -6,8 +6,8 @@
 			<div class="card p-2 shadow-sm mb-3 rounded text-center">
 				<blockquote class="blockquote mb-0 card-body">
 					<h1 class="m-2"><strong>{{ process.result }}%</strong></h1>
-					<p class="m-0"><small class="text-muted">{{ __('Correct:') }}</small> {{ process.correct_count }} / {{ process.answer_count }} <small class="text-muted">{{ __('answers') }}</small></p>
-					<p class="m-0"><small class="text-muted">{{ __('Spent Time:') }}</small> {{ process.total_answer_time }} / {{ process.speed_time }} <small class="text-muted">{{ __('seconds') }}</small></p>
+					<p class="m-0"><small class="text-muted">{{ __('Correct') }}:</small> {{ process.correct_count }} / {{ process.answer_count }} <small class="text-muted">{{ __('answers') }}</small></p>
+					<p class="m-0"><small class="text-muted">{{ __('Time') }}:</small> {{ process.total_answer_time }} / {{ process.speed_time }} <small class="text-muted">{{ __('seconds') }}</small></p>
 					<a href="{{ url_for('test.start', uid=test.uid) }}" class="mt-2 btn btn-outline-dark w-75">{{ __('Restart') }}</a>
 					<a href="{{ url_for('test.get_process') }}" class="mt-2 btn btn-outline-dark w-75">{{ __('Close') }}</a>
 				</div>

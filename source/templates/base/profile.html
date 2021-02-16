@@ -50,8 +50,8 @@
 									</div>
 								{%- endfor -%}
 							</div>
-							<div class="col-12 my-2">
-								<input type="submit" class="btn btn-block btn-outline-dark" name="{{ profiler.submit.label.text }}" id="{{ profiler.submit.label.text }}" value="{{ __('Save') }}" />
+							<div class="col-12 my-2 text-center">
+								<input type="submit" class="mt-2 btn btn-outline-dark w-75" name="{{ profiler.submit.label.text }}" id="{{ profiler.submit.label.text }}" value="{{ __('Save') }}" />
 							</div>
 						</div>
 					</form>
@@ -64,13 +64,18 @@
 							{{ feedbacker.csrf_token }}
 							<div class="col-12">
 								<small>{{ __('Feedback') }}</small>
-								<textarea class="form-control" name="{{ feedbacker.message.label.text }}" id="{{ feedbacker.message.label.text }}" placeholder="{{ __('Message') }}" row="3"></textarea>
+								<textarea class="form-control" name="{{ feedbacker.message.label.text }}" id="{{ feedbacker.message.label.text }}" placeholder="{{ __('Message') }}" row="5"></textarea>
 							</div>
-							<div class="col-12 my-2">
-								<input type="submit" class="btn btn-block btn-outline-dark" name="{{ feedbacker.submit.label.text }}" id="{{ feedbacker.submit.label.text }}" value="{{ __('Send') }}" />
+							<div class="col-12 my-2 text-center">
+								<input type="submit" class="mt-2 btn btn-outline-dark w-75" name="{{ feedbacker.submit.label.text }}" id="{{ feedbacker.submit.label.text }}" value="{{ __('Send') }}" />
 							</div>
 						</div>
 					</form>  
+				</blockquote>
+			</div>
+			<div class="card p-2 shadow-sm mb-3 rounded">
+				<blockquote class="blockquote mb-0 card-body text-center">
+					<a href="{{ url_for('base.sign_out') }}" class="btn btn-outline-dark w-75">{{ __('Sign Out') }}</a>
 				</blockquote>
 			</div>
 		</div>

@@ -95,9 +95,6 @@ def handle(break_event: threading.Event, data: dict) -> None:
 					])
 					usercode_item['passcode'] = \
 						''.join(secrets.choice(alphabet) for i in range(code_length))
-					# Output data to json-file
-					with open(usercode_filename, 'w') as usercode_file:
-						usercode_file.write(json.dumps(usercode_item, indent=2))
 					# Send passcode within chat message
 					response = send_message(
 						usercode_item['chat_id'],
@@ -107,6 +104,9 @@ def handle(break_event: threading.Event, data: dict) -> None:
 					if response.json()['ok']:
 						usercode_item['message_id'] = \
 							response.json()['result']['message_id']
+					# Output data to json-file
+					with open(usercode_filename, 'w') as usercode_file:
+						usercode_file.write(json.dumps(usercode_item, indent=2))
 					# Delete correct usercode message
 					response = requests.post(
 						data['url_delete_message'],
@@ -247,6 +247,7 @@ def verify_usercode(usercode: str, passcode: str) -> dict:
 				'message_id': usercode_item['message_id']
 			}
 		)
+		print(response)
 		return usercode_item
 	except:
 		logging.error('Verification: %s / %s' % (usercode, passcode), exc_info=1)

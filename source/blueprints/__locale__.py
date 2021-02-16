@@ -22,10 +22,10 @@ def set_session_language():
 	"""
 	Set session language from client request.
 	"""
-#	session['language'] = 'ru'
-	session['language'] = request.accept_languages.best_match(
-		LOCALE['__']['supported_languages']
-	)
+	session['language'] = 'ru'
+#	session['language'] = request.accept_languages.best_match(
+#		LOCALE['__']['supported_languages']
+#	)
 
 
 @application.context_processor

@@ -21,7 +21,7 @@
   		{%- if pagination.page_count > 1 -%}
 			  <a href="#" class="text-muted p-1 ml-2 mr-2" style="text-decoration: none;" data-toggle="collapse" data-target="#collapsePaginator" aria-expanded="true" aria-controls="collapsePaginator">{{ __('Page') + ' %d' % pagination.page_index }}</a>
 			{%- else -%}
-				<div class="text-muted">{{ __('total') }}: {{ pagination.entity_count }} {{ __('elements') }}</div>
+				<div class="text-muted">{{ __('Total') }}: {{ pagination.entity_count }} {{ __('elements') }}</div>
 	  	{%- endif -%}
 	  	{%- if pagination.page_index < pagination.page_count -%}
 		  	{%- set pagination_kwargs = { '%sPageIndex' % pagination.prefix: pagination.page_index + 1 } -%}
@@ -57,7 +57,7 @@
 					</small>
 				</p>
 				<p class="mt-0 mb-1">
-					<small class="text-muted">{{ __('total') }}: {{ pagination.entity_count }} {{ __('elements') }}</small>
+					<small class="text-muted">{{ __('Total') }}: {{ pagination.entity_count }} {{ __('elements') }}</small>
 				</p>
 	    </div>
 	  </div>

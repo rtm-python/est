@@ -18,14 +18,16 @@
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment-with-locales.min.js" integrity="sha256-wdiCkHJlqyoIJxG49WbDO0D3/EnppQp6GVOGQA6PBkA=" crossorigin="anonymous"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.31/moment-timezone-with-data.min.js" integrity="sha256-E10X63Z5YvTXDfZjb0Kqd7FOo6a/gE7hFGcYm63PLmM=" crossorigin="anonymous"></script>
 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.0-alpha14/js/tempusdominus-bootstrap-4.min.js"></script>
-		<!-- Global site tag (gtag.js) - Google Analytics -->
-		<script async src="https://www.googletagmanager.com/gtag/js?id=G-5VK8NR14VG"></script>
-		<script>
-			window.dataLayer = window.dataLayer || [];
-			function gtag(){dataLayer.push(arguments);}
-			gtag('js', new Date());
-			gtag('config', 'G-5VK8NR14VG');
-		</script>
+		{%- if not ga_disable -%}
+			<!-- Global site tag (gtag.js) - Google Analytics -->
+			<script async src="https://www.googletagmanager.com/gtag/js?id=G-5VK8NR14VG"></script>
+			<script>
+				window.dataLayer = window.dataLayer || [];
+				function gtag(){dataLayer.push(arguments);}
+				gtag('js', new Date());
+				gtag('config', 'G-5VK8NR14VG');
+			</script>
+		{%- endif -%}
     {%- block script -%}{%- endblock -%}
 	</head>
 	{%- block body -%}{%- endblock -%}

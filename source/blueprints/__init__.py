@@ -15,6 +15,7 @@ from config import UrlPrefix
 
 # Additional libraries import
 from flask import Flask
+from flask import session
 from flask import redirect
 from flask import url_for
 from flask_paranoid import Paranoid
@@ -55,6 +56,14 @@ def redirect_on_invalid_session():
 	Return redirect on invalid session.
 	"""
 	return redirect(url_for('base.get_landing'))
+
+
+@application.before_request
+def make_session_permanent():
+	"""
+	Make all sessions permanent.
+	"""
+	session.permanent = True
 
 
 @application.context_processor

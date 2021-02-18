@@ -4,6 +4,11 @@
 	<head lang="en">
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes">
+		<meta property="og:title" content="{{ __(basename) }}">
+		<meta property="og:site_name" content="{{ __(basename) }}">
+		<meta property="og:url" content="{{ url_for('base.get_landing') }}">
+		<meta property="og:description" content="{{ __('Learning training material through frequent solving of quick tasks') }}">
+		<meta property="og:image" content="{{ url_for('static', filename='est_b.png') }}">
 		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"/>
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.0-alpha14/css/tempusdominus-bootstrap-4.min.css" />
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Comfortaa|Marmelad|Open+Sans+Condensed:300&display=swap"/>
@@ -28,7 +33,7 @@
 				gtag('config', 'G-5VK8NR14VG');
 			</script>
 		{%- endif -%}
-    {%- block script -%}{%- endblock -%}
+		{%- block script -%}{%- endblock -%}
 	</head>
 	{%- block body -%}{%- endblock -%}
 </html>

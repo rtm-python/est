@@ -17,7 +17,6 @@ from blueprints import application
 
 # Initiate database
 database_folder = os.path.join(os.path.abspath(os.curdir), 'database')
-print(database_folder)
 if CONFIG['database']['filename'] is None:
 	application.config['SQLALCHEMY_DATABASE_URI'] = CONFIG['database']['URI']
 else:

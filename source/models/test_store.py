@@ -16,14 +16,14 @@ class TestStore(Store):
 	"""
 
 	@staticmethod
-	def create(name: str, plugin: str, plugin_options: str,
+	def create(name: str, extension: str, extension_options: str,
 						 repeat: int, speed: int, user_uid: str) -> Test:
 		"""
 		Create and return test.
 		"""
 		return super(TestStore, TestStore).create(
 			Test(
-				name, plugin, plugin_options, repeat, speed, user_uid
+				name, extension, extension_options, repeat, speed, user_uid
 			)
 		)
 
@@ -37,14 +37,14 @@ class TestStore(Store):
 		)
 
 	@staticmethod
-	def update(uid: str, name: str, plugin_options: str,
+	def update(uid: str, name: str, extension_options: str,
 						 repeat: int, speed: int) -> Test:
 		"""
 		Update and return test.
 		"""
 		test = TestStore.read(uid)
 		test.name = name
-		test.plugin_options = plugin_options
+		test.extension_options = extension_options
 		test.repeat = repeat
 		test.speed = speed
 		return super(TestStore, TestStore).update(
@@ -62,23 +62,23 @@ class TestStore(Store):
 
 	@staticmethod
 	def read_list(offset: int, limit: int,
-								filter_name: str, filter_plugin: str,
+								filter_name: str, filter_extension: str,
 								filter_user_uid: str) -> list:
 		"""
 		Return list of tests by arguments.
 		"""
 		return _get_list_query(
-			filter_name, filter_plugin, filter_user_uid
+			filter_name, filter_extension, filter_user_uid
 		).limit(limit).offset(offset).all()
 
 	@staticmethod
-	def count_list(filter_name: str, filter_plugin: str,
+	def count_list(filter_name: str, filter_extension: str,
 								 filter_user_uid: str) -> int:
 		"""
 		Return number of tests in list
 		"""
 		return Store.count(_get_list_query(
-			filter_name, filter_plugin, filter_user_uid
+			filter_name, filter_extension, filter_user_uid
 		))
 
 	@staticmethod
@@ -91,7 +91,7 @@ class TestStore(Store):
 		)
 
 
-def _get_list_query(filter_name: str, filter_plugin: str,
+def _get_list_query(filter_name: str, filter_extension: str,
 										filter_user_uid: str):
 	"""
 	Return query object for test.
@@ -101,8 +101,8 @@ def _get_list_query(filter_name: str, filter_plugin: str,
 	).filter(
 		True if filter_name is None else \
 			Test.name.ilike('%' + filter_name + '%'),
-		True if filter_plugin is None else \
-			Test.plugin.ilike('%' + filter_plugin + '%'),
+		True if filter_extension is None else \
+			Test.extension.ilike('%' + filter_extension + '%'),
 		True if filter_user_uid is None else \
 			Test.user_uid == filter_user_uid,
 		Test.deleted_utc == None

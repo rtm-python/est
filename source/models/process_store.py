@@ -78,26 +78,26 @@ class ProcessStore(Store):
 
 	@staticmethod
 	def read_list(offset: int, limit: int,
-								filter_name: str, filter_plugin: str,
+								filter_name: str, filter_extension: str,
 								filter_hide_completed: bool,
 								user_uid: str, anonymous_token: str) -> list:
 		"""
 		Return list of processes by arguments.
 		"""
 		return _get_list_query(
-			filter_name, filter_plugin, filter_hide_completed,
+			filter_name, filter_extension, filter_hide_completed,
 			user_uid, anonymous_token
 		).limit(limit).offset(offset).all()
 
 	@staticmethod
-	def count_list(filter_name: str, filter_plugin: str,
+	def count_list(filter_name: str, filter_extension: str,
 								 filter_hide_completed: bool,
 								 user_uid: str, anonymous_token: str) -> int:
 		"""
 		Return number of processes in list.
 		"""
 		return Store.count(_get_list_query(
-			filter_name, filter_plugin, filter_hide_completed,
+			filter_name, filter_extension, filter_hide_completed,
 			user_uid, anonymous_token
 		))
 
@@ -172,34 +172,34 @@ class ProcessStore(Store):
 
 	@staticmethod
 	def read_charts(offset: int, limit: int,
-								  filter_name: str, filter_plugin: str,
+								  filter_name: str, filter_extension: str,
 								  user_uid: str, anonymous_token: str) -> list:
 		"""
 		Return list of process charts by arguments.
 		"""
 		return _get_charts_query(
-			filter_name, filter_plugin,
+			filter_name, filter_extension,
 			user_uid, anonymous_token, False
 		).limit(limit).offset(offset).all()
 
 	@staticmethod
-	def count_charts(filter_name: str, filter_plugin: str,
+	def count_charts(filter_name: str, filter_extension: str,
 								   user_uid: str, anonymous_token: str) -> int:
 		"""
 		Return number of process charts in list.
 		"""
 		return _get_charts_query(
-			filter_name, filter_plugin,
+			filter_name, filter_extension,
 			user_uid, anonymous_token, True
 		)
 		# TODO: Issue with simplified query
 		return Store.count(_get_charts_query(
-			filter_name, filter_plugin,
+			filter_name, filter_extension,
 			user_uid, anonymous_token, True
 		))
 
 
-def _get_list_query(filter_name: str, filter_plugin: str,
+def _get_list_query(filter_name: str, filter_extension: str,
 										filter_hide_completed: bool,
 										user_uid: str, anonymous_token: str):
 	"""
@@ -212,8 +212,8 @@ def _get_list_query(filter_name: str, filter_plugin: str,
 	).filter(
 		True if filter_name is None else \
 			Test.name.ilike('%' + filter_name + '%'),
-		True if filter_plugin is None else \
-			Test.plugin.ilike('%' + filter_plugin + '%'),
+		True if filter_extension is None else \
+			Test.extension.ilike('%' + filter_extension + '%'),
 		True if filter_hide_completed is None or \
 			filter_hide_completed is False else \
 			Process.result == None,
@@ -227,7 +227,7 @@ def _get_list_query(filter_name: str, filter_plugin: str,
 	)
 
 
-def _get_charts_query(filter_name: str, filter_plugin: str,
+def _get_charts_query(filter_name: str, filter_extension: str,
 										  user_uid: str, anonymous_token: str,
 										  is_count_query: bool):
 	"""
@@ -243,8 +243,8 @@ def _get_charts_query(filter_name: str, filter_plugin: str,
 	).filter(
 		True if filter_name is None else \
 			Test.name.ilike('%' + filter_name + '%'),
-		True if filter_plugin is None else \
-			Test.plugin.ilike('%' + filter_plugin + '%'),
+		True if filter_extension is None else \
+			Test.extension.ilike('%' + filter_extension + '%'),
 		True if user_uid is None else \
 			user_uid == Process.user_uid,
 		True if anonymous_token is None else \
@@ -283,7 +283,7 @@ def _get_charts_query(filter_name: str, filter_plugin: str,
 			).subquery()
 		]
 	return database.session.query(
-		Test.uid, Test.name, Test.plugin,
+		Test.uid, Test.name, Test.extension,
 		weekdays[0].c.weekday, weekdays[0].c.count, weekdays[0].c.result,
 		weekdays[1].c.weekday, weekdays[1].c.count, weekdays[1].c.result,
 		weekdays[2].c.weekday, weekdays[2].c.count, weekdays[2].c.result,

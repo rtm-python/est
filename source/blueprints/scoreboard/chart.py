@@ -24,7 +24,6 @@ from models.process_store import ProcessStore
 from models.test_store import TestStore
 from models.task_store import TaskStore
 from models.entity.process import Process
-from identica import telegram as bot
 
 # Additional libraries import
 from flask import render_template

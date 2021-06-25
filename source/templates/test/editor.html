@@ -1,0 +1,73 @@
+{%- extends "layout_inner.html" -%}
+{%- if type == 'create' -%}
+	{% set title -%}{{ __('Create Test') }}{%- endset %}
+{%- elif type == 'update' -%}
+	{% set title -%}{{ __('Update Test') }}{%- endset %}
+{%- endif -%}
+{%- block body_content -%}
+	<div class="row">
+		<div class="col-12 col-sm-6 offset-sm-3 col-lg-4 offset-lg-4">
+			<div class="card p-2 shadow-sm mb-3 rounded">
+				<blockquote class="blockquote mb-0 card-body">
+					<form method="post" actions="">
+						{{ editor.csrf_token }}
+						<div class="form-row">
+							<div class="col-12">
+								<small>{{ __('Name') }}</small>
+								<input autofocus type="text" class="form-control{%- if editor.name.error -%}{{ ' is-invalid' }}{%- endif -%}" id="{{ editor.name.label.text }}" name="{{ editor.name.label.text }}" placeholder="{{ __('Name') }}" value="{{ editor.name.data|default('', True) }}" />	
+								{%- for error in editor.name.errors -%}
+									<div class="invalid-feedback">
+										{{ __(error) }}
+									</div>
+								{%- endfor -%}
+							</div>
+							{%- for option in editor.options.get_items() -%}
+								<div class="col-12">
+									<small>{{ __(option.description) }}</small>
+									<select class="custom-select" name="{{ option.label.text }}">
+										<option{%- if option.data == '' -%}{{ ' selected' }}{%- endif -%}>{{ __('Choose') }}</option>
+										{%- for choice in option.choices -%}
+											<option value="{{ choice[0] }}"{%- if option.data == choice[0] -%}{{ ' selected' }}{%- endif -%}>{{ __(choice[1]) }}</option>
+										{%- endfor -%}
+									</select>		
+								</div>
+							{%- endfor -%}
+							<div class="col-12">
+								<small>{{ __('Repeat') }}</small>
+								<select class="custom-select{%- if editor.repeat.erros -%}{{ ' is-invalid' }}{%- endif -%}" id="{{ editor.repeat.label.text }}" name="{{ editor.repeat.label.text }}">
+									<option{%- if editor.repeat.data == '' -%}{{ ' selected' }}{%- endif -%}>{{ __('Choose..') }}</option>
+									{%- for choice in editor.repeat.choices -%}
+										<option value="{{ choice[0] }}"{%- if editor.repeat.data == choice[0] -%}{{ ' selected' }}{%- endif -%}>{{ __(choice[1]) }}</option>
+									{%- endfor -%}
+								</select>
+								{%- for error in editor.repeat.errors -%}
+									<div class="invalid-feedback">
+										{{ __(error) }}
+									</div>
+								{%- endfor -%}
+							</div>
+							<div class="col-12">
+								<small>{{ __('Speed') }}</small>
+								<select class="custom-select{%- if editor.speed.erros -%}{{ ' is-invalid' }}{%- endif -%}" id="{{ editor.speed.label.text }}" name="{{ editor.speed.label.text }}">
+									<option{%- if editor.speed.data == '' -%}{{ ' selected' }}{%- endif -%}>{{ __('Choose') }}</option>
+									{%- for choice in editor.speed.choices -%}
+										<option value="{{ choice[0] }}"{%- if editor.speed.data == choice[0] -%}{{ ' selected' }}{%- endif -%}>{{ __(choice[1]) }}</option>
+									{%- endfor -%}
+								</select>
+								{%- for error in editor.speed.errors -%}
+									<div class="invalid-feedback">
+										{{ __(error) }}
+									</div>
+								{%- endfor -%}
+							</div>
+							<div class="col-12 my-2">
+								<button type="submit" class="mt-2 btn btn-block btn-outline-dark">{{ __('Save') }}</button>
+								<a href="{{ url_for('test.get_catalog') }}" class="btn btn-block btn-outline-dark">{{ __('Cancel') }}</a>
+							</div>
+						</div>
+					</form>
+				</blockquote>
+			</div>
+		</div>
+	</div>
+{%- endblock -%}

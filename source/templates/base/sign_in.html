@@ -1,0 +1,54 @@
+{%- extends "layout_landing.html" -%}
+{%- set title -%}{{ __('Sign in') }}{%- endset -%}
+{%- set ga_disable = True -%}
+{%- block body_content -%}
+	<form id="signInForm" class="col-12 offset-sm-2 col-sm-8 offset-md-3 col-md-6" method="post" actions="">
+		{{ sign_in.csrf_token }}
+		<div class="row p-1 g-3">
+			<div class="col-12 text-center">
+				<p class="p-0 m-0"><small>{{ __('Start chat with ') + ' ' }}<a href="https://t.me/crammer_identica_bot" style="background: darkgrey; padding: 3px 5px; color: black; border-radius: 5px;">@crammer_identica_bot</a></small></p>
+				<p class="p-0 m-0"><small>{{__('Or scan QR code bellow to authenticate') }}</small></p>
+				<img src="{{ url_for('static', filename='est_identica.png') }}" class="w-50">
+			</div>
+			<div class="col-12 text-center mt-5">
+				<small>{{ __('Personal Identification Number (PIN)') }}</small>
+				<input autofocus type="password" class="form-control form-control-sm text-center" id="{{ sign_in.pin.label.text }}" name="{{ sign_in.pin.label.text }}" placeholder="{{ __('Personal Identification Number (PIN)') }}" value="{{ sign_in.pin.data|default('', True) }}" {%- if sign_in.password.data -%}{{ ' readonly' }}{%- endif -%}/>
+			</div>
+			{%- if sign_in.password.data -%}
+				<div class="col-12 text-center">
+					<small>{{ __('Password') }}</small>
+					<input class="form-control form-control-sm text-center" id="{{ sign_in.password.label.text }}" name="{{ sign_in.password.label.text }}" placeholder="{{ __('Password') }}" value="{{ sign_in.password.data|default('', True) }}" readonly />
+				</div>
+			{%- else -%}
+				<input class="d-none" id="{{ sign_in.password.label.text }}" name="{{ sign_in.password.label.text }}" placeholder="{{ __('Password') }}" value="{{ sign_in.password.data|default('', True) }}" readonly />
+				<div class="col-12 text-center mt-3">
+					<input type="submit" id="{{ sign_in.submit.label.text }}" name="{{ sign_in.submit.label.text }}" class="mt-2 btn btn-outline-light btn-block" value="{{ __('Submit') }}" />
+				</div>
+			{%- endif -%}
+			</div>
+	</form>
+{%- endblock -%}
+{%- block body_script -%}
+	<script type="text/javascript">
+		$(window).on('load', function() {
+			if ($("#{{ sign_in.password.label.text }}").val()) {
+				setInterval(verifyPin, 5000);
+			}
+		});
+		function verifyPin() {
+			$.ajax({
+				type: "post",
+				async: false,
+				url: $("#signInForm").attr("actions"),
+				data: $("#signInForm").serialize(),
+				success: function (data, textStatus, request) {
+					if (data.redirect) {
+						location.pathname = data.redirect;
+					} else if (!data.wait) {
+						location.href = location.origin;
+					}
+				}
+			});
+		}
+	</script>	
+{%- endblock -%}

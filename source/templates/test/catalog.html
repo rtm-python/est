@@ -1,0 +1,104 @@
+{%- extends "layout_list.html" -%}
+{% set title -%}{{ __('Catalog') }}{%- endset %}
+{%- block style -%}
+	<style>
+  	@media (max-width: 768px) {
+			.card-columns {
+	  	  column-count: 1;
+	    }
+	  }
+	</style>
+{%- endblock -%}
+{% set filter_link -%}{{ '#' }}{%- endset %}
+{%- block filter -%}
+	<form method="post" actions="">
+		{{ filter.csrf_token }}
+		<div class="form-row">
+			<div class="col-12 col-md-4 mb-2">
+				<small>{{ __('Name') }}</small>
+				<input autofocus type="text" class="form-control form-control-sm" id="{{ filter.prefix + filter.name.label.text }}" name="{{ filter.prefix + filter.name.label.text }}" placeholder="{{ __('Name') }}" value="{{ filter.name.data|default('', True) }}" />	
+			</div>
+			<div class="col-12 col-md-4 mb-2">
+				<small>{{ __('Plugin') }}</small>
+				<input type="text" class="form-control form-control-sm" id="{{ filter.prefix + filter.plugin.label.text }}" name="{{ filter.prefix + filter.plugin.label.text }}" placeholder="{{ __('Plugin') }}" value="{{ filter.plugin.data|default('', True) }}" />
+			</div>
+			<div class="col-12 col-md-2 mb-2">
+				<small>{{ __('Author') }}</small>
+				<div class="custom-control custom-checkbox mr-sm-2">
+					<input type="checkbox" class="custom-control-input" id="{{ filter.prefix + filter.hide_global.label.text }}" name="{{ filter.prefix + filter.hide_global.label.text }}" {%- if (filter.hide_global.data == 'true' or filter.hide_global.data == 'True') or filter.hide_global.data == 'on' or filter.hide_global.data is true -%}checked{%- endif -%}>
+					<label class="custom-control-label" for="{{ filter.prefix + filter.hide_global.label.text }}" style="font-size: smaller; padding-top: 2px; margin-top: 3px;">{{ __('Hide Global Tests') }}</label>
+				</div>
+			</div>
+			<div class="col-12 col-md-2 my-2">
+				<div class="form-row">
+					<div class="mb-2 col-6 col-md-12">
+						<input type="submit" class="btn btn-sm btn-block btn-outline-dark" name="{{ filter.prefix + filter.submit.label.text }}" id="{{ filter.prefix + filter.submit.label.text }}" value="{{ __('Apply') }}" />
+					</div>
+					<div class="mb-2 col-6 col-md-12">
+						<a href="{{ url_for('test.get_catalog', catalogFilterReset='true') }}" class="btn btn-sm btn-block btn-outline-dark">{{ __('Reset') }}</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>
+{%- endblock -%}
+{%- if current_user.is_authenticated -%}
+	{% set extra_link -%}{{ '#' }}{%- endset %}
+	{% set extra_text -%}<span class="oi oi-plus ml-2 mr-1"></span>{{ __('Create') }}{%- endset %}
+	{%- block extra -%}
+		<form method="post" actions="" class="col-12 col-sm-8 offset-sm-2 col-md-6 offset-md-3 col-lg-4 offset-lg-4">
+			{{ creator.csrf_token }}
+			<div class="form-row">
+				<div class="col-12 mb-2">
+					<small>{{ __('Plugin') }}</small>
+					<select autofocus class="custom-select" name="{{ creator.plugin.label.text }}" id="{{ creator.plugin.label.text }}" style="height: 1.9rem; font-size: 0.9rem; padding-top: 3px;">
+						<option value="" selected>{{ __('Select Plugin') }}</option>
+						{%- for choice in creator.plugin.choices -%}
+							<option value="{{ choice }}"{%- if creator.plugin.data == choice -%}{{ ' selected' }}{%- endif -%}>{{ __(choice) }}</option>
+						{%- endfor -%}
+					</select>
+				</div>
+				<div class="col-12 my-2">
+					<input type="submit" class="btn btn-sm btn-block btn-outline-dark" name="{{ creator.submit.label.text }}" id="{{ creator.submit.label.text }}" value="{{ __('Create') }}" />
+				</div>
+			</div>
+		</form>
+	{%- endblock -%}
+{%- endif -%}
+{%- block list_content -%}
+	<div class="card-columns">
+		{%- for test in tests -%}
+			<div class="card p-2 shadow-sm mb-3 rounded text-center">
+				<blockquote class="blockquote mb-0 card-body">
+					<div class="d-flex w-100 justify-content-between">
+						<small class="text-muted">{{ __(test.plugin) }}</small>
+						{%- if current_user.get_id() == test.user_uid -%}
+							<small>
+								<a class="text-muted p-1" href="{{ url_for('test.update', uid=test.uid) }}"><span class="oi oi-pencil"></span></a>
+								<a class="text-muted p-1" href="#" data-toggle="collapse" data-target="#collapse-{{ test.uid }}" aria-expanded="true" aria-controls="collapse-{{ test.uid }}"><span class="oi oi-x"></span></a>
+							</small>
+						{%- endif -%}
+					</div>
+					{%- if current_user.get_id() == test.user_uid -%}
+						<div class="collapse mt-2 shadow-sm" id="collapse-{{ test.uid }}">
+							<div class="alert alert-danger text-center p-3" role="alert">
+								<p><small>{{ __('Do you really want to delete test from catalog?') }}</small></p>
+								<a class="btn btn-sm btn-outline-danger" href="{{ url_for('test.delete', uid=test.uid) }}">{{ __('Delete') }}</a>
+								<a class="btn btn-sm btn-outline-dark" href="#" data-toggle="collapse" data-target="#collapse-{{ test.uid }}" aria-expanded="true" aria-controls="collapse-{{ test.uid }}">{{ __('Cancel') }}</a>
+							</div>
+						</div>
+					{%- endif -%}
+					<h4 class="card-title p-4"><strong>{{ test.name }}</strong></h4>
+					<a href="{{ url_for('test.start', uid=test.uid) }}" class="btn btn-outline-dark w-75">{{ __('Start') }}</a>
+				</blockquote>
+			</div>
+		{% endfor %}
+		{% if tests|length == 0 %}
+			<div class="card p-2 shadow-sm mb-3 rounded text-center" style="background: whitesmoke;">
+				<blockquote class="blockquote mb-0 card-body">
+					<p class="card-text">{{ __('No tests found') }}</p>
+				</blockquote>
+			</div>
+		{%- endif -%}
+	</div>
+{%- endblock -%}

@@ -1,0 +1,87 @@
+{%- extends "layout_list.html" -%}
+{% set title -%}{{ __('Test') }}{%- endset %}
+{%- block style -%}
+	<style>
+  	@media (max-width: 768px) {
+			.card-columns {
+	  	  column-count: 1;
+	    }
+	  }
+	</style>
+{%- endblock -%}
+{% set filter_link -%}{{ '#' }}{%- endset %}
+{%- block filter -%}
+	<form method="post" actions="">
+		{{ filter.csrf_token }}
+		<div class="form-row">
+			<div class="col-12 col-md-4 mb-2">
+				<small>{{ __('Name') }}</small>
+				<input autofocus type="text" class="form-control form-control-sm" id="{{ filter.prefix + filter.name.label.text }}" name="{{ filter.prefix + filter.name.label.text }}" placeholder="{{ __('Name') }}" value="{{ filter.name.data|default('', True) }}" />	
+			</div>
+			<div class="col-12 col-md-4 mb-2">
+				<small>{{ __('Plugin') }}</small>
+				<input type="text" class="form-control form-control-sm" id="{{ filter.prefix + filter.plugin.label.text }}" name="{{ filter.prefix + filter.plugin.label.text }}" placeholder="{{ __('Plugin') }}" value="{{ filter.plugin.data|default('', True) }}" />
+			</div>
+			<div class="col-12 col-md-2 mb-2">
+				<small>{{ __('Completed') }}</small>
+				<div class="custom-control custom-checkbox mr-sm-2">
+					<input type="checkbox" class="custom-control-input" id="{{ filter.prefix + filter.hide_completed.label.text }}" name="{{ filter.prefix + filter.hide_completed.label.text }}" {%- if (filter.hide_completed.data == 'true' or filter.hide_completed.data == 'True') or filter.hide_completed.data == 'on' or filter.hide_completed.data is true -%}checked{%- endif -%}>
+					<label class="custom-control-label" for="{{ filter.prefix + filter.hide_completed.label.text }}" style="font-size: smaller; padding-top: 2px; margin-top: 3px;">{{ __('Hide Completed Processes') }}</label>
+				</div>
+			</div>
+			<div class="col-12 col-md-2 my-2">
+				<div class="form-row">
+					<div class="mb-2 col-6 col-md-12">
+						<input type="submit" class="btn btn-sm btn-block btn-outline-dark" name="{{ filter.prefix + filter.submit.label.text }}" id="{{ filter.prefix + filter.submit.label.text }}" value="{{ __('Apply') }}" />
+					</div>
+					<div class="mb-2 col-6 col-md-12">
+						<a href="{{ url_for('test.get_process', processFilterReset='true') }}" class="btn btn-sm btn-block btn-outline-dark">{{ __('Reset') }}</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>
+{%- endblock -%}
+{%- block list_content -%}
+	<div class="card-columns">
+		{%- for process, test in processes -%}
+			<div class="card p-2 shadow-sm mb-3 rounded text-center">
+				<blockquote class="blockquote mb-0 card-body">
+					<div class="d-flex w-100 justify-content-between">
+						<small class="text-muted">{{ __(test.plugin) }}</small>
+						<small class="text-muted">
+							{%- if process.result != None -%}
+								{{ __('Completed') }}
+							{%- else -%}
+								{{ __('In process') }}
+							{%- endif -%}
+						</small>
+					</div>
+					<div class="card-title p-4">
+						<h4 class="m-0"><strong>{{ test.name }}</strong></h4>
+						{%- if process.result != None -%}
+							<small class="text-muted">{{ __('Result') }}: </small>
+							<h4 class="m-0">{{ process.result }}%</h4>
+						{%- else -%}
+							<small class="text-muted">{{ __('Progress') }}: </small>
+							<p class="m-0">{{ process.correct_count }} ({{ process.answer_count }} / {{ test.repeat }})</p>
+						{%- endif -%}
+					</div>
+					{%- if process.result != None -%}
+						<a href="{{ url_for('test.get_result', uid=process.uid) }}" class="btn btn-outline-dark w-75">{{ __('Details') }}</a>
+						<a href="{{ url_for('test.start', uid=test.uid) }}" class="mt-2 btn btn-outline-dark w-75">{{ __('Restart') }}</a>
+					{%- else -%}
+						<a href="{{ url_for('test.play', uid=process.uid) }}" class="btn btn-outline-dark w-75">{{ __('Continue') }}</a>
+					{%- endif -%}
+				</blockquote>
+			</div>
+		{% endfor %}
+		{% if processes|length == 0 %}
+			<div class="card p-2 shadow-sm mb-3 rounded text-center" style="background: whitesmoke;">
+				<blockquote class="blockquote mb-0 card-body">
+					<p class="card-text">{{ __('No tests found') }}</p>
+				</blockquote>
+			</div>
+		{%- endif -%}
+	</div>
+{%- endblock -%}

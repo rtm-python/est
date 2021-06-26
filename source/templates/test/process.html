@@ -19,8 +19,8 @@
 				<input autofocus type="text" class="form-control form-control-sm" id="{{ filter.prefix + filter.name.label.text }}" name="{{ filter.prefix + filter.name.label.text }}" placeholder="{{ __('Name') }}" value="{{ filter.name.data|default('', True) }}" />	
 			</div>
 			<div class="col-12 col-md-4 mb-2">
-				<small>{{ __('Plugin') }}</small>
-				<input type="text" class="form-control form-control-sm" id="{{ filter.prefix + filter.plugin.label.text }}" name="{{ filter.prefix + filter.plugin.label.text }}" placeholder="{{ __('Plugin') }}" value="{{ filter.plugin.data|default('', True) }}" />
+				<small>{{ __('Extension') }}</small>
+				<input type="text" class="form-control form-control-sm" id="{{ filter.prefix + filter.extension.label.text }}" name="{{ filter.prefix + filter.extension.label.text }}" placeholder="{{ __('Extension') }}" value="{{ filter.extension.data|default('', True) }}" />
 			</div>
 			<div class="col-12 col-md-2 mb-2">
 				<small>{{ __('Completed') }}</small>
@@ -48,7 +48,7 @@
 			<div class="card p-2 shadow-sm mb-3 rounded text-center">
 				<blockquote class="blockquote mb-0 card-body">
 					<div class="d-flex w-100 justify-content-between">
-						<small class="text-muted">{{ __(test.plugin) }}</small>
+						<small class="text-muted">{{ __(test.extension) }}</small>
 						<small class="text-muted">
 							{%- if process.result != None -%}
 								{{ __('Completed') }}

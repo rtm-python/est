@@ -12,7 +12,7 @@ import logging
 from blueprints import application
 from blueprints.base import blueprint
 from blueprints.__locale__ import __
-from identica import telegram as bot
+from plugins.identica import Plugin as IdenticaPlugin
 from models.process_store import ProcessStore
 from models.user_store import UserStore
 from models.entity.user import User
@@ -106,9 +106,19 @@ class SignInForm(FlaskForm):
 	"""
 	This is a SignInForm class to retrieve form data.
 	"""
-	usercode = StringField()
-	passcode = StringField(validators=[validators.DataRequired()])
-	submit = SubmitField()
+	pin = StringField('signInPin')
+	password = StringField('signInPassword')
+	submit = SubmitField('signInSubmit')
+
+	def __init__(self) -> "SignInForm":
+		"""
+		Initiate object with values from request.
+		"""
+		super(SignInForm, self).__init__()
+		for field in self:
+			if field.name != 'csrf_token':
+				data = request.form.get(field.label.text)
+				field.data = data if data is not None and len(data) > 0 else None
 
 
 class ProfilerForm(FlaskForm):
@@ -237,34 +247,75 @@ def sign_in():
 	Return sign-in page and login user.
 	"""
 	if current_user.is_authenticated:
-		return redirect(url_for('base.get_profile'))
+		return redirect(url_for('base.get_landing'))
 	sign_in = SignInForm()
-	if sign_in.validate_on_submit():
-		usercode_item = bot.verify_usercode(
-			sign_in.usercode.data, sign_in.passcode.data.strip())
-		if usercode_item is not None: # usercode/passcode is valid
-			anonymous_token = current_user.get_token()
-			user = UserStore.get_or_create_user(
-				usercode_item['from_id'], usercode_item['name'])
-			logging.debug('Sign in as user %s (%s)' % (user.name, user.from_id))
-			login_user(SignedInUser(user), remember=True)
-			logging.debug(
-				'Defined user (%s) and token (%s)' % \
-				(current_user.get_id(), anonymous_token)
-			)
-			logging.debug(
-				'Binding anonymous processes to user: %d binded' % \
-				ProcessStore.bind_token(current_user.get_id(), anonymous_token)
-			)
-			return redirect(url_for('base.get_landing'))
-		logging.warning('Invalid usercode/passcode pair')
-		return redirect(url_for('base.sign_in'))
-	sign_in.usercode.value = bot.create_usercode()
+	if sign_in.validate_on_submit() and sign_in.pin.data is not None:
+		if sign_in.password.data is None:
+			password = IdenticaPlugin.get_password(sign_in.pin.data)
+			if password is None:
+				logging.debug('Wrong password submitted')
+				return redirect(url_for('base.sign_in'))
+			sign_in.password.data = password
+		else:
+			verify_data = IdenticaPlugin.verify_pin(sign_in.pin.data)
+			if verify_data is None:
+				logging.debug('Wrong PIN submitted')
+				return { 'redirect': url_for('base.sign_in') }
+			elif verify_data.get('from'):
+				user = UserStore().get_or_create_user(
+					verify_data['from']['id'],
+					'%s %s [%s]' % (
+						verify_data['from'].get('first_name'),
+						verify_data['from'].get('last_name'),
+						verify_data['from'].get('username')
+					)
+				)
+				login_user(SignedInUser(user), remember=True)
+				user_info = '%s (%s / %s)' % \
+					(
+						' '.join([str(user.first_name), str(user.last_name)]),
+						user.from_id, user.username
+					) if user is not None else None
+				logging.debug('Sign in as user %s' % user_info)
+				return { 'redirect': url_for('base.get_landing') }
+			return { 'wait': True }
 	return render_template(
 		'base/sign_in.html',
 		sign_in=sign_in,
 		nav_active='account'
 	)
+
+
+	# if current_user.is_authenticated:
+	# 	return redirect(url_for('base.get_profile'))
+	# sign_in = SignInForm()
+	# if sign_in.validate_on_submit():
+	# 	usercode_item = bot.verify_usercode(
+	# 		sign_in.usercode.data, sign_in.passcode.data.strip())
+	# 	if usercode_item is not None: # usercode/passcode is valid
+	# 		anonymous_token = current_user.get_token()
+	# 		user = UserStore.get_or_create_user(
+	# 			usercode_item['from_id'], usercode_item['name'])
+	# 		logging.debug('Sign in as user %s (%s)' % (user.name, user.from_id))
+	# 		login_user(SignedInUser(user), remember=True)
+	# 		logging.debug(
+	# 			'Defined user (%s) and token (%s)' % \
+	# 			(current_user.get_id(), anonymous_token)
+	# 		)
+	# 		logging.debug(
+	# 			'Binding anonymous processes to user: %d binded' % \
+	# 			ProcessStore.bind_token(current_user.get_id(), anonymous_token)
+	# 		)
+	# 		return redirect(url_for('base.get_landing'))
+	# 	logging.warning('Invalid usercode/passcode pair')
+	# 	return redirect(url_for('base.sign_in'))
+	# sign_in.usercode.value = bot.create_usercode()
+	# return render_template(
+	# 	'base/sign_in.html',
+	# 	sign_in=sign_in,
+	# 	nav_active='account'
+	# )
+
 
 @blueprint.route('/account/sign-out/', methods=('GET',))
 def sign_out():

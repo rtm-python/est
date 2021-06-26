@@ -24,7 +24,6 @@ from models.process_store import ProcessStore
 from models.test_store import TestStore
 from models.task_store import TaskStore
 from models.entity.process import Process
-from identica import telegram as bot
 
 # Additional libraries import
 from flask import render_template
@@ -45,7 +44,7 @@ class ChartFilterForm(FilterForm):
 	This is ChartFilterForm class to retrieve form data.
 	"""
 	name = StringField('FilterName')
-	plugin = StringField('FilterPlugin')
+	extension = StringField('FilterExtension')
 	submit = SubmitField('FilterSubmit')
 
 	def __init__(self) -> 'ChartFilterForm':
@@ -72,7 +71,7 @@ def get_chart():
 		'chart',
 		ProcessStore.count_charts(
 			filter.name.data,
-			filter.plugin.data,
+			filter.extension.data,
 			current_user.get_id(),
 			current_user.get_token()
 		)
@@ -83,7 +82,7 @@ def get_chart():
 		(pagination['page_index'] - 1) * pagination['per_page'],
 		pagination['per_page'],
 		filter.name.data,
-		filter.plugin.data,
+		filter.extension.data,
 		current_user.get_id(),
 		current_user.get_token()
 	)

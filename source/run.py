@@ -8,19 +8,27 @@ Main module to run application.
 import logging
 import sys
 
+# Append source path on wsgi initialization
 sys.path.append('source')
 
 # Application modules import
 from blueprints import application
 from models import database
-from identica import telegram as bot
+from config import CONFIG
+from plugins import PluginManager
 
-try:
-	bot.init(False)
-except:
-	logging.error('Bot initialization error', exc_info=1)
 
+@application.cli.command('run-identica')
+def run_identica():
+	"""
+	Run PluginManager to communicate with application identica bot.
+	"""
+	logging.getLogger().level = logging.INFO
+	PluginManager(
+		'identica', domain_url='https://crammer.scene.kz').execute('run')
+
+
+# Run application on executing module
 if __name__ == '__main__':
-	bot.run()
-	application.run('0.0.0.0')
-	bot.stop()
+	logging.getLogger().level = logging.DEBUG
+	application.run(CONFIG['web']['host'], CONFIG['web']['port'])

@@ -20,7 +20,7 @@ from blueprints.__pagination__ import get_pagination
 from blueprints.__args__ import get_string
 from blueprints.__args__ import get_boolean
 from blueprints.__args__ import set_value
-from config import PLUGIN_LIST
+from config import EXTENSION_LIST
 from models.test_store import TestStore
 from models.entity.test import Test
 
@@ -43,7 +43,7 @@ class CatalogFilterForm(FilterForm):
 	This is CatalogFilterForm class to retrieve form data.
 	"""
 	name = StringField('FilterName')
-	plugin = StringField('FilterPlugin')
+	extension = StringField('FilterExtension')
 	hide_global = BooleanField('FilterHideGlobal')
 	submit = SubmitField('FilterSubmit')
 
@@ -58,36 +58,36 @@ class CreatorForm(FlaskForm):
 	"""
 	This is CreatorForm class to retrieve form data.
 	"""
-	plugin = SelectField('creatorPlugin', validators=[validators.DataRequired()])
+	extension = SelectField('creatorExtension', validators=[validators.DataRequired()])
 	submit = SubmitField('creatorSubmit')
 
 	def __init__(self) -> 'CreatorForm':
 		"""
-		Initiate object with plugin
+		Initiate object with extension
 		"""
 		super(CreatorForm, self).__init__()
-		self.plugin.choices = PLUGIN_LIST
-		self.plugin.data = request.form.get(self.plugin.label.text)
+		self.extension.choices = EXTENSION_LIST
+		self.extension.data = request.form.get(self.extension.label.text)
 
 
-class PluginOptionsField(StringField):
+class ExtensionOptionsField(StringField):
 	"""
-	This is PluginOptionsField class to handle form data.
+	This is ExtensionOptionsField class to handle form data.
 	"""
-	plugin_module = None
+	extension_module = None
 
 	def get_items(self) -> list:
 		"""
-		Form from plugin and return options items list.
+		Form from extension and return options items list.
 		"""
-		return self.plugin_module.form_options(self.data)
+		return self.extension_module.form_options(self.data)
 
 	def pre_validate(self, form):
 		"""
-		Prevalidate plugin options values and store string representation.
+		Prevalidate extension options values and store string representation.
 		"""
-		self.data = self.plugin_module.parse_options(request.form)
-		self.plugin_module.form_options(self.data, validate=True)
+		self.data = self.extension_module.parse_options(request.form)
+		self.extension_module.form_options(self.data, validate=True)
 
 
 class TestForm(FlaskForm):
@@ -95,14 +95,14 @@ class TestForm(FlaskForm):
 	This is TestForm class to retrieve form data.
 	"""
 	name = StringField('name', validators=[validators.DataRequired()])
-	options = PluginOptionsField('options')
+	options = ExtensionOptionsField('options')
 	repeat = SelectField('repeat', validators=[validators.DataRequired()])
 	speed = SelectField('speed', validators=[validators.DataRequired()])
 	submit = SubmitField('submit')
 
-	def __init__(self, plugin_module: object, test: object = None) -> 'TestForm':
+	def __init__(self, extension_module: object, test: object = None) -> 'TestForm':
 		"""
-		Initiate object with plugin, repeat and preformance choices.
+		Initiate object with extension, repeat and preformance choices.
 		"""
 		super(TestForm, self).__init__()
 		self.repeat.choices = [
@@ -111,10 +111,10 @@ class TestForm(FlaskForm):
 		self.speed.choices = [
 			('25', 'Slow'), ('50', 'Normal'), ('100', 'Fast')
 		]
-		self.options.plugin_module = plugin_module
+		self.options.extension_module = extension_module
 		if test:
 			self.name.data = test.name
-			self.options.data = test.plugin_options
+			self.options.data = test.extension_options
 			self.repeat.data = str(test.repeat)
 			self.speed.data = str(test.speed)
 		else:
@@ -155,13 +155,13 @@ def get_catalog():
 		if request.form.get('creatorSubmit') and \
 				creator.validate_on_submit(): # Valid post request
 			return redirect(url_for(
-				'test.create', plugin=creator.plugin.data))
+				'test.create', extension=creator.extension.data))
 	# Prepare list data
 	pagination = get_pagination(
 		'catalog',
 		 TestStore.count_list(
 			filter.name.data,
-			filter.plugin.data,
+			filter.extension.data,
 			current_user.get_id() if filter.hide_global.data else None
 		)
 	)
@@ -171,7 +171,7 @@ def get_catalog():
 		(pagination['page_index'] - 1) * pagination['per_page'],
 		pagination['per_page'],
 		filter.name.data,
-		filter.plugin.data,
+		filter.extension.data,
 		current_user.get_id() if filter.hide_global.data else None
 	)
 	return render_template(
@@ -184,23 +184,23 @@ def get_catalog():
 	)
 
 
-@blueprint.route('/catalog/create/<plugin>/', methods=('GET', 'POST'))
-def create(plugin: str):
+@blueprint.route('/catalog/create/<extension>/', methods=('GET', 'POST'))
+def create(extension: str):
 	"""
 	Return create test page.
 	"""
 	if not current_user.is_authenticated:
 		return redirect(url_for('test.get_catalog'))
 	try:
-		plugin_module = importlib.import_module('plugins.%s' % plugin)
+		extension_module = importlib.import_module('extensions.%s' % extension)
 	except:
-		logging.error('Plugin import error', exc_info=1)
+		logging.error('Extension import error', exc_info=1)
 		redirect(url_for('test.get_catalog'))
-	creator = TestForm(plugin_module=plugin_module)
+	creator = TestForm(extension_module=extension_module)
 	if creator.validate_on_submit(): # Valid post request
 		TestStore.create(
 			creator.name.data,
-			plugin,
+			extension,
 			creator.options.data,
 			int(creator.repeat.data),
 			int(creator.speed.data),
@@ -226,14 +226,14 @@ def update(uid: str):
 	if not verify_test_owner(test):
 		return reidrect(url_for('test.get_catalog'))
 	try:
-		plugin_module = importlib.import_module('plugins.%s' % test.plugin)
+		extension_module = importlib.import_module('extensions.%s' % test.extension)
 	except:
-		logging.error('Plugin import error', exc_info=1)
+		logging.error('Extension import error', exc_info=1)
 		redirect(url_for('test.get_catalog'))
 	if request.method == 'GET':
-		updater = TestForm(plugin_module, test)
+		updater = TestForm(extension_module, test)
 	else:
-		updater = TestForm(plugin_module)
+		updater = TestForm(extension_module)
 	if updater.validate_on_submit(): # Valid post request
 		TestStore.update(
 			uid,

@@ -48,7 +48,7 @@ class ProcessFilterForm(FilterForm):
 	This is ProcessFilterForm class to retrieve form data.
 	"""
 	name = StringField('filterName')
-	plugin = StringField('filterPlugin')
+	extension = StringField('filterExtension')
 	hide_completed = BooleanField('filterHideCompleted')
 	submit = SubmitField('filterSubmit')
 
@@ -100,7 +100,7 @@ def get_process():
 		'process',
 		ProcessStore.count_list(
 			filter.name.data,
-			filter.plugin.data,
+			filter.extension.data,
 			filter.hide_completed.data,
 			current_user.get_id(),
 			current_user.get_token()
@@ -112,7 +112,7 @@ def get_process():
 		(pagination['page_index'] - 1) * pagination['per_page'],
 		pagination['per_page'],
 		filter.name.data,
-		filter.plugin.data,
+		filter.extension.data,
 		filter.hide_completed.data,
 		current_user.get_id(),
 		current_user.get_token()
@@ -142,7 +142,7 @@ def start(uid: str):
 		IdenticaPlugin.notify_user(
 			current_user.user.from_id,
 			process_template % (
-				'%s (%s)' % (test.name, __(test.plugin)),
+				'%s (%s)' % (test.name, __(test.extension)),
 				__('Started')
 			)
 		)
@@ -159,9 +159,9 @@ def play(uid: str):
 		return redirect(url_for('test.get_process'))
 	if process.result is not None:
 		return redirect(url_for('test.get_result', uid=uid))
-	# Import plugin module and get data
-	plugin_module = importlib.import_module('plugins.%s' % test.plugin)
-	data = plugin_module.get_data(json.loads(test.plugin_options))
+	# Import extension module and get data
+	extension_module = importlib.import_module('extensions.%s' % test.extension)
+	data = extension_module.get_data(json.loads(test.extension_options))
 	# Read previous tasks
 	task = None
 	passed_tasks = TaskStore.read_list(
@@ -175,17 +175,17 @@ def play(uid: str):
 	player = PlayerForm()
 	if player.validate_on_submit():
 		user_answer = player.answer.data.strip()
-		validation_errors = plugin_module.validate_answer(user_answer)
-		if not validation_errors: # Plugin should validate anwser
+		validation_errors = extension_module.validate_answer(user_answer)
+		if not validation_errors: # Extension should validate anwser
 			task = TaskStore.set_answer(task.uid, user_answer)
 			process = ProcessStore.add_answer(process.uid, task)
 			if process.result is not None:
 				if current_user.is_authenticated and \
 						current_user.user.notification_test_start:
-					IdenticaPlugin.notify_user(
+					IdenticaExtension.notify_user(
 						current_user.user.from_id,
 						process_template % (
-							'%s (%s)' % (test.name, __(test.plugin)),
+							'%s (%s)' % (test.name, __(test.extension)),
 							__('Completed with result %s') % process.result + '%'
 						)
 					)

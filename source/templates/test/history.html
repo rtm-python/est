@@ -1,0 +1,17 @@
+{%- for passed_task in passed_tasks -%}
+	{%- set passed_data = __dict(passed_task.data) -%}
+	<div class="card p-2 shadow-sm mb-3 rounded text-center" style="background: {%- if passed_task.correct_answer -%}lightgreen{%- else -%}lightcoral{%- endif -%};">
+		<blockquote class="blockquote mb-0 card-body">
+			<div class="d-flex w-100 justify-content-between mb-1">
+				{%- if passed_task.correct_answer -%}
+					<small class="text-muted">{{ __('Correct answer') }}</small>
+				{%- else -%}
+					<small class="text-muted">{{ __('Incorrect answer') }}</small>
+				{%- endif -%}
+				<small class="text-muted">{{ passed_task.answer }}</small>
+			</div>
+			{{ extension.show(passed_data.task, false) }}
+			<h3 class="m-2">{{ passed_data.answer }}</h3>
+		</blockquote>
+	</div>
+{%- endfor -%}

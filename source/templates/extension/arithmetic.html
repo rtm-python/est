@@ -1,2 +1,8 @@
-<h5>{{ __('Type number for question mark...') }}</h5>
-<h1 class="p-3" style="font-family: 'Roboto Mono', monospace; background: whitesmoke;">{{ data.task }}</h1>
+{%- macro show(task, active=false) -%}
+	{%- if active -%}
+		<h5>{{ __('Type number for question mark...') }}</h5>
+		<h1 class="p-3" style="font-family: 'Roboto Mono', monospace; background: whitesmoke;">{{ data.task }}</h1>
+	{%- else -%}
+		<h3 class="m-0">{{ task }}</h3>
+	{%- endif -%}
+{%- endmacro -%}

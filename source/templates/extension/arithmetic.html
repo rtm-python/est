@@ -1,2 +1,15 @@
-<h5>{{ __('Type number for question mark...') }}</h5>
-<h1 class="p-3" style="font-family: 'Roboto Mono', monospace; background: whitesmoke;">{{ data.task }}</h1>
+{%- macro show(index, task, answer) -%}
+	{{ task }}
+	{%- if answer -%}
+		{{ answer }}
+		<!-- <h5>{{ __('Type number for question mark...') }}</h5>
+		<h1 class="p-3" style="font-family: 'Roboto Mono', monospace; background: whitesmoke;">{{ data.task }}</h1> -->
+	{%- else -%}
+		<input autofocus id="answer" type="text" class="w-100 form-control{%- if player.answer.errors -%}{{ ' is-invalid' }}{%- endif -%}" name="answer" placeholder="?" value="{{ player.answer.data|default('', True) }}" autocomplete="off" pattern="[0-9]+"/>
+		{%- for error in player.answer.errors -%}
+			<div class="invalid-feedback">
+				{{ __(error) }}
+			</div>
+		{%- endfor -%}
+	{%- endif -%}
+{%- endmacro -%}

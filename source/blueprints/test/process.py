@@ -60,10 +60,11 @@ class ProcessFilterForm(FilterForm):
 
 
 class PlayerForm(FlaskForm):
+
 	"""
 	This is a PlayerForm class to retrieve form data.
 	"""
-	answer = StringField(validators=[validators.DataRequired()])
+	answer = StringField()
 	submit = SubmitField()
 
 
@@ -174,9 +175,11 @@ def play(uid: str):
 	sound_filename = None
 	player = PlayerForm()
 	if player.validate_on_submit():
-		user_answer = player.answer.data.strip()
-		validation_errors = extension_module.validate_answer(user_answer)
-		if not validation_errors: # Extension should validate anwser
+		user_answer, validation_errors = extension_module.validate_answer(request.form)
+		if validation_errors: # Extension should validate anwser
+			data = json.loads(task.data)
+			player.answer.errors = validation_errors
+		else:
 			task = TaskStore.set_answer(task.uid, user_answer)
 			process = ProcessStore.add_answer(process.uid, task)
 			if process.result is not None:
@@ -194,9 +197,6 @@ def play(uid: str):
 			passed_tasks = [task] + passed_tasks
 			task = TaskStore.create(process.id, json.dumps(data))
 			player.answer.data = None
-		else:
-			data = json.loads(task.data)
-			player.answer.errors = validation_errors
 	elif task is None:
 		task = TaskStore.create(process.id, json.dumps(data))
 	else:

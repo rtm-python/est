@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Plugin module to handle examination process.
+Arithmetic plugin module to handle examination process.
 """
 
 # Standard libraries import
@@ -124,15 +124,16 @@ def form_options(values: str, validate: bool=False) -> dict:
 	return result
 
 
-def validate_answer(answer: str) -> list:
+def validate_answer(form) -> tuple:
 	"""
-	Return errors list on invalid answer.
+	Return answer and errors list on invalid answer.
 	"""
+	answer = form.get('answer')
 	try:
 		answer_int = int(answer)
-		return None
+		return (answer, None)
 	except:
-		return ['Answer should be a number.']
+		return (None, ['Answer should be a number.'])
 
 
 def get_random_operation(options: dict) -> list:

@@ -27,7 +27,7 @@ application = Flask(
 	static_folder='source/static',
 	template_folder='source/template'
 )
-application.config['SECRET_KEY'] = secrets.token_hex(256)
+application.config['SECRET_KEY'] = CONFIG['key']
 paranoid = Paranoid(application)
 paranoid.redirect_view = 'base.get_landing'
 

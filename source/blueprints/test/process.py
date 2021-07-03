@@ -184,8 +184,8 @@ def play(uid: str):
 			process = ProcessStore.add_answer(process.uid, task)
 			if process.result is not None:
 				if current_user.is_authenticated and \
-						current_user.user.notification_test_start:
-					IdenticaExtension.notify_user(
+						current_user.user.notification_test_complete:
+					IdenticaPlugin.notify_user(
 						current_user.user.from_id,
 						process_template % (
 							'%s (%s)' % (test.name, __(test.extension)),

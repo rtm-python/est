@@ -16,6 +16,7 @@ from plugins.identica import Plugin as IdenticaPlugin
 from models.process_store import ProcessStore
 from models.user_store import UserStore
 from models.entity.user import User
+from config import CONFIG
 
 # Additional libraries import
 from flask_login import LoginManager
@@ -36,9 +37,9 @@ from wtforms import SubmitField
 from wtforms import validators
 
 # Constants
-profile_template = '<code>EVENT: </code><b>%s</b>'
-feedback_template = '<code>FROM: </code><b>%s</b>\n<i>%s</i>'
-link_template = 'tg://user?id=%s'
+PROFILE_TEMPLATE = 'EVENT: %s'
+FEEDBACK_TEMPLATE = '%s [%s]: %s'
+LINK_TEMPLATE = 'https://t.me/user?id=%s'
 
 
 class SignedInUser(UserMixin):
@@ -202,9 +203,9 @@ def get_profile():
 		profiler = ProfilerForm(current_user.user)
 	else:
 		if current_user.user.notification_profile:
-			bot.send_message(
+			IdenticaPlugin.notify_user(
 				current_user.user.from_id,
-				profile_template % __('Profile updated')
+				PROFILE_TEMPLATE % __('Profile updated')
 			)
 		profiler = ProfilerForm()
 	if request.form.get('profilerSubmit') and \
@@ -218,18 +219,15 @@ def get_profile():
 	feedbacker = FeedbackerForm(request.method == 'POST')
 	if request.form.get('feedbackerSubmit') and \
 			 feedbacker.validate_on_submit(): # Valid post request
-		bot.send_message(
+		IdenticaPlugin.notify_user(
 			current_user.user.from_id,
 			__('Thank you for your feedback!')
 		)
-		bot.send_message(
-			None,
-			feedback_template % (
-				'<a href="%s">%s</a>' % (
-					current_user.user.from_id,
-					current_user.user.name
-				),
-				feedbacker.message.data[:100]
+		IdenticaPlugin.notify_user(
+			CONFIG['feedback'],
+			FEEDBACK_TEMPLATE % (
+				LINK_TEMPLATE % current_user.user.from_id,
+				current_user.user.name, feedbacker.message.data[:100]
 			)
 		)
 		return redirect(url_for('base.get_profile'))
@@ -284,37 +282,6 @@ def sign_in():
 		sign_in=sign_in,
 		nav_active='account'
 	)
-
-
-	# if current_user.is_authenticated:
-	# 	return redirect(url_for('base.get_profile'))
-	# sign_in = SignInForm()
-	# if sign_in.validate_on_submit():
-	# 	usercode_item = bot.verify_usercode(
-	# 		sign_in.usercode.data, sign_in.passcode.data.strip())
-	# 	if usercode_item is not None: # usercode/passcode is valid
-	# 		anonymous_token = current_user.get_token()
-	# 		user = UserStore.get_or_create_user(
-	# 			usercode_item['from_id'], usercode_item['name'])
-	# 		logging.debug('Sign in as user %s (%s)' % (user.name, user.from_id))
-	# 		login_user(SignedInUser(user), remember=True)
-	# 		logging.debug(
-	# 			'Defined user (%s) and token (%s)' % \
-	# 			(current_user.get_id(), anonymous_token)
-	# 		)
-	# 		logging.debug(
-	# 			'Binding anonymous processes to user: %d binded' % \
-	# 			ProcessStore.bind_token(current_user.get_id(), anonymous_token)
-	# 		)
-	# 		return redirect(url_for('base.get_landing'))
-	# 	logging.warning('Invalid usercode/passcode pair')
-	# 	return redirect(url_for('base.sign_in'))
-	# sign_in.usercode.value = bot.create_usercode()
-	# return render_template(
-	# 	'base/sign_in.html',
-	# 	sign_in=sign_in,
-	# 	nav_active='account'
-	# )
 
 
 @blueprint.route('/account/sign-out/', methods=('GET',))

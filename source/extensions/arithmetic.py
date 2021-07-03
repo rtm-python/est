@@ -223,7 +223,8 @@ def get_data(options: dict) -> dict:
 		speed_time *= DIVISION_TIME_PER_BIT
 	# Replace one of the vars with question mark
 	hide_index = randint(1, len(preset) - 1) \
-		if options['result_only'] == 'false' else len(preset) - 1
+		if options['result_only'] == 'no' else len(preset) - 1
+	print(options['result_only'], options['result_only'] == 'no')
 	if preset[0] in ['x', '/']:
 		if preset[hide_index] != 0 and '0' in preset:
 			hide_index = len(preset) - 1
@@ -233,8 +234,13 @@ def get_data(options: dict) -> dict:
 	answer = preset[hide_index]
 	preset[hide_index] = '?'
 	return {
-		'task': '%s = %s' % \
-			((' %s ' % preset[0]).join(preset[1: -1]), preset[-1]),
+		'task': (preset[0], preset[1: ]),
 		'answer': answer,
 		'speed_time': int(speed_time)
 	}
+	# return {
+	# 	'task': '%s = %s' % \
+	# 		((' %s ' % preset[0]).join(preset[1: -1]), preset[-1]),
+	# 	'answer': answer,
+	# 	'speed_time': int(speed_time)
+	# }

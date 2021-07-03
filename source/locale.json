@@ -8,6 +8,12 @@
 		"ru": "Арифметика",
 		"kz": "Арифметика"
 	},
+	"atime": {
+		"endpoint": null,
+		"en": "Clock",
+		"ru": "Часы",
+		"kz": "Сағат"
+	},
 	"language": {
 		"endpoint": null,
 		"ru": "язык"

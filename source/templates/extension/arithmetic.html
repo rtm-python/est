@@ -1,15 +1,34 @@
 {%- macro show(index, task, answer) -%}
-	{{ task }}
-	{%- if answer -%}
-		{{ answer }}
-		<!-- <h5>{{ __('Type number for question mark...') }}</h5>
-		<h1 class="p-3" style="font-family: 'Roboto Mono', monospace; background: whitesmoke;">{{ data.task }}</h1> -->
-	{%- else -%}
-		<input autofocus id="answer" type="text" class="w-100 form-control{%- if player.answer.errors -%}{{ ' is-invalid' }}{%- endif -%}" name="answer" placeholder="?" value="{{ player.answer.data|default('', True) }}" autocomplete="off" pattern="[0-9]+"/>
-		{%- for error in player.answer.errors -%}
-			<div class="invalid-feedback">
-				{{ __(error) }}
+	<div class="item-font">
+		{%- for value in task[1] -%}
+			{%- if not loop.first -%}
+				{%- if not loop.last -%}
+					<div class="item-center">{{ task[0] }}</div>
+				{%- else -%}
+					<div class="item-center">=</div>
+				{%- endif -%}
+			{%- endif -%}
+			<div class="item-center">
+				{%- if value == '?' -%}
+					{%- if index == -1 -%}
+						<input autofocus id="answer" type="text" class="item-font text-center form-control{%- if player.answer.errors -%}{{ ' is-invalid' }}{%- endif -%}" name="answer" placeholder="? " value="{{ player.answer.data|default('', True) }}" autocomplete="off" pattern="[0-9]+" style="width: 75px; min-width: 75px; max-width: max-content;" oninput="resizeInputWidth();" />
+					{%- else -%}
+						<div class="item-font text-center form-control">
+							{{ answer }}
+						</div>
+					{%- endif -%}
+				{%- else -%}
+					<div class="item-font text-center form-control" style="border-radius: 55px; min-width: 55px;">
+						{{ value }}
+					</div>
+				{%- endif -%}
 			</div>
 		{%- endfor -%}
-	{%- endif -%}
+	</div>
+	<script type="text/javascript">
+		function resizeInputWidth() {
+			var answer = $("#answer")
+			answer.width(answer.val().length * 16);
+		}
+	</script>
 {%- endmacro -%}

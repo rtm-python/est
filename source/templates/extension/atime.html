@@ -100,17 +100,21 @@
 			ctx.rotate(-pos);
 		}
 	</script>
-	<div class="d-flex col-12 mt-2 mb-0" style="margin: 0 auto; width: min-content;">
-		{%- if answer -%}
-			<h3 class="m-0 p-0">{{ answer }}</h3>
+	<div class="d-flex col-12 mt-2 mb-0" style="margin: 0 auto; width: max-content;">
+		{%- if index >= 0 -%}
+			<div>
+				<div class="d-inline item-font form-control">{{ answer.split(":")[0] }}</div>
+				<div class="d-inline item-font" style="margin: auto 5px;">:</div>
+				<div class="d-inline item-font form-control">{{ answer.split(":")[1] }}</div>
+			</div>
 		{%- else -%}
-			<select autofocus required name="hours" class="{%- if player.answer.errors -%}{{ ' is-invalid' }}{%- endif -%}">
+			<select autofocus required name="hours" class="item-font form-control{%- if player.answer.errors -%}{{ ' is-invalid' }}{%- endif -%}">
 				{%- for hour in range(24) -%}
 					<option value="{{ '%02d' % hour }}">{{ '%02d' % hour }}</option>
 				{%- endfor -%}
 			</select>
-			<div style="margin: auto 5px;">:</div>
-			<select autofocus required name="minutes" class="{%- if player.answer.errors -%}{{ ' is-invalid' }}{%- endif -%}">
+			<div class="item-font" style="margin: auto 5px;">:</div>
+			<select autofocus required name="minutes" class="item-font form-control{%- if player.answer.errors -%}{{ ' is-invalid' }}{%- endif -%}">
 				{%- for minute in range(60) -%}
 					<option value="{{ '%02d' % minute }}">{{ '%02d' % minute }}</option>
 				{%- endfor -%}
@@ -123,5 +127,5 @@
 				{{ __(error) }}
 			</div>
 		{%- endfor -%}
-	{%- endif -}
+	{%- endif -%}
 {%- endmacro -%}

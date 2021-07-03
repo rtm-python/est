@@ -1,6 +1,6 @@
 {%- for passed_task in passed_tasks -%}
 	{%- set passed_data = __dict(passed_task.data) -%}
-	<div class="card p-2 shadow-sm mb-3 rounded text-center" style="background: {%- if passed_task.correct_answer -%}lightgreen{%- else -%}lightcoral{%- endif -%};">
+	<div class="card p-3 shadow-sm mb-3 rounded text-center" style="background: {%- if passed_task.correct_answer -%}lightgreen{%- else -%}lightcoral{%- endif -%};">
 		<blockquote class="blockquote mb-0 card-body">
 			<div class="d-flex w-100 justify-content-between mb-2">
 				{%- if passed_task.correct_answer -%}

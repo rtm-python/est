@@ -1,0 +1,59 @@
+{%- extends "layout_landing.html" -%}
+{%- set title -%}{{ __('Name') }}{%- endset -%}
+{%- set ga_disable = False -%}
+{%- block body_content -%}
+	{%- if switcher|default('', True) -%}
+		<form id="switcherForm" class="col-12 offset-sm-2 col-sm-8 offset-md-3 col-md-6" method="post" actions="">
+			{{ switcher.csrf_token }}
+			<div class="row p-1 g-3">
+				<div class="col-12 text-center mt-5">
+					<small>{{ __('Select name below or create new name') }}</small>
+					{%- for name in switcher.name.choices -%}
+						<div class="form-check">
+							<input class="form-check-input" type="radio" name="{{ switcher.name.label.text }}" id="{{ name[0] }}"  value="{{ name[0] }}" style="margin: auto 0px; top: 0; bottom: 0; left: 0;"/>
+							<label class="form-check-label" for="{{ name[0] }}" style="padding: 5px 10px; border: 1px solid slategrey; border-radius: 5px; width: 95%; margin: 5px 10px; line-height: 1.95;">
+								{%- if loop.last -%}
+									<div id="label" style="display: inline;">{{ name[1] }}</div>
+									<input type="text" class="form-control form-control-sm w-100 text-center" id="{{ switcher.value.label.text }}" name="{{ switcher.value.label.text }}" placeholder="{{ __('New Name') }}" value="{{ switcher.value.data|default('', True) }}" style="display: none;" />
+								{%- else -%}
+									{{ name[1] }}
+								{%- endif -%}
+							</label>
+						</div>
+					{%- endfor -%}
+				</div>
+				<div class="col-12 text-center mt-3">
+					<input type="submit" id="{{ switcher.submit.label.text }}" name="{{ switcher.submit.label.text }}" class="mt-2 btn btn-outline-light btn-block" value="{{ __('Submit') }}" />
+				</div>
+			</div>
+		</form>
+		<script type="text/javascript">
+			$(window).on('load', function() {
+				if ($("input[type=radio][name={{ switcher.name.label.text }}]").val() == "{{ switcher.name.choices[-1][0] }}") {
+					$("#label").css("display", "none");
+					$("#{{ switcher.value.label.text }}").css("display", "block");
+					$("#{{ switcher.value.label.text }}").focus();
+				}
+			});
+			$("input[type=radio][name={{ switcher.name.label.text }}]").on("change", function() {
+				console.log($(this).val());
+				switch ($(this).val()) {
+					case "{{ switcher.name.choices[-1][0] }}":
+						$("#label").css("display", "none");
+						$("#{{ switcher.value.label.text }}").css("display", "block");
+						$("#{{ switcher.value.label.text }}").focus();
+						break;
+					default:
+						$("#label").css("display", "inline");
+						$("#{{ switcher.value.label.text }}").css("display", "none");
+						break;
+				}
+			});
+		</script>	
+	{%- else -%}
+		<div class="col-12 offset-sm-2 col-sm-8 offset-md-3 col-md-6">
+			<p>{{ __('Please, sign in to select name') }}</p>
+			<a href="{{ url_for('base.sign_in') }}" class="mt-2 btn btn-outline-light btn-block">{{ __('Sign In') }}</a>
+		</div>
+	{%- endif -%}
+{%- endblock -%}

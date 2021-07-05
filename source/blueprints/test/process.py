@@ -96,6 +96,7 @@ def get_process():
 		filter.store_fields()
 		return redirect(filter.url_for_with_fields('test.get_process'))
 	filter.define_fields()
+	name = current_user.get_name()
 	# Prepare list data
 	pagination = get_pagination(
 		'process',
@@ -104,7 +105,8 @@ def get_process():
 			filter.extension.data,
 			filter.hide_completed.data,
 			current_user.get_id(),
-			current_user.get_token()
+			current_user.get_token(),
+			name.uid if name is not None else None
 		)
 	)
 	pagination['endpoint'] = 'test.get_process'
@@ -116,7 +118,8 @@ def get_process():
 		filter.extension.data,
 		filter.hide_completed.data,
 		current_user.get_id(),
-		current_user.get_token()
+		current_user.get_token(),
+		name.uid if name is not None else None
 	)
 	return render_template(
 		'test/process.html',
@@ -135,8 +138,10 @@ def start(uid: str):
 	test = TestStore.read(uid)
 	if test is None:
 		return redirect(url_for('test.get_process'))
+	name = current_user.get_name()
 	process = ProcessStore.create(
-		test.id, current_user.get_id(), current_user.get_token()
+		test.id, current_user.get_id(), current_user.get_token(),
+		name.uid if name is not None else None
 	)
 	if current_user.is_authenticated and \
 			current_user.user.notification_test_start:

@@ -41,9 +41,11 @@ class Process(Entity):
 	result = Column(database.Integer, index=True, nullable=True)
 	user_uid = Column(database.String, index=True, nullable=True)
 	anonymous_token = Column(database.String, index=True, nullable=True)
+	name_uid = Column(database.String, index=True, nullable=True)
 
 	def __init__(self, test_id: int,
-							 user_uid: str, anonymous_token: str) -> "Process":
+							 user_uid: str, anonymous_token: str,
+							 name_uid: str) -> "Process":
 		'''
 		Initiate object and stores Process' data.
 		'''
@@ -51,3 +53,4 @@ class Process(Entity):
 		self.test_id = test_id
 		self.user_uid = user_uid
 		self.anonymous_token = anonymous_token
+		self.name_uid = name_uid

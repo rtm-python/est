@@ -26,13 +26,14 @@ class ProcessStore(Store):
 	"""
 
 	@staticmethod
-	def create(test_id: int, user_uid: str, anonymous_token: str) -> Process:
+	def create(test_id: int, user_uid: str, anonymous_token: str,
+						 name_uid: str) -> Process:
 		"""
 		Create and return process.
 		"""
 		return super(ProcessStore, ProcessStore).create(
 			Process(
-				test_id, user_uid, anonymous_token
+				test_id, user_uid, anonymous_token, name_uid
 			)
 		)
 
@@ -47,7 +48,7 @@ class ProcessStore(Store):
 
 	@staticmethod
 	def update(uid: str, test_id: int,
-						 user_uid: str, anonymous_token: str,
+						 user_uid: str, anonymous_token: str, name_uid: str,
 						 answer_count: int, correct_count: int,
 						 total_answer_time: int, speed_time: int,
 						 result: int) -> Process:
@@ -58,6 +59,7 @@ class ProcessStore(Store):
 		process.test_id = test_id
 		process.user_uid = user_uid
 		process.anonymous_token = anonymous_token
+		process.name_uid = name_uid
 		process.answer_count = answer_count
 		process.correct_count = correct_count
 		process.total_answer_time = total_answer_time
@@ -80,25 +82,27 @@ class ProcessStore(Store):
 	def read_list(offset: int, limit: int,
 								filter_name: str, filter_extension: str,
 								filter_hide_completed: bool,
-								user_uid: str, anonymous_token: str) -> list:
+								user_uid: str, anonymous_token: str,
+								name_uid: str) -> list:
 		"""
 		Return list of processes by arguments.
 		"""
 		return _get_list_query(
 			filter_name, filter_extension, filter_hide_completed,
-			user_uid, anonymous_token
+			user_uid, anonymous_token, name_uid
 		).limit(limit).offset(offset).all()
 
 	@staticmethod
 	def count_list(filter_name: str, filter_extension: str,
 								 filter_hide_completed: bool,
-								 user_uid: str, anonymous_token: str) -> int:
+								 user_uid: str, anonymous_token: str,
+								 name_uid: str) -> int:
 		"""
 		Return number of processes in list.
 		"""
 		return Store.count(_get_list_query(
 			filter_name, filter_extension, filter_hide_completed,
-			user_uid, anonymous_token
+			user_uid, anonymous_token, name_uid
 		))
 
 	@staticmethod
@@ -137,7 +141,7 @@ class ProcessStore(Store):
 		binded_count = 0
 		while True:
 			process_list = ProcessStore.read_list(
-				0, 100, None, None, None, None, anonymous_token)
+				0, 100, None, None, None, None, anonymous_token, None)
 			if len(process_list) == 0:
 				break
 			else:
@@ -173,35 +177,38 @@ class ProcessStore(Store):
 	@staticmethod
 	def read_charts(offset: int, limit: int,
 								  filter_name: str, filter_extension: str,
-								  user_uid: str, anonymous_token: str) -> list:
+								  user_uid: str, anonymous_token: str,
+									name_uid) -> list:
 		"""
 		Return list of process charts by arguments.
 		"""
 		return _get_charts_query(
 			filter_name, filter_extension,
-			user_uid, anonymous_token, False
+			user_uid, anonymous_token, name_uid, False
 		).limit(limit).offset(offset).all()
 
 	@staticmethod
 	def count_charts(filter_name: str, filter_extension: str,
-								   user_uid: str, anonymous_token: str) -> int:
+								   user_uid: str, anonymous_token: str,
+									 name_uid: str) -> int:
 		"""
 		Return number of process charts in list.
 		"""
 		return _get_charts_query(
 			filter_name, filter_extension,
-			user_uid, anonymous_token, True
+			user_uid, anonymous_token, name_uid, True
 		)
 		# TODO: Issue with simplified query
 		return Store.count(_get_charts_query(
 			filter_name, filter_extension,
-			user_uid, anonymous_token, True
+			user_uid, anonymous_token, name_uid, True
 		))
 
 
 def _get_list_query(filter_name: str, filter_extension: str,
 										filter_hide_completed: bool,
-										user_uid: str, anonymous_token: str):
+										filter_user_uid: str, filter_anonymous_token: str,
+										filter_name_uid: str):
 	"""
 	Return query object for process.
 	"""
@@ -217,10 +224,12 @@ def _get_list_query(filter_name: str, filter_extension: str,
 		True if filter_hide_completed is None or \
 			filter_hide_completed is False else \
 			Process.result == None,
-		True if user_uid is None else \
-			user_uid == Process.user_uid,
-		True if anonymous_token is None else \
-			anonymous_token == Process.anonymous_token,
+		True if filter_user_uid is None else \
+			filter_user_uid == Process.user_uid,
+		True if filter_anonymous_token is None else \
+			filter_anonymous_token == Process.anonymous_token,
+		True if filter_name_uid is None else \
+			filter_name_uid == Process.name_uid,
 		Process.deleted_utc == None
 	).order_by(
 		Process.modified_utc.desc()
@@ -228,8 +237,8 @@ def _get_list_query(filter_name: str, filter_extension: str,
 
 
 def _get_charts_query(filter_name: str, filter_extension: str,
-										  user_uid: str, anonymous_token: str,
-										  is_count_query: bool):
+										  filter_user_uid: str, filter_anonymous_token: str,
+											filter_name_uid: str, is_count_query: bool):
 	"""
 	Return query object for process charts.
 	"""
@@ -245,10 +254,12 @@ def _get_charts_query(filter_name: str, filter_extension: str,
 			Test.name.ilike('%' + filter_name + '%'),
 		True if filter_extension is None else \
 			Test.extension.ilike('%' + filter_extension + '%'),
-		True if user_uid is None else \
-			user_uid == Process.user_uid,
-		True if anonymous_token is None else \
-			anonymous_token == Process.anonymous_token,
+		True if filter_user_uid is None else \
+			filter_user_uid == Process.user_uid,
+		True if filter_anonymous_token is None else \
+			filter_anonymous_token == Process.anonymous_token,
+		True if filter_name_uid is None else \
+			filter_name_uid == Process.name_uid,
 		Process.modified_utc >= \
 				datetime.datetime.utcnow() - datetime.timedelta(days=7),
 		Test.deleted_utc == None

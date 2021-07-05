@@ -66,6 +66,7 @@ def get_chart():
 		filter.store_fields()
 		return redirect(filter.url_for_with_fields('scoreboard.get_chart'))
 	filter.define_fields()
+	name = current_user.get_name()
 	# Prepare list data
 	pagination = get_pagination(
 		'chart',
@@ -73,7 +74,8 @@ def get_chart():
 			filter.name.data,
 			filter.extension.data,
 			current_user.get_id(),
-			current_user.get_token()
+			current_user.get_token(),
+			name.uid if name is not None else None
 		)
 	)
 	pagination['endpoint'] = 'scoreboard.get_chart'
@@ -84,7 +86,8 @@ def get_chart():
 		filter.name.data,
 		filter.extension.data,
 		current_user.get_id(),
-		current_user.get_token()
+		current_user.get_token(),
+		name.uid if name is not None else None
 	)
 	return render_template(
 		'scoreboard/chart.html',

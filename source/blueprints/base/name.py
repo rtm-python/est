@@ -63,16 +63,16 @@ def get_switcher():
 		if request.form.get('switcherSubmit') and \
 				switcher.validate_on_submit(): # Valid post request
 			if switcher.name.data == switcher.name.choices[-1][0]:
-				if len(switcher.value.data.strip()) > 0:
+				if switcher.value.data and len(switcher.value.data.strip()) > 0:
 					name = NameStore.create(
 						current_user.user.id, switcher.value.data.strip())
+					session['name'] = name.uid
+					return redirect(url_for('base.get_landing'))
 			else:
 				name = NameStore.read(switcher.name.data)
-				if name is not None and name.user_id != current_user.user.id:
-					name = None
-			if name is not None:
-				session['name'] = name.uid
-				return redirect(url_for('base.get_landing'))
+				if name is not None and name.user_id == current_user.user.id:
+					session['name'] = name.uid
+					return redirect(url_for('base.get_landing'))
 	else:
 		switcher = None
 	return render_template(
@@ -80,25 +80,3 @@ def get_switcher():
 		switcher=switcher,
 		nav_active='name'
 	)
-
-
-@application.context_processor
-def get_name():
-	"""
-	Return name from session.
-	"""
-	def _name(key: str) -> object:
-		return __name()
-	return dict(__name=__name)
-
-
-def __name() -> object:
-	"""
-	Return name from session.
-	"""
-	name = session.get('name')
-	if name:
-		name = NameStore.read(name)
-		if name:
-			return name.value
-	return None

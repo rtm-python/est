@@ -15,6 +15,7 @@ from blueprints.__locale__ import __
 from plugins.identica import Plugin as IdenticaPlugin
 from models.process_store import ProcessStore
 from models.user_store import UserStore
+from models.name_store import NameStore
 from models.entity.user import User
 from config import CONFIG
 
@@ -64,6 +65,14 @@ class SignedInUser(UserMixin):
 		"""
 		return None
 
+	def get_name(self):
+		"""
+		Return name object from session.
+		"""
+		if session.get('name') is not None:
+			name = NameStore.read(session['name'])
+			return name if name.user_id == self.user.id else None
+
 
 class AnonymousUser(AnonymousUserMixin):
 	"""
@@ -85,6 +94,12 @@ class AnonymousUser(AnonymousUserMixin):
 			anonymous_token = secrets.token_hex(256)
 			session['anonymous_token'] = anonymous_token
 		return anonymous_token
+
+	def get_name(self):
+		"""
+		Return None for AnonymousUser object (no name).
+		"""
+		return None
 
 
 # Initiate login manager

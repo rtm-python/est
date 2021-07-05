@@ -95,16 +95,23 @@ class UserStore(Store):
 		)
 
 	@staticmethod
-	def get_or_create_user(from_id: str, name: str) -> User:
+	def get_by_from_id(from_id: str) -> User:
 		"""
 		Return user by from_id (only not deleted).
 		"""
-		user = database.session.query(
+		return database.session.query(
 			User
 		).filter(
 			from_id == User.from_id,
 			User.deleted_utc == None
 		).first()
+
+	@staticmethod
+	def get_or_create_user(from_id: str, name: str) -> User:
+		"""
+		Return user by from_id (only not deleted).
+		"""
+		user = UserStore.get_by_from_id(from_id)
 		if user is None:
 			user = UserStore.create(from_id, name)
 		else:

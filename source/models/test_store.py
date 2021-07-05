@@ -9,6 +9,8 @@ from models import database
 from models.__base__ import Store
 from models.entity.test import Test
 
+# Additional libraries import
+from sqlalchemy import or_
 
 class TestStore(Store):
 	"""
@@ -63,22 +65,26 @@ class TestStore(Store):
 	@staticmethod
 	def read_list(offset: int, limit: int,
 								filter_name: str, filter_extension: str,
-								filter_user_uid: str) -> list:
+								filter_user_uid: str,
+								filter_admin_user_uid_list: list) -> list:
 		"""
 		Return list of tests by arguments.
 		"""
 		return _get_list_query(
-			filter_name, filter_extension, filter_user_uid
+			filter_name, filter_extension, filter_user_uid,
+			filter_admin_user_uid_list
 		).limit(limit).offset(offset).all()
 
 	@staticmethod
 	def count_list(filter_name: str, filter_extension: str,
-								 filter_user_uid: str) -> int:
+								 filter_user_uid: str,
+								 filter_admin_user_uid_list: list) -> int:
 		"""
 		Return number of tests in list
 		"""
 		return Store.count(_get_list_query(
-			filter_name, filter_extension, filter_user_uid
+			filter_name, filter_extension, filter_user_uid,
+			filter_admin_user_uid_list
 		))
 
 	@staticmethod
@@ -92,10 +98,17 @@ class TestStore(Store):
 
 
 def _get_list_query(filter_name: str, filter_extension: str,
-										filter_user_uid: str):
+										filter_user_uid: str, filter_admin_user_uid_list: list):
 	"""
 	Return query object for test.
 	"""
+	if filter_user_uid in filter_admin_user_uid_list:
+		user_uid_expression = True
+	else:
+		user_uid_expression = or_(
+			Test.user_uid == user_uid \
+				for user_uid in [ filter_user_uid ] + filter_admin_user_uid_list
+		)
 	return database.session.query(
 		Test
 	).filter(
@@ -103,8 +116,7 @@ def _get_list_query(filter_name: str, filter_extension: str,
 			Test.name.ilike('%' + filter_name + '%'),
 		True if filter_extension is None else \
 			Test.extension.ilike('%' + filter_extension + '%'),
-		True if filter_user_uid is None else \
-			Test.user_uid == filter_user_uid,
+		user_uid_expression,
 		Test.deleted_utc == None
 	).order_by(
 		Test.modified_utc.desc()

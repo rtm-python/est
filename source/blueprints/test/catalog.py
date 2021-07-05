@@ -14,6 +14,7 @@ import logging
 # Application modules import
 from blueprints import application
 from blueprints.test import blueprint
+from blueprints.base.account import admin_user_uid_list
 from blueprints.__filter__ import FilterForm
 from blueprints.__locale__ import __
 from blueprints.__pagination__ import get_pagination
@@ -162,7 +163,8 @@ def get_catalog():
 		 TestStore.count_list(
 			filter.name.data,
 			filter.extension.data,
-			current_user.get_id() if filter.hide_global.data else None
+			current_user.get_id(),
+			admin_user_uid_list if not filter.hide_global.data else []
 		)
 	)
 	pagination['endpoint'] = 'test.get_catalog'
@@ -172,7 +174,8 @@ def get_catalog():
 		pagination['per_page'],
 		filter.name.data,
 		filter.extension.data,
-		current_user.get_id() if filter.hide_global.data else None
+		current_user.get_id(),
+		admin_user_uid_list if not filter.hide_global.data else []
 	)
 	return render_template(
 		'test/catalog.html',

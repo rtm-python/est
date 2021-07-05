@@ -42,6 +42,13 @@ PROFILE_TEMPLATE = 'EVENT: %s'
 FEEDBACK_TEMPLATE = '%s [%s]: %s'
 LINK_TEMPLATE = 'https://t.me/user?id=%s'
 
+# Inititate admin list with user uid
+admin_user_uid_list = []
+for from_id in CONFIG['admin']:
+	user = UserStore.get_by_from_id(from_id)
+	if user is not None:
+		admin_user_uid_list += [ user.uid ]
+
 
 class SignedInUser(UserMixin):
 	"""
@@ -99,6 +106,7 @@ class AnonymousUser(AnonymousUserMixin):
 		"""
 		Return None for AnonymousUser object (no name).
 		"""
+		session['name'] = None
 		return None
 
 

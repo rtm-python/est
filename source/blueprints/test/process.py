@@ -23,6 +23,7 @@ from blueprints.__args__ import set_value
 from models.process_store import ProcessStore
 from models.test_store import TestStore
 from models.task_store import TaskStore
+from models.name_store import NameStore
 from models.entity.process import Process
 from plugins.identica import Plugin as IdenticaPlugin
 
@@ -50,6 +51,7 @@ class ProcessFilterForm(FilterForm):
 	name = StringField('filterName')
 	extension = StringField('filterExtension')
 	hide_completed = BooleanField('filterHideCompleted')
+	hide_others = BooleanField('filterHideOthers')
 	submit = SubmitField('filterSubmit')
 
 	def __init__(self) -> 'ProcessFilterForm':
@@ -68,7 +70,8 @@ class PlayerForm(FlaskForm):
 	submit = SubmitField()
 
 
-def verify_process_owner(process: Process) -> bool:
+def verify_process_owner(process: Process,
+												 ignore_name: bool = False) -> bool:
 	"""
 	Return True when current_user is the process owner,
 	otherwise return False.
@@ -80,6 +83,9 @@ def verify_process_owner(process: Process) -> bool:
 		return False
 	if current_user.get_token() is not None and \
 			current_user.get_token() != process.anonymous_token:
+		return False
+	if not ignore_name and current_user.get_name() is not None and \
+			current_user.get_name().uid != process.name_uid:
 		return False
 	return True
 
@@ -96,7 +102,7 @@ def get_process():
 		filter.store_fields()
 		return redirect(filter.url_for_with_fields('test.get_process'))
 	filter.define_fields()
-	name = current_user.get_name()
+	name = current_user.get_name() if filter.hide_others.data else None
 	# Prepare list data
 	pagination = get_pagination(
 		'process',
@@ -224,10 +230,12 @@ def get_result(uid: str):
 	Return test process result page.
 	"""
 	process, test = ProcessStore.read_with_test(uid)
-	if not verify_process_owner(process):
+	if not verify_process_owner(process, ignore_name=True):
 		return redirect(url_for('test.get_process', uid=uid))
 	if process.result is None:
 		return redirect(url_for('test.play'))
+	name = NameStore.read(process.name_uid)
+	name_value = name.value if name is not None else ''
 	# Read previous tasks
 	passed_tasks = TaskStore.read_list(
 		offset=0, limit=0, filter_process_id=process.id)
@@ -241,6 +249,7 @@ def get_result(uid: str):
 		process=process,
 		test=test,
 		passed_tasks=passed_tasks,
+		name_value=name_value,
 		sound_filename=sound_filename,
 		nav_active='test'
 	)

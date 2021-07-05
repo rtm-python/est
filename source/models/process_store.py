@@ -14,6 +14,7 @@ from models.__base__ import Store
 from models.entity.process import Process
 from models.entity.test import Test
 from models.entity.task import Task
+from models.entity.name import Name
 
 # Additional libraries import
 from sqlalchemy import func
@@ -212,11 +213,23 @@ def _get_list_query(filter_name: str, filter_extension: str,
 	"""
 	Return query object for process.
 	"""
-	return database.session.query(
-		Process, Test
-	).join(
-		Test
-	).filter(
+	if filter_name_uid is None:
+		pre = database.session.query(
+			Process, Test, Name
+		).join(
+			Test
+		).outerjoin(
+			Name, Name.uid == Process.name_uid
+		)
+	else:
+		pre = database.session.query(
+			Process, Test, Name
+		).join(
+			Test
+		).join(
+			Name, Name.uid == filter_name_uid
+		)
+	return pre.filter(
 		True if filter_name is None else \
 			Test.name.ilike('%' + filter_name + '%'),
 		True if filter_extension is None else \

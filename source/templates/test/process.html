@@ -14,11 +14,11 @@
 	<form method="post" actions="">
 		{{ filter.csrf_token }}
 		<div class="form-row">
-			<div class="col-12 col-md-4 mb-2">
+			<div class="col-12 col-md-3 mb-2">
 				<small>{{ __('Name') }}</small>
 				<input autofocus type="text" class="form-control form-control-sm" id="{{ filter.prefix + filter.name.label.text }}" name="{{ filter.prefix + filter.name.label.text }}" placeholder="{{ __('Name') }}" value="{{ filter.name.data|default('', True) }}" />	
 			</div>
-			<div class="col-12 col-md-4 mb-2">
+			<div class="col-12 col-md-3 mb-2">
 				<small>{{ __('Extension') }}</small>
 				<input type="text" class="form-control form-control-sm" id="{{ filter.prefix + filter.extension.label.text }}" name="{{ filter.prefix + filter.extension.label.text }}" placeholder="{{ __('Extension') }}" value="{{ filter.extension.data|default('', True) }}" />
 			</div>
@@ -27,6 +27,13 @@
 				<div class="custom-control custom-checkbox mr-sm-2">
 					<input type="checkbox" class="custom-control-input" id="{{ filter.prefix + filter.hide_completed.label.text }}" name="{{ filter.prefix + filter.hide_completed.label.text }}" {%- if (filter.hide_completed.data == 'true' or filter.hide_completed.data == 'True') or filter.hide_completed.data == 'on' or filter.hide_completed.data is true -%}checked{%- endif -%}>
 					<label class="custom-control-label" for="{{ filter.prefix + filter.hide_completed.label.text }}" style="font-size: smaller; padding-top: 2px; margin-top: 3px;">{{ __('Hide Completed Processes') }}</label>
+				</div>
+			</div>
+			<div class="col-12 col-md-2 mb-2">
+				<small>{{ __('Hide Others') }}</small>
+				<div class="custom-control custom-checkbox mr-sm-2">
+					<input type="checkbox" class="custom-control-input" id="{{ filter.prefix + filter.hide_others.label.text }}" name="{{ filter.prefix + filter.hide_others.label.text }}" {%- if (filter.hide_others.data == 'true' or filter.hide_others.data == 'True') or filter.hide_others.data == 'on' or filter.hide_others.data is true -%}checked{%- endif -%}>
+					<label class="custom-control-label" for="{{ filter.prefix + filter.hide_others.label.text }}" style="font-size: smaller; padding-top: 2px; margin-top: 3px;">{{ __('Hide Others Processes') }}</label>
 				</div>
 			</div>
 			<div class="col-12 col-md-2 my-2">
@@ -44,7 +51,7 @@
 {%- endblock -%}
 {%- block list_content -%}
 	<div class="card-columns">
-		{%- for process, test in processes -%}
+		{%- for process, test, name in processes -%}
 			<div class="card p-2 shadow-sm mb-3 rounded text-center">
 				<blockquote class="blockquote mb-0 card-body">
 					<div class="d-flex w-100 justify-content-between">

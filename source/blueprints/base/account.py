@@ -78,7 +78,8 @@ class SignedInUser(UserMixin):
 		"""
 		if session.get('name') is not None:
 			name = NameStore.read(session['name'])
-			return name if name.user_id == self.user.id else None
+			return name \
+				if name is not None and name.user_id == self.user.id else None
 
 
 class AnonymousUser(AnonymousUserMixin):

@@ -1,5 +1,5 @@
 {%- extends "layout_base.html" -%}
-{%- set name = current_user.get_name() or { 'value': None } -%}
+{%- set name = current_user.get_name()|default({ 'value': None }, True) -%}
 {%- block body -%}
 	<body class="d-flex flex-column h-100">
 		<header>

@@ -1,5 +1,5 @@
 {%- extends "layout_base.html" -%}
-{%- set name = current_user.get_name() or { 'value': None } -%}
+{%- set name = current_user.get_name()|default({ 'value': None }, True) -%}
 {%- block style -%}
 		<meta name="theme-color" content="#563d7c">
     <style>

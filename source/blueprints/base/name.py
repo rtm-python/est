@@ -52,6 +52,25 @@ class SwitcherForm(FlaskForm):
 				field.data = data if data is not None and len(data) > 0 else None
 
 
+class UpdaterForm(FlaskForm):
+	"""
+	This is a UpdaterForm class to retrieve form data.
+	"""
+	uid = StringField('updaterUid')
+	value = StringField('updaterValue')
+	submit = SubmitField('updaterSubmit')
+
+	def __init__(self) -> "UpdaterForm":
+		"""
+		Initiate object with values from request.
+		"""
+		super(UpdaterForm, self).__init__()
+		for field in self:
+			if field.name != 'csrf_token':
+				data = request.form.get(field.label.text)
+				field.data = data if data is not None and len(data) > 0 else None
+
+
 @blueprint.route('/name/', methods=('GET', 'POST'))
 @blueprint.route('/name/switcher/', methods=('GET', 'POST'))
 def get_switcher():
@@ -73,10 +92,34 @@ def get_switcher():
 				if name is not None and name.user_id == current_user.user.id:
 					session['name'] = name.uid
 					return redirect(url_for('base.get_landing'))
+		updater = UpdaterForm()
+		if request.form.get('updaterSubmit') and \
+				updater.validate_on_submit(): # Valid post request
+			if updater.value.data and len(updater.value.data.strip()) > 0:
+				name = NameStore.read(updater.uid.data)
+				if name is not None and name.user_id == current_user.user.id:
+					name = NameStore.set_value(name.uid, updater.value.data.strip())
+					for index in range(len(switcher.name.choices)):
+						if switcher.name.choices[index][0] == name.uid:
+							switcher.name.choices[index] = (name.uid, name.value)
+							break
 	else:
 		switcher = None
+		updater = None
 	return render_template(
 		'base/switcher.html',
 		switcher=switcher,
+		updater=updater,
 		nav_active='name'
 	)
+
+@blueprint.route('/name/delete/<uid>/', methods=('GET',))
+def delete_name(uid: str):
+	"""
+	Delete name and redirect to switcher.
+	"""
+	if current_user.is_authenticated:
+		name = NameStore.read(uid)
+		if name is not None and name.user_id == current_user.user.id:
+			NameStore.delete(uid)
+	return redirect(url_for('base.get_switcher'))

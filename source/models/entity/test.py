@@ -21,12 +21,12 @@ class Test(Entity):
 	name = Column(database.String, index=True, nullable=False)
 	extension = Column(database.String, index=True, nullable=False)
 	extension_options = Column(database.String, index=True, nullable=False)
-	repeat = Column(database.Integer, index=True, nullable=False)
-	speed = Column(database.Integer, index=True, nullable=False)
+	answer_count = Column(database.Integer, index=True, nullable=False)
+	limit_time = Column(database.Integer, index=True, nullable=False)
 	user_uid = Column(database.String, index=True, nullable=True)
 
 	def __init__(self, name: str, extension: str, extension_options: str,
-							 repeat: int, speed: int, user_uid: str) -> "Test":
+							 answer_count: int, limit_time: int, user_uid: str) -> "Test":
 		'''
 		Initiate object and stores Test's data.
 		'''
@@ -34,6 +34,6 @@ class Test(Entity):
 		self.name = name
 		self.extension = extension
 		self.extension_options = extension_options
-		self.repeat = repeat
-		self.speed = speed
+		self.answer_count = answer_count
+		self.limit_time = limit_time
 		self.user_uid = user_uid

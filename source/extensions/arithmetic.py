@@ -210,37 +210,36 @@ def get_data(options: dict) -> dict:
 	for i in range(int(options['vars_count']) - 1):
 		preset = operation(int(options['max_limit']), preset)
 	# Calculate performance for preset
-	speed_time = 0
+	limit_time = 0
 	for var in preset[1:]:
-		speed_time += len(var)
+		limit_time += len(var)
 	if operation is get_addition:
-		speed_time *= ADDITION_TIME_PER_BIT
+		limit_time *= ADDITION_TIME_PER_BIT
 	if operation is get_substraction:
-		speed_time *= SUBSTRACTION_TIME_PER_BIT
+		limit_time *= SUBSTRACTION_TIME_PER_BIT
 	if operation is get_multiplication:
-		speed_time *= MULTIPLICATION_TIME_PER_BIT
+		limit_time *= MULTIPLICATION_TIME_PER_BIT
 	if operation is get_division:
-		speed_time *= DIVISION_TIME_PER_BIT
+		limit_time *= DIVISION_TIME_PER_BIT
 	# Replace one of the vars with question mark
 	hide_index = randint(1, len(preset) - 1) \
 		if options['result_only'] == 'no' else len(preset) - 1
-	print(options['result_only'], options['result_only'] == 'no')
 	if preset[0] in ['x', '/']:
 		if preset[hide_index] != 0 and '0' in preset:
 			hide_index = len(preset) - 1
 	if hide_index < len(preset) - 1:
-		speed_time *= 1.05
+		limit_time *= 1.05
 	# Prepare data
 	answer = preset[hide_index]
 	preset[hide_index] = '?'
 	return {
 		'task': (preset[0], preset[1: ]),
 		'answer': answer,
-		'speed_time': int(speed_time)
+		'limit_time': int(limit_time)
 	}
 	# return {
 	# 	'task': '%s = %s' % \
 	# 		((' %s ' % preset[0]).join(preset[1: -1]), preset[-1]),
 	# 	'answer': answer,
-	# 	'speed_time': int(speed_time)
+	# 	'limit_time': int(limit_time)
 	# }

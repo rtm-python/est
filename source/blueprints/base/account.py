@@ -42,15 +42,27 @@ PROFILE_TEMPLATE = 'EVENT: %s'
 FEEDBACK_TEMPLATE = '%s [%s]: %s'
 LINK_TEMPLATE = 'https://t.me/user?id=%s'
 
-# Inititate admin list with user uid
-admin_user_uid_list = []
-for from_id in CONFIG['admin']:
-	user = UserStore.get_by_from_id(from_id)
-	if user is not None:
-		admin_user_uid_list += [ user.uid ]
+
+class GlobalUser():
+	"""
+	"""
+	__admin_uid_list = None
+
+	@staticmethod
+	def get_or_create_admin_uid_list() -> list:
+		if GlobalUser.__admin_uid_list is None:
+			GlobalUser.__admin_uid_list = []
+			for from_id in CONFIG['admin']:
+				user = UserStore.get_by_from_id(from_id)
+				if user is not None:
+					GlobalUser.__admin_uid_list += [ user.uid ]
+		return GlobalUser.__admin_uid_list
+
+	def get_admin_uid_list(self) -> list:
+		return GlobalUser.get_or_create_admin_uid_list()
 
 
-class SignedInUser(UserMixin):
+class SignedInUser(UserMixin, GlobalUser):
 	"""
 	This is a SignedInUser class to handle data of authenticated user.
 	"""
@@ -82,7 +94,7 @@ class SignedInUser(UserMixin):
 				if name is not None and name.user_id == self.user.id else None
 
 
-class AnonymousUser(AnonymousUserMixin):
+class AnonymousUser(AnonymousUserMixin, GlobalUser):
 	"""
 	This is a AnonymousUser class to handle data of anonymous user.
 	"""

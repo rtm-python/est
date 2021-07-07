@@ -171,12 +171,12 @@ def get_data(options: dict) -> dict:
 		operation(multiplicity)
 	# Calculate performance
 	if operation is get_definition:
-		speed_time = DEFINITION_TIME_PER_TASK
+		limit_time = DEFINITION_TIME_PER_TASK
 	if operation is get_calculation:
-		speed_time = CALCULATION_TIME_PER_TASK
+		limit_time = CALCULATION_TIME_PER_TASK
 	# Prepare data
 	return {
 		'task': (source_hours_minutes, next_hours_minutes),
 		'answer': answer,
-		'speed_time': int(speed_time)
+		'limit_time': int(limit_time)
 	}

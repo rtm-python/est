@@ -8,10 +8,10 @@
 				<blockquote class="blockquote mb-0 card-body">
 					<div class="d-flex w-100 justify-content-between">
 						<small class="text-muted">{{ process.answer_count + 1 }} {{ __('Task') }}</small>
-						<small class="text-muted">{{ __('Total') }}: {{ test.repeat }}</small>
+						<small class="text-muted">{{ __('Total') }}: {{ test.answer_count }}</small>
 					</div>
 					<div class="progress" style="height: 3px;">
-						<div class="progress-bar" role="progressbar" style="width: {{ (process.answer_count + 1) / test.repeat * 100 }}%" area-valuenow="{{ (process.answer_count + 1) / test.repeat * 100 }}" area-valuemin="0" area-valuemax="100"></div>
+						<div class="progress-bar" role="progressbar" style="width: {{ (process.answer_count + 1) / test.answer_count * 100 }}%" area-valuenow="{{ (process.answer_count + 1) / test.answer_count * 100 }}" area-valuemin="0" area-valuemax="100"></div>
 					</div>
 					<div class="mt-3">
 						<form actions="" method="post">

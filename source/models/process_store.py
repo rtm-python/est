@@ -19,6 +19,7 @@ from models.entity.name import Name
 # Additional libraries import
 from sqlalchemy import func
 from sqlalchemy import or_
+from sqlalchemy.sql.expression import literal
 
 
 class ProcessStore(Store):
@@ -51,8 +52,7 @@ class ProcessStore(Store):
 	def update(uid: str, test_id: int,
 						 user_uid: str, anonymous_token: str, name_uid: str,
 						 answer_count: int, correct_count: int,
-						 total_answer_time: int, speed_time: int,
-						 result: int) -> Process:
+						 limit_time: int, answer_time: int) -> Process:
 		"""
 		Update and return process.
 		"""
@@ -63,9 +63,8 @@ class ProcessStore(Store):
 		process.name_uid = name_uid
 		process.answer_count = answer_count
 		process.correct_count = correct_count
-		process.total_answer_time = total_answer_time
-		process.speed_time = speed_time
-		process.result = result
+		process.limit_time = limit_time
+		process.answer_time = answer_time
 		return super(ProcessStore, ProcessStore).update(
 			process
 		)
@@ -83,27 +82,29 @@ class ProcessStore(Store):
 	def read_list(offset: int, limit: int,
 								filter_name: str, filter_extension: str,
 								filter_hide_completed: bool,
-								user_uid: str, anonymous_token: str,
-								name_uid: str) -> list:
+								filter_user_uid: str, filter_anonymous_token: str,
+								filter_name_uid: str, result_expression) -> list:
 		"""
 		Return list of processes by arguments.
 		"""
 		return _get_list_query(
 			filter_name, filter_extension, filter_hide_completed,
-			user_uid, anonymous_token, name_uid
+			filter_user_uid, filter_anonymous_token, filter_name_uid,
+			result_expression
 		).limit(limit).offset(offset).all()
 
 	@staticmethod
 	def count_list(filter_name: str, filter_extension: str,
 								 filter_hide_completed: bool,
-								 user_uid: str, anonymous_token: str,
-								 name_uid: str) -> int:
+								 filter_user_uid: str, filter_anonymous_token: str,
+								 filter_name_uid: str, result_expression) -> int:
 		"""
 		Return number of processes in list.
 		"""
 		return Store.count(_get_list_query(
 			filter_name, filter_extension, filter_hide_completed,
-			user_uid, anonymous_token, name_uid
+			filter_user_uid, filter_anonymous_token, filter_name_uid,
+			result_expression
 		))
 
 	@staticmethod
@@ -111,24 +112,24 @@ class ProcessStore(Store):
 		"""
 		Return process after increment answer count and
 		if answer is correct then insrement correct count.
-		Also calculate answer and speed time.
+		Also calculate answer and limit time.
 		"""
-		process, test = ProcessStore.read_with_test(uid)
+		process, test, _ = ProcessStore.read_with_test(uid, None)
 		process.answer_count += 1
 		data = json.loads(task.data)
 		if task.correct_answer:
 			process.correct_count += 1
-		process.total_answer_time += \
+		process.answer_time += \
 			int((task.modified_utc - task.created_utc).total_seconds())
-		process.speed_time += \
-			int(data['speed_time'] / test.speed * 100)
-		if process.answer_count >= test.repeat:
+		process.limit_time += \
+			int(data['limit_time'] / test.limit_time * 100)
+		if process.answer_count >= test.answer_count:
 			correctness = int(process.correct_count / process.answer_count * 100)
 			speed = \
-				int(process.speed_time / process.total_answer_time * 100)
+				int(process.answer_time / process.limit_time * 100)
 			if speed > 100:
 				speed = 100
-			process.result = int(correctness * speed / 100)
+			# process.result = int(correctness * speed / 100)
 		return super(ProcessStore, ProcessStore).update(
 			process
 		)
@@ -163,12 +164,14 @@ class ProcessStore(Store):
 		)
 
 	@staticmethod
-	def read_with_test(uid: str):
+	def read_with_test(uid: str, result_expression):
 		"""
 		Return process with test data.
 		"""
+		if result_expression is None:
+			result_expression = literal(0)
 		return database.session.query(
-			Process, Test
+			Process, Test, result_expression
 		).join(
 			Test
 		).filter(
@@ -209,13 +212,15 @@ class ProcessStore(Store):
 def _get_list_query(filter_name: str, filter_extension: str,
 										filter_hide_completed: bool,
 										filter_user_uid: str, filter_anonymous_token: str,
-										filter_name_uid: str):
+										filter_name_uid: str, result_expression):
 	"""
 	Return query object for process.
 	"""
+	if result_expression is None:
+		result_expression = literal(0)
 	if filter_name_uid is None:
 		pre = database.session.query(
-			Process, Test, Name
+			Process, Test, Name, result_expression
 		).join(
 			Test
 		).outerjoin(
@@ -223,7 +228,7 @@ def _get_list_query(filter_name: str, filter_extension: str,
 		)
 	else:
 		pre = database.session.query(
-			Process, Test, Name
+			Process, Test, Name, result_expression
 		).join(
 			Test
 		).join(
@@ -350,3 +355,7 @@ def _get_charts_query(filter_name: str, filter_extension: str,
 		weekdays[1].c.modified_utc.desc(),
 		weekdays[6].c.modified_utc.desc()
 	)
+
+
+def __get_rating_query():
+	pass

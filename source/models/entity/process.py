@@ -30,15 +30,14 @@ class Process(Entity):
 		database.Integer, default=0,
 		index=True, nullable=False
 	)
-	total_answer_time = Column(
+	limit_time = Column(
 		database.Integer, default=0,
 		index=True, nullable=False
 	)
-	speed_time = Column(
+	answer_time = Column(
 		database.Integer, default=0,
 		index=True, nullable=False
 	)
-	result = Column(database.Integer, index=True, nullable=True)
 	user_uid = Column(database.String, index=True, nullable=True)
 	anonymous_token = Column(database.String, index=True, nullable=True)
 	name_uid = Column(database.String, index=True, nullable=True)

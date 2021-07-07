@@ -112,7 +112,8 @@ def get_process():
 			filter.hide_completed.data,
 			current_user.get_id(),
 			current_user.get_token(),
-			name.uid if name is not None else None
+			name.uid if name is not None else None,
+			get_result_expression()
 		)
 	)
 	pagination['endpoint'] = 'test.get_process'
@@ -125,14 +126,15 @@ def get_process():
 		filter.hide_completed.data,
 		current_user.get_id(),
 		current_user.get_token(),
-		name.uid if name is not None else None
+		name.uid if name is not None else None,
+		get_result_expression()
 	)
 	return render_template(
 		'test/process.html',
 		filter=filter,
 		processes=processes,
 		pagination=pagination,
-		nav_active='test'
+		nav_active='testing'
 	)
 
 
@@ -166,10 +168,10 @@ def play(uid: str):
 	"""
 	Return test process play page.
 	"""
-	process, test = ProcessStore.read_with_test(uid)
+	process, test, _ = ProcessStore.read_with_test(uid, None)
 	if not verify_process_owner(process):
 		return redirect(url_for('test.get_process'))
-	if process.result is not None:
+	if process.answer_count == test.answer_count:
 		return redirect(url_for('test.get_result', uid=uid))
 	# Import extension module and get data
 	extension_module = importlib.import_module('extensions.%s' % test.extension)
@@ -193,9 +195,9 @@ def play(uid: str):
 		else:
 			task = TaskStore.set_answer(task.uid, user_answer)
 			process = ProcessStore.add_answer(process.uid, task)
-			if process.result is not None:
+			if process.answer_count == test.answer_count:
 				if current_user.is_authenticated and \
-						current_user.user.notification_test_complete:
+							current_user.user.notification_test_complete:
 					IdenticaPlugin.notify_user(
 						current_user.user.from_id,
 						process_template % (
@@ -220,7 +222,7 @@ def play(uid: str):
 		passed_tasks=passed_tasks,
 		player=player,
 		sound_filename=sound_filename,
-		nav_active='test'
+		nav_active='testing'
 	)
 
 
@@ -229,10 +231,11 @@ def get_result(uid: str):
 	"""
 	Return test process result page.
 	"""
-	process, test = ProcessStore.read_with_test(uid)
+	process, test, result = \
+		ProcessStore.read_with_test(uid, get_result_expression())
 	if not verify_process_owner(process, ignore_name=True):
 		return redirect(url_for('test.get_process', uid=uid))
-	if process.result is None:
+	if process.answer_count < test.answer_count:
 		return redirect(url_for('test.play'))
 	name = NameStore.read(process.name_uid)
 	name_value = name.value if name is not None else ''
@@ -248,8 +251,16 @@ def get_result(uid: str):
 		'test/result.html',
 		process=process,
 		test=test,
+		result=result,
 		passed_tasks=passed_tasks,
 		name_value=name_value,
 		sound_filename=sound_filename,
-		nav_active='test'
+		nav_active='testing'
 	)
+
+
+def get_result_expression():
+	"""
+	Return result calculation expression.
+	"""
+	return Process.correct_count / Process.answer_count	* 100

@@ -8,7 +8,7 @@
 			<input type="submit" id="{{ switcher.submit.label.text }}" name="{{ switcher.submit.label.text }}" class="d-none" />
 			<div class="row p-1 g-3">
 				<div class="col-12 text-center mt-5">
-					<small>{{ __('Select name below or create new name') }}</small>
+					<small>{{ __('Select user below or create new user') }}</small>
 					{%- for name in switcher.name.choices -%}
 						<div class="form-check">
 							<input class="form-check-input" type="radio" name="{{ switcher.name.label.text }}" id="{{ name[0] }}"  value="{{ name[0] }}" style="margin: auto 0px; top: 0; bottom: 0; left: 0;"/>
@@ -41,7 +41,7 @@
 										</div>
 										<div class="collapse shadow-sm" id="delete-collapse-{{ name[0]}}" data-parent="#group-collapse-{{ name[0] }}">
 											<div class="alert text-center p-0 mb-2" role="alert">
-												<p class="mb-1"><small>{{ __('Do you really want to delete name?') }}</small></p>
+												<p class="mb-1"><small>{{ __('Do you really want to delete user?') }}</small></p>
 												<a class="btn btn-sm btn-outline-light" href="{{ url_for('base.delete_name', uid=name[0]) }}">{{ __('Delete') }}</a>
 												<a class="btn btn-sm btn-outline-light" href="#" data-toggle="collapse" data-target="#delete-collapse-{{ name[0] }}" aria-expanded="true" aria-controls="delete-collapse-{{ name[0] }}">{{ __('Cancel') }}</a>
 											</div>
@@ -53,7 +53,7 @@
 					{%- endfor -%}
 				</div>
 				<div class="col-12 text-center mt-3">
-					<label for="{{ switcher.submit.label.text }}" class="mt-2 btn btn-outline-light btn-block mb-0">{{ __('Submit') }}</label>
+					<label for="{{ switcher.submit.label.text }}" class="mt-2 btn btn-outline-light btn-block mb-0">{{ __('Switch') }}</label>
 				</div>
 			</div>
 		</form>
@@ -82,7 +82,7 @@
 		</script>	
 	{%- else -%}
 		<div class="col-12 offset-sm-2 col-sm-8 offset-md-3 col-md-6">
-			<p>{{ __('Please, sign in to select name') }}</p>
+			<p>{{ __('Please, sign in to switch user') }}</p>
 			<a href="{{ url_for('base.sign_in') }}" class="mt-2 btn btn-outline-light btn-block">{{ __('Sign In') }}</a>
 		</div>
 	{%- endif -%}

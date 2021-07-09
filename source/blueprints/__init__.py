@@ -37,7 +37,7 @@ for module_name in \
 		[
 			'base',
 			'test',
-			'scoreboard'
+			'rating'
 		]:
 	module = importlib.import_module('blueprints.%s' % module_name)
 	application.register_blueprint(

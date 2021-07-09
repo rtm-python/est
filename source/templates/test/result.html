@@ -7,9 +7,10 @@
 			<div class="card p-2 shadow-sm mb-3 rounded text-center">
 				<blockquote class="blockquote mb-0 card-body">
 					<h3>{{ name_value }}</h3>
-					<h1 class="m-2"><strong>{{ result }}%</strong></h1>
-					<p class="m-0"><small class="text-muted">{{ __('Correct') }}:</small> {{ process.correct_count }} / {{ process.answer_count }} <small class="text-muted">{{ __('answers') }}</small></p>
-					<p class="m-0"><small class="text-muted">{{ __('Time') }}:</small> {{ process.answer_time }} / {{ process.limit_time }} <small class="text-muted">{{ __('seconds') }}</small></p>
+					<h1 class="m-2"><strong>{{ result }}<small class="ml-1">%</small></strong></h1>
+					<h4 class="m-2">{{ __('Crammers') }}: {{ crammers }}</h4>
+					<p class="m-0 text-muted">{{ __('Correct') }}: {{ process.correct_count }} / {{ process.answer_count }} <small class="text-muted">{{ __('answers') }}</small></p>
+					<p class="m-0 text-muted">{{ __('Time') }}: {{ process.answer_time }} / {{ process.limit_time }} <small class="text-muted">{{ __('seconds') }}</small></p>
 					<a href="{{ url_for('test.start', uid=test.uid) }}" class="mt-2 btn btn-outline-dark w-75">{{ __('Restart') }}</a>
 					<a href="{{ url_for('test.get_process') }}" class="mt-2 btn btn-outline-dark w-75">{{ __('Close') }}</a>
 				</div>

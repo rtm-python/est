@@ -14,10 +14,11 @@ from flask import Blueprint
 
 # Initiate Blueprint object
 blueprint = Blueprint(
-	'scoreboard', __name__,
+	'rating', __name__,
 	static_folder='',
 	template_folder=''
 )
 
 # Routes import
-from blueprints.scoreboard import chart
+from blueprints.rating import table
+from blueprints.rating import chart

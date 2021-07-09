@@ -1,79 +1,36 @@
 
-{%- extends "layout_inner.html" -%}
-{% set title -%}{{ __('Ratings') }}{%- endset %}
-{%- block body_content -%}
-	<div class="row">
-
-		<div class="col-12 offset-md-1 col-md-10 offset-lg-2 col-lg-8">
-
-			<ul class="nav nav-tabs">
-				<li class="nav-item">
-					<a class="nav-link text-muted active" aria-current="page" href="#">{{ __('Top 10') }}</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link text-muted" aria-current="page" href="#">{{ __('Personal') }}</a>
-				</li>
-				<li class="nav-item dropdown" style="margin: 0 0 0 auto;">
-					<a class="nav-link text-muted dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">{{ __('Select Test') }}</a>
-					<ul class="dropdown-menu">
-						<li><a class="dropdown-item" href="#"><span class="oi oi-check mr-1"></span>{{ __('All') }}</a></li>
-						<li><hr class="dropdown-divider"></li>
-						<li><a class="dropdown-item" href="#">{{ __('Arithmetic') }}</a></li>
-						<li><a class="dropdown-item" href="#">{{ __('Atime') }}</a></li>
-					</ul>
-				</li>
-			</ul>
-
-			<div class="card w-100 my-2">
-				<div class="card-header">{{ __('Today') }}</div>
-				<ul class="list-group list-group-flush">
-					{%- for name, pass, count, total in today -%}
-						<li class="list-group-item d-flex justify-content-between align-items-start">
-							<div>
-								<div class="d-inline-block mr-3">{{ loop.index }}<span class="small ml-1" style="position: relative; top: -5px;">{{ __('place') }}</div>
-								{{  name }}
-							</div>
-							<div class="ml-3">
-								<div class="d-inline-block small text-muted">
-									<div class="d-inline-block mr-5">
-										{{ pass }}
-										<span class="ml-1">{{  __('tests') }}</span>
-									</div>
-									<div class="d-inline-block mr-5">
-										{{ count }}
-										<span class="ml-1">{{  __('answers') }}</span>
-									</div>
+{%- extends "rating/base.html" -%}
+{% set endpoint = 'rating.get_top' -%}
+{%- block rating_content -%}
+	<div class="card w-100 my-3">
+		{% if top_crammers|length %}
+			<ul class="list-group list-group-flush">
+				{%- for name_value, process_count, correct_count, answer_time, total in top_crammers -%}
+					<li class="list-group-item d-flex justify-content-between align-items-start" style="{%- if loop.first -%}background: lightgrey;{%- endif -%}">
+						<div>
+							<div class="d-inline-block mr-3">{{ loop.index }}<span class="small ml-1" style="position: relative; top: -5px;">{{ __('place') }}</div>
+							{{ name_value }}
+						</div>
+						<div class="ml-3">
+							<div class="d-none d-md-inline-block small text-muted">
+								<div class="d-inline-block mr-5">
+									{{ process_count }}
+									<span class="ml-1">{{  __('passed tests') }}</span>
 								</div>
-								<div class="d-inline-block">
-									{{ total }}
-									<span class="small">{{ __('points') }}</span></div>
+								<div class="d-inline-block mr-5">
+									{{ correct_count }}
+									<span class="ml-1">{{  __('correct answers') }}</span>
+								</div>
 							</div>
-						</li>
-					{%- endfor -%}
-				</ul>
-			</div>
-		
-		</div>
+							<div class="d-inline-block">
+								{{ total }}
+								<span class="small">{{ __('crammers') }}</span></div>
+						</div>
+					</li>
+				{%- endfor -%}
+			</ul>
+		{%- else -%}
+			<small class="text-muted w-100 text-center">{{ __('Top 10 empty') }}</small>
+		{%- endif -%}
 	</div>
-
-
-	<p>{{ __('Today') }}</p>
-	<p>{{ __('Last 7 days') }}</p>
-	<p>{{ __('Last 30 days') }}</p>
-	
-	<p>--------------------</p>
-	
-	<p>{{ __('Show Charts') }}</p>
-
-
-
-	<div class="offcanvas offcanvas-bottom show" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel">
-		<div class="offcanvas-header">
-			<h5 class="offcanvas-title" id="offcanvasBottomLabel">Offcanvas bottom</h5>
-			<button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-		</div>
-		<div class="offcanvas-body small">
-			...
-		</div>
-	</div>
-{%- endblock -%}
+{%- endblock rating_content -%}

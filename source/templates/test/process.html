@@ -1,5 +1,5 @@
 {%- extends "layout_list.html" -%}
-{% set title -%}{{ __('Test') }}{%- endset %}
+{% set title -%}{{ __('Testing') }}{%- endset %}
 {%- block style -%}
 	<style>
   	@media (max-width: 768px) {
@@ -51,7 +51,7 @@
 {%- endblock -%}
 {%- block list_content -%}
 	<div class="card-columns">
-		{%- for process, test, name, result in processes -%}
+		{%- for process, test, name, result, crammers in processes -%}
 			<div class="card p-2 shadow-sm mb-3 rounded text-center">
 				<blockquote class="blockquote mb-0 card-body">
 					<div class="d-flex w-100 justify-content-between">
@@ -70,6 +70,8 @@
 						{%- if process.answer_count == test.answer_count -%}
 							<small class="text-muted">{{ __('Result') }}: </small>
 							<h4 class="m-0">{{ result }}%</h4>
+							<small class="text-muted">{{ __('Crammers') }}: </small>
+							<h4>{{ crammers }}</h4>
 						{%- else -%}
 							<small class="text-muted">{{ __('Progress') }}: </small>
 							<p class="m-0">{{ process.correct_count }} ({{ process.answer_count }} / {{ test.answer_count }})</p>

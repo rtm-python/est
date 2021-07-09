@@ -39,6 +39,7 @@ from wtforms import BooleanField
 from wtforms import SubmitField
 from wtforms import validators
 from flask_login import current_user
+from sqlalchemy import func
 
 # Global constants
 process_template = __('TEST') + ': %s\n' + __('STATUS') + ': %s'
@@ -112,8 +113,7 @@ def get_process():
 			filter.hide_completed.data,
 			current_user.get_id(),
 			current_user.get_token(),
-			name.uid if name is not None else None,
-			get_result_expression()
+			name.uid if name is not None else None
 		)
 	)
 	pagination['endpoint'] = 'test.get_process'
@@ -127,7 +127,8 @@ def get_process():
 		current_user.get_id(),
 		current_user.get_token(),
 		name.uid if name is not None else None,
-		get_result_expression()
+		get_result_expression(),
+		get_crammers_expression()
 	)
 	return render_template(
 		'test/process.html',
@@ -168,7 +169,7 @@ def play(uid: str):
 	"""
 	Return test process play page.
 	"""
-	process, test, _ = ProcessStore.read_with_test(uid, None)
+	process, test, _, _ = ProcessStore.read_with_test(uid)
 	if not verify_process_owner(process):
 		return redirect(url_for('test.get_process'))
 	if process.answer_count == test.answer_count:
@@ -231,8 +232,8 @@ def get_result(uid: str):
 	"""
 	Return test process result page.
 	"""
-	process, test, result = \
-		ProcessStore.read_with_test(uid, get_result_expression())
+	process, test, result, crammers = ProcessStore.read_with_test(
+		uid, get_result_expression(), get_crammers_expression())
 	if not verify_process_owner(process, ignore_name=True):
 		return redirect(url_for('test.get_process', uid=uid))
 	if process.answer_count < test.answer_count:
@@ -252,6 +253,7 @@ def get_result(uid: str):
 		process=process,
 		test=test,
 		result=result,
+		crammers=crammers,
 		passed_tasks=passed_tasks,
 		name_value=name_value,
 		sound_filename=sound_filename,
@@ -263,4 +265,14 @@ def get_result_expression():
 	"""
 	Return result calculation expression.
 	"""
-	return Process.correct_count / Process.answer_count	* 100
+	return 1.0 * Process.correct_count / Process.answer_count * 100 * \
+		func.min(1.0 * Process.limit_time / Process.answer_time, 1.0)
+
+
+def get_crammers_expression():
+	"""
+	Return result calculation expression.
+	"""
+	return 1.0 * Process.correct_count / Process.answer_count * 100 * \
+		func.min(1.0 * Process.limit_time / Process.answer_time, 1.0) * \
+			Process.answer_count / Process.answer_time

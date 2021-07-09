@@ -1,125 +1,69 @@
-
-{%- extends "layout_list.html" -%}
-{% set title -%}{{ __('Ratings') }}{%- endset %}
-{%- block style -%}
-	<style>
-  	@media (max-width: 768px) {
-			.card-columns {
-	  	  column-count: 1;
-	    }
-	  }
-	</style>
-{%- endblock -%}
+{%- extends "rating/base.html" -%}
+{% set endpoint = 'rating.get_chart' -%}
+{%- block rating_content -%}
+	<div class="card w-100 my-3">
+		<div class="d-none d-md-inline-block p-3">
+			<canvas id="chart-landscape" style="display: block; width: 600px; height: 300px;" width="600" height="300" class="chartjs-render-monitor"></canvas>
+		</div>
+		<div class="d-inline-block d-md-none p-3">
+			<canvas id="chart-portrait" style="display: block; width: 600px; height: 600px;" width="600" height="600" class="chartjs-render-monitor"></canvas>
+		</div>
+	</div>
+	<script>
+		new Chart("chart-landscape", {
+			type: "line",
+			data: {
+				labels: {{ days|tojson|safe }},
+				datasets: [
+					{%- for name_value, name_data in data.items() -%}
+						{{ { 'data': name_data['value'], 'label': name_value, 'fill': 'start', 'backgroundColor': name_data['bg-color'], 'borderColor': name_data['fg-color'] }|tojson|safe }}
+						{% if not loop.last %},{%- endif -%}
+					{%- endfor -%}
+				]
+			},
+			options: {
+				elements: {
+					line: {
+						tension: 0.25,
+						borderWidth: 2
+					},
+					point: {
+						radius: 2.1
+					}
+				},
+				legend: {
+					position: 'top'
+				}
+			}
+		});
+		new Chart("chart-portrait", {
+			type: "line",
+			data: {
+				labels: {{ days|tojson|safe }},
+				datasets: [
+					{%- for name_value, name_data in data.items() -%}
+						{{ { 'data': name_data['value'], 'label': name_value, 'fill': 'start', 'backgroundColor': name_data['bg-color'], 'borderColor': name_data['fg-color'] }|tojson|safe }}
+						{% if not loop.last %},{%- endif -%}
+					{%- endfor -%}
+				]
+			},
+			options: {
+				elements: {
+					line: {
+						tension: 0.25,
+						borderWidth: 1
+					},
+					point: {
+						radius: 1.1
+					}
+				},
+				legend: {
+					position: 'top'
+				}
+			}
+		});
+	</script>
+{%- endblock rating_content -%}
 {%- block script -%}
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
-{%- endblock -%}
-{% set filter_link -%}{{ '#' }}{%- endset %}
-{%- block filter -%}
-	<form method="post" actions="">
-		{{ filter.csrf_token }}
-		<div class="form-row">
-			<div class="col-12 col-md-5 mb-2">
-				<small>{{ __('Name') }}</small>
-				<input autofocus type="text" class="form-control form-control-sm" id="{{ filter.prefix + filter.name.label.text }}" name="{{ filter.prefix + filter.name.label.text }}" placeholder="{{ __('Name') }}" value="{{ filter.name.data|default('', True) }}" />	
-			</div>
-			<div class="col-12 col-md-5 mb-2">
-				<small>{{ __('Extension') }}</small>
-				<input type="text" class="form-control form-control-sm" id="{{ filter.prefix + filter.extension.label.text }}" name="{{ filter.prefix + filter.extension.label.text }}" placeholder="{{ __('Extension') }}" value="{{ filter.extension.data|default('', True) }}" />
-			</div>
-			<div class="col-12 col-md-2 my-2">
-				<div class="form-row">
-					<div class="mb-2 col-6 col-md-12">
-						<input type="submit" class="btn btn-sm btn-block btn-outline-dark" name="{{ filter.prefix + filter.submit.label.text }}" id="{{ filter.prefix + filter.submit.label.text }}" value="{{ __('Apply') }}" />
-					</div>
-					<div class="mb-2 col-6 col-md-12">
-						<a href="{{ url_for('scoreboard.get_chart', chartFilterReset='true') }}" class="btn btn-sm btn-block btn-outline-dark">{{ __('Reset') }}</a>
-					</div>
-				</div>
-			</div>
-		</div>
-	</form>
-{%- endblock -%}
-{%- block list_content -%}
-	{% set weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] %}
-	<div class="card-columns">
-		{%- for chart  in charts  -%}
-			<div class="card p-2 shadow-sm mb-3 rounded text-center">
-				<blockquote class="blockquote mb-0 card-body">
-					<div class="d-flex w-100 justify-content-between">
-						<small class="text-muted text-left">{{ chart[1] }}</small>
-						<small class="text-muted text-right">{{ __(chart[2]) }}</small>
-					</div>
-					<canvas id="chart-{{ chart[0] }}" style="display: block; width: 600px; height: 400px;" width="600" height="400" class="chartjs-render-monitor"></canvas>
-					<script>
-						new Chart('chart-{{ chart[0] }}', {
-							type: 'line',
-							data: {
-								labels: [
-									'{{ __(weekdays[chart[3]|int]) }}',
-									'{{ __(weekdays[chart[6]|int]) }}',
-									'{{ __(weekdays[chart[9]|int]) }}',
-									'{{ __(weekdays[chart[12]|int]) }}',
-									'{{ __(weekdays[chart[15]|int]) }}',
-									'{{ __(weekdays[chart[18]|int]) }}',
-									'{{ __(weekdays[chart[21]|int]) }}'
-								],
-								datasets: [
-									{
-										data: [
-											{{ chart[4]|default(0, true) }},
-											{{ chart[7]|default(0, true) }},
-											{{ chart[10]|default(0, true) }},
-											{{ chart[13]|default(0, true) }},
-											{{ chart[16]|default(0, true) }},
-											{{ chart[19]|default(0, true) }},
-											{{ chart[22]|default(0, true) }}
-										],
-										label: '{{ __('Total Passed') }}',
-										fill: 'start',
-										background: (200, 200, 200, 0.75)
-									},
-									{
-										data: [
-											{{ chart[5]|default(0, true) * chart[4]|default(0, true) / 100 }},
-											{{ chart[8]|default(0, true) * chart[7]|default(0, true) / 100 }},
-											{{ chart[11]|default(0, true) * chart[10]|default(0, true) / 100 }},
-											{{ chart[14]|default(0, true) * chart[13]|default(0, true) / 100 }},
-											{{ chart[17]|default(0, true) * chart[16]|default(0, true) / 100 }},
-											{{ chart[20]|default(0, true) * chart[19]|default(0, true) / 100 }},
-											{{ chart[23]|default(0, true) * chart[22]|default(0, true) / 100 }}
-										],
-										label: '{{ __('Average Progress') }}',
-										fill: 'start',
-										background: (100, 100, 100, 0.75)
-									}
-								]
-							},
-							options: {
-								elements: {
-									line: {
-										tension: 0,
-										borderColor: (50, 50, 50, 0.75),
-										borderWidth: 3
-									},
-									point: {
-										radius: 1
-									}
-								},
-								legend: {
-									position: 'bottom'
-								}
-							}
-						});
-					</script>
-				</blockquote>
-			</div>
-		{%- endfor -%}
-		{% if charts|length == 0 %}
-			<div class="card p-2 shadow-sm mb-3 rounded text-center" style="background: whitesmoke;">
-				<blockquote class="blockquote mb-0 card-body">
-					<p class="card-text">{{ __('No tests found') }}</p>
-				</blockquote>
-			</div>
-		{%- endif -%}
-	</div>
 {%- endblock -%}

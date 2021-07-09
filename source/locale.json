@@ -30,13 +30,17 @@
 		"endpoint": null,
 		"ru": "Каталог"
 	},
-	"Test": {
+	"Testing": {
 		"endpoint": null,
-		"ru": "Тест"
+		"ru": "Тестирование"
 	},
-	"Scoreboard": {
+	"Ratings": {
 		"endpoint": null,
-		"ru": "Результаты"
+		"ru": "Рейтинги"
+	},
+	"User": {
+		"endpoint": null,
+		"ru": "Пользователь"
 	},
 	"Profile": {
 		"endpoint": null,
@@ -51,9 +55,9 @@
 		"endpoint": null,
 		"ru": "Наименование"
 	},
-	"Plugin": {
+	"Extension": {
 		"endpoint": null,
-		"ru": "Плагин"
+		"ru": "Дополнение"
 	},
 	"Author": {
 		"endpoint": null,
@@ -62,6 +66,14 @@
 	"Hide Global Tests": {
 		"endpoint": null,
 		"ru": "Скрыть общие тесты"
+	},
+	"Hide Others": {
+		"endpoint": null,
+		"ru": "Скрыть других"
+	},
+	"Hide Others Processes": {
+		"endpoint": null,
+		"ru": "Скрыть тестирование других"
 	},
 	"Hide Completed Processes": {
 		"endpoint": null,
@@ -193,9 +205,9 @@
 		"ru": "Средний результат"
 	},
 
-	"Select Plugin": {
+	"Select Extension": {
 		"endpoint": null,
-		"ru": "Выберите плагин"
+		"ru": "Выберите дополнение"
 	},
 	"Choose": {
 		"endpoint": null,
@@ -314,22 +326,120 @@
 		"endpoint": null,
 		"ru": "Выйти"
 	},
-
-	"Usercode": {
+	"Sign In": {
 		"endpoint": null,
-		"ru": "Код пользователя"
+		"ru": "Войти под учетной записью"
 	},
-	"Send usercode within chat message to": {
+	
+	"Please, sign in to switch user": {
 		"endpoint": null,
-		"ru": "Отправьте код пользователя через сообщение в чате"
+		"ru": "Пожалуйста, войдите под учетной записью для смены пользователя"
 	},
-	"Passcode": {
+	"Start chat with": {
 		"endpoint": null,
-		"ru": "Код доступа"
+		"ru": "Начните чат с"
+	},
+	"or scan QR code bellow to authenticate": {
+		"endpoint": null,
+		"ru": "или отсканируйте QR код для аутентификации"
+	},
+	"Personal Identification Number (PIN)": {
+		"endpoint": null,
+		"ru": "Персональный идентификационный код (ПИН)"
 	},
 	"Confirm": {
 		"endpoint": null,
 		"ru": "Подтвердить"
+	},
+
+	"Select user below or create new user": {
+		"endpoint": null,
+		"ru": "Выберите пользователя ниже или создайте нового пользователя"
+	},
+	"Update": {
+		"endpoint": null,
+		"ru": "Обновить"
+	},
+	"Do you really want to delete user?": {
+		"endpoint": null,
+		"ru": "Вы действительно желаете удалить пользователя?"
+	},
+	"Switch": {
+		"endpoint": null,
+		"ru": "Переключиться"
+	},
+	
+	"Crammers": {
+		"endpoint": null,
+		"ru": "Зубрилки"
+	},
+	"Top 10": {
+		"endpoint": null,
+		"ru": "Топ 10"
+	},
+	"Personal": {
+		"endpoint": null,
+		"ru": "Персональный"
+	},
+	"all-days": {
+		"endpoint": null,
+		"en": "All Days",
+		"ru": "Все дни"
+	},
+	"30-days": {
+		"endpoint": null,
+		"en": "20 Days",
+		"ru": "30 дней"
+	},
+	"7-days": {
+		"endpoint": null,
+		"en": "7 Days",
+		"ru": "7 дней"
+	},
+	"today": {
+		"endpoint": null,
+		"en": "Today",
+		"ru": "Сегодня"
+	},
+	"all-extensions": {
+		"endpoint": null,
+		"en": "All Extensions",
+		"ru": "Все дополнения"
+	},
+	"crammers": {
+		"endpoint": null,
+		"en": "Crammers",
+		"ru": "Зубрилки"
+	},
+	"passed-tests": {
+		"endpoint": null,
+		"en": "Passed Tests",
+		"ru": "Пройдено тестов"
+	},
+	"correct-answers": {
+		"endpoint": null,
+		"en": "Correct Answers",
+		"ru": "Правильные ответы"
+	},
+	"Top 10 empty": {
+		"endpoint": null,
+		"ru": "Топ 10 пуст"
+	},
+	"Anonymous User": {
+		"endpoint": null,
+		"ru": "Анонимный пользователь"
+	},
+	"passed tests": {
+		"endpoint": null,
+		"ru": "пройденых тестов"
+	},
+	"correct answers": {
+		"endpoint": null,
+		"ru": "правильных ответов"
+	},
+	"place": {
+		"endpoint": null,
+		"ru": "место"
 	},
 
 	"Error": {

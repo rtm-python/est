@@ -72,7 +72,7 @@
 				<blockquote class="blockquote mb-0 card-body">
 					<div class="d-flex w-100 justify-content-between">
 						<small class="text-muted">{{ __(test.extension) }}</small>
-						{%- if current_user.get_id() == test.user_uid -%}
+						{%- if current_user.get_id() == test.user_uid or current_user.get_id() in current_user.get_admin_uid_list() -%}
 							<small>
 								<a class="text-muted p-1" href="{{ url_for('test.update', uid=test.uid) }}"><span class="oi oi-pencil"></span></a>
 								<a class="text-muted p-1" href="#" data-toggle="collapse" data-target="#collapse-{{ test.uid }}" aria-expanded="true" aria-controls="collapse-{{ test.uid }}"><span class="oi oi-x"></span></a>

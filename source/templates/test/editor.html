@@ -33,28 +33,28 @@
 								</div>
 							{%- endfor -%}
 							<div class="col-12">
-								<small>{{ __('Repeat') }}</small>
-								<select class="custom-select{%- if editor.repeat.erros -%}{{ ' is-invalid' }}{%- endif -%}" id="{{ editor.repeat.label.text }}" name="{{ editor.repeat.label.text }}">
-									<option{%- if editor.repeat.data == '' -%}{{ ' selected' }}{%- endif -%}>{{ __('Choose..') }}</option>
-									{%- for choice in editor.repeat.choices -%}
-										<option value="{{ choice[0] }}"{%- if editor.repeat.data == choice[0] -%}{{ ' selected' }}{%- endif -%}>{{ __(choice[1]) }}</option>
+								<small>{{ __('Answer Count') }}</small>
+								<select class="custom-select{%- if editor.answer_count.erros -%}{{ ' is-invalid' }}{%- endif -%}" id="{{ editor.answer_count.label.text }}" name="{{ editor.answer_count.label.text }}">
+									<option{%- if editor.answer_count.data == '' -%}{{ ' selected' }}{%- endif -%}>{{ __('Choose..') }}</option>
+									{%- for choice in editor.answer_count.choices -%}
+										<option value="{{ choice[0] }}"{%- if editor.answer_count.data == choice[0] -%}{{ ' selected' }}{%- endif -%}>{{ __(choice[1]) }}</option>
 									{%- endfor -%}
 								</select>
-								{%- for error in editor.repeat.errors -%}
+								{%- for error in editor.answer_count.errors -%}
 									<div class="invalid-feedback">
 										{{ __(error) }}
 									</div>
 								{%- endfor -%}
 							</div>
 							<div class="col-12">
-								<small>{{ __('Speed') }}</small>
-								<select class="custom-select{%- if editor.speed.erros -%}{{ ' is-invalid' }}{%- endif -%}" id="{{ editor.speed.label.text }}" name="{{ editor.speed.label.text }}">
-									<option{%- if editor.speed.data == '' -%}{{ ' selected' }}{%- endif -%}>{{ __('Choose') }}</option>
-									{%- for choice in editor.speed.choices -%}
-										<option value="{{ choice[0] }}"{%- if editor.speed.data == choice[0] -%}{{ ' selected' }}{%- endif -%}>{{ __(choice[1]) }}</option>
+								<small>{{ __('Limit Time') }}</small>
+								<select class="custom-select{%- if editor.limit_time.erros -%}{{ ' is-invalid' }}{%- endif -%}" id="{{ editor.limit_time.label.text }}" name="{{ editor.limit_time.label.text }}">
+									<option{%- if editor.limit_time.data == '' -%}{{ ' selected' }}{%- endif -%}>{{ __('Choose') }}</option>
+									{%- for choice in editor.limit_time.choices -%}
+										<option value="{{ choice[0] }}"{%- if editor.limit_time.data == choice[0] -%}{{ ' selected' }}{%- endif -%}>{{ __(choice[1]) }}</option>
 									{%- endfor -%}
 								</select>
-								{%- for error in editor.speed.errors -%}
+								{%- for error in editor.limit_time.errors -%}
 									<div class="invalid-feedback">
 										{{ __(error) }}
 									</div>

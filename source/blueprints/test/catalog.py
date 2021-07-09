@@ -96,8 +96,8 @@ class TestForm(FlaskForm):
 	"""
 	name = StringField('name', validators=[validators.DataRequired()])
 	options = ExtensionOptionsField('options')
-	repeat = SelectField('repeat', validators=[validators.DataRequired()])
-	speed = SelectField('speed', validators=[validators.DataRequired()])
+	answer_count = SelectField('answer_count', validators=[validators.DataRequired()])
+	limit_time = SelectField('limit_time', validators=[validators.DataRequired()])
 	submit = SubmitField('submit')
 
 	def __init__(self, extension_module: object, test: object = None) -> 'TestForm':
@@ -105,18 +105,18 @@ class TestForm(FlaskForm):
 		Initiate object with extension, repeat and preformance choices.
 		"""
 		super(TestForm, self).__init__()
-		self.repeat.choices = [
+		self.answer_count.choices = [
 			('5', '5'), ('10', '10'), ('15', '15'),('25', '25'),('50', '50')
 		]
-		self.speed.choices = [
+		self.limit_time.choices = [
 			('25', 'Slow'), ('50', 'Normal'), ('100', 'Fast')
 		]
 		self.options.extension_module = extension_module
 		if test:
 			self.name.data = test.name
 			self.options.data = test.extension_options
-			self.repeat.data = str(test.repeat)
-			self.speed.data = str(test.speed)
+			self.answer_count.data = str(test.answer_count)
+			self.limit_time.data = str(test.limit_time)
 		else:
 			for field in self:
 				if field.name != 'csrf_token':
@@ -131,7 +131,8 @@ def verify_test_owner(test: Test) -> bool:
 	if test is None:
 		return False
 	if current_user.get_id() is not None and \
-			current_user.get_id() != test.user_uid:
+			current_user.get_id() != test.user_uid and \
+				current_user.get_id() not in current_user.get_admin_uid_list():
 		return False
 	return True
 
@@ -204,8 +205,8 @@ def create(extension: str):
 			creator.name.data,
 			extension,
 			creator.options.data,
-			int(creator.repeat.data),
-			int(creator.speed.data),
+			int(creator.answer_count.data),
+			int(creator.limit_time.data),
 			current_user.get_id()
 		)
 		return redirect(url_for('test.get_catalog'))
@@ -241,8 +242,8 @@ def update(uid: str):
 			uid,
 			updater.name.data,
 			updater.options.data,
-			int(updater.repeat.data),
-			int(updater.speed.data)
+			int(updater.answer_count.data),
+			int(updater.limit_time.data)
 		)
 		return redirect(url_for('test.get_catalog'))
 	return render_template(

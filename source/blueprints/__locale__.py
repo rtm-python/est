@@ -25,7 +25,7 @@ def set_session_language():
 	session['language'] = request.accept_languages.best_match(
 		LOCALE['__']['supported_languages']
 	)
-	session['language'] = 'ru'
+	# session['language'] = 'ru'
 
 
 @application.context_processor

@@ -140,7 +140,7 @@ class Plugin():
 			self.config['bot_url']['sendPhoto'] % self.config['token']
 		if self.domain_url is not None:
 			self.config['auth_url'] = \
-				'/'.join([self.domain_url] + self.config['auth_url'].split('/')[-2:])
+				'/'.join([self.domain_url] + self.config['auth_url'].split('/')[3:])
 		# Initiate update message (ignore previous)
 		response = requests.get(
 			self.config['bot_url']['getUpdates'] % (-1, 1),

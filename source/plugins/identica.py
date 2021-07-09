@@ -505,7 +505,7 @@ class Plugin():
 		with open(url_filename, 'r') as file:
 			url_data = json.loads(file.read())
 		if url_data['valid'] < datetime.utcnow().timestamp():
-			logging.warning('URL invalid: %s' % pin_filename)
+			logging.warning('URL invalid: %s' % url_filename)
 			return
 		os.remove(url_filename)
 		return { 'from': url_data['from'] }

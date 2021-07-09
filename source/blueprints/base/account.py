@@ -305,12 +305,11 @@ def sign_in():
 					)
 				)
 				login_user(SignedInUser(user), remember=True)
-				user_info = '%s (%s / %s)' % \
+				user_info = '%s (%s)' % \
 					(
-						' '.join([str(user.first_name), str(user.last_name)]),
-						user.from_id, user.username
+						user.name, user.from_id
 					) if user is not None else None
-				logging.debug('Sign in as user %s' % user_info)
+				logging.debug('Signed in as user %s' % user_info)
 				return { 'redirect': url_for('base.get_landing') }
 			return { 'wait': True }
 	return render_template(
@@ -318,6 +317,34 @@ def sign_in():
 		sign_in=sign_in,
 		nav_active='account'
 	)
+
+
+@blueprint.route('/account/identica/<url_token>/', methods=('GET',))
+def authenticate_identica(url_token: str):
+	"""
+	Verify token and login user on success.
+	"""
+	if current_user.is_authenticated:
+		return redirect(url_for('base.get_landing'))
+	verify_data = IdenticaPlugin.verify_url(url_token)
+	if verify_data is None:
+		logging.debug('Wrong TOKEN submitted')
+	elif verify_data.get('from'):
+		user = UserStore().get_or_create_user(
+			verify_data['from']['id'],
+			'%s %s [%s]' % (
+				verify_data['from'].get('first_name'),
+				verify_data['from'].get('last_name'),
+				verify_data['from'].get('username')
+			)
+		)
+		login_user(SignedInUser(user), remember=True)
+		user_info = '%s (%s)' % \
+			(
+				user.name, user.from_id
+			) if user is not None else None
+		logging.debug('Signed in as user %s' % user_info)
+	return redirect(url_for('base.get_landing'))
 
 
 @blueprint.route('/account/sign-out/', methods=('GET',))

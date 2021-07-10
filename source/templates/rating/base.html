@@ -9,7 +9,7 @@
 					<li class="nav-item dropdown">
 						<a class="nav-link text-muted dropdown-toggle active" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">{{ __('Top 10') + ': ' + __(current_period) }}</a>
 						<ul class="dropdown-menu">
-							<li><a class="dropdown-item" href="{{ url_for('rating.get_top', period='all-days', extension=current_extension) }}">{%- if current_period == 'all-days' -%}<span class="small oi oi-check mr-2"></span>{%- endif -%}{{ __('all-days') }}</a></li>
+							<li><a class="dropdown-item" href="{{ url_for('rating.get_top', period='all-days', extension=current_extension) }}" timezone="local">{%- if current_period == 'all-days' -%}<span class="small oi oi-check mr-2"></span>{%- endif -%}{{ __('all-days') }}</a></li>
 							<li><hr class="dropdown-divider"></li>
 							{%- for period in periods -%}
 								<li><a class="dropdown-item" href="{{ url_for('rating.get_top', period=period, extension=current_extension) }}">{%- if current_period == period -%}<span class="small oi oi-check mr-2"></span>{%- endif -%}{{ __(period) }}</a></li>

@@ -36,7 +36,7 @@
 		        {%- if current_user.is_authenticated -%}
 			        <a class="nav-link" href="{{ url_for('base.get_profile') }}"><span class="oi oi-person"></span></a>
 			      {%- else -%}
-			        <a class="nav-link" href="{{ url_for('base.sign_in') }}"><span class="oi oi-account-login"></span></a>
+			        <a class="nav-link" href="{{ url_for('base.sign_in', step=1) }}"><span class="oi oi-account-login"></span></a>
 			      {%- endif -%}
 		      </nav>
 		    </div>
@@ -44,7 +44,7 @@
 		  <main role="main" class="inner cover">
 		  	{%- block body_content -%}{%- endblock -%}
 		  </main>
-		  <footer class="mastfoot mt-auto">
+		  <footer class="mastfoot mt-2">
 		    <div class="inner text-center">- P1A7CK/2021 -</div>
 		  </footer>
 		</div>

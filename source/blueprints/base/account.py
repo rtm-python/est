@@ -234,7 +234,7 @@ def get_profile():
 	Return profile page.
 	"""
 	if not current_user.is_authenticated:
-		return redirect(url_for('base.sign_in'))
+		return redirect(url_for('base.sign_in', step=3))
 	if request.method == 'GET':
 		profiler = ProfilerForm(current_user.user)
 	else:
@@ -275,45 +275,52 @@ def get_profile():
 	)
 
 
-@blueprint.route('/account/sign-in/', methods=('GET', 'POST'))
-def sign_in():
+@blueprint.route('/account/sign-in/<step>/', methods=('GET', 'POST'))
+def sign_in(step: str):
 	"""
 	Return sign-in page and login user.
 	"""
-	if current_user.is_authenticated:
+	if current_user.is_authenticated or step not in '1234':
 		return redirect(url_for('base.get_landing'))
 	sign_in = SignInForm()
-	if sign_in.validate_on_submit() and sign_in.pin.data is not None:
-		if sign_in.password.data is None:
-			password = IdenticaPlugin.get_password(sign_in.pin.data)
-			if password is None:
-				logging.debug('Wrong password submitted')
-				return redirect(url_for('base.sign_in'))
-			sign_in.password.data = password
+	if sign_in.validate_on_submit() and step in '34':
+		if sign_in.pin.data is None:
+			sign_in.pin.errors = [ __('Empty PIN') ]
 		else:
-			verify_data = IdenticaPlugin.verify_pin(sign_in.pin.data)
-			if verify_data is None:
-				logging.debug('Wrong PIN submitted')
-				return { 'redirect': url_for('base.sign_in') }
-			elif verify_data.get('from'):
-				user = UserStore().get_or_create_user(
-					verify_data['from']['id'],
-					'%s %s [%s]' % (
-						verify_data['from'].get('first_name'),
-						verify_data['from'].get('last_name'),
-						verify_data['from'].get('username')
+			if sign_in.password.data is None:
+				password = IdenticaPlugin.get_password(sign_in.pin.data)
+				if password is None:
+					logging.debug('Wrong PIN submitted')
+					sign_in.pin.data = ''
+					sign_in.pin.errors = [ __('Wrong PIN') ]
+				else:
+					sign_in.password.data = password
+					step = '4'
+			else:
+				verify_data = IdenticaPlugin.verify_pin(sign_in.pin.data)
+				if verify_data is None:
+					logging.debug('Wrong password submitted')
+					return { 'redirect': url_for('base.sign_in', step=3) }
+				elif verify_data.get('from'):
+					user = UserStore().get_or_create_user(
+						verify_data['from']['id'],
+						'%s %s [%s]' % (
+							verify_data['from'].get('first_name'),
+							verify_data['from'].get('last_name'),
+							verify_data['from'].get('username')
+						)
 					)
-				)
-				login_user(SignedInUser(user), remember=True)
-				user_info = '%s (%s)' % \
-					(
-						user.name, user.from_id
-					) if user is not None else None
-				logging.debug('Signed in as user %s' % user_info)
-				return { 'redirect': url_for('base.get_landing') }
-			return { 'wait': True }
+					login_user(SignedInUser(user), remember=True)
+					user_info = '%s (%s)' % \
+						(
+							user.name, user.from_id
+						) if user is not None else None
+					logging.debug('Signed in as user %s' % user_info)
+					return { 'redirect': url_for('base.get_landing') }
+				return { 'wait': True }
 	return render_template(
 		'base/sign_in.html',
+		step=step,
 		sign_in=sign_in,
 		nav_active='account'
 	)

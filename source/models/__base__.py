@@ -22,9 +22,13 @@ class Store():
 		"""
 		Create and return entity.
 		"""
-		database.session.add(entity)
-		database.session.commit()
-		return entity
+		try:
+			database.session.add(entity)
+			database.session.commit()
+			return entity
+		except:
+			database.session.rollback()
+			raise
 
 	@staticmethod
 	def read(entity_class, uid: str) -> Entity:
@@ -39,18 +43,27 @@ class Store():
 		"""
 		Update and return entity.
 		"""
-		entity.set_modified()
-		database.session.commit()
-		return entity
+		try:
+			entity.set_modified()
+			database.session.commit()
+			return entity
+		except:
+			database.session.rollback()
+			raise
+
 
 	@staticmethod
 	def delete(entity: Entity) -> Entity:
 		"""
 		Delete and return entity.
 		"""
-		entity.set_deleted()
-		database.session.commit()
-		return entity
+		try:
+			entity.set_deleted()
+			database.session.commit()
+			return entity
+		except:
+			database.session.rollback()
+			raise
 
 	@staticmethod
 	def get(entity_class, id: int) -> Entity:

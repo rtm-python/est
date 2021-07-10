@@ -60,6 +60,7 @@
 		<script type="text/javascript">
 			$(window).on('load', function() {
 				if ($("input[type=radio][name={{ switcher.name.label.text }}]").val() == "{{ switcher.name.choices[-1][0] }}") {
+					$("input[type=radio][name={{ switcher.name.label.text }}]").attr('checked', true);
 					$("#label").css("display", "none");
 					$("#{{ switcher.value.label.text }}").css("display", "block");
 					$("#{{ switcher.value.label.text }}").focus();

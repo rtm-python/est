@@ -69,9 +69,9 @@ def get_chart(extension: str, criteria: str):
 			data[name_value] = name_data
 		if criteria == 'crammers':
 			name_data['value'][date_index_dict[process_date_local]] = total
-		elif criteria == 'tests':
+		elif criteria == 'passed-tests':
 			name_data['value'][date_index_dict[process_date_local]] = process_count
-		elif criteria == 'answers':
+		elif criteria == 'correct-answers':
 			name_data['value'][date_index_dict[process_date_local]] = correct_count
 	return render_template(
 		'rating/chart.html',

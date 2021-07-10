@@ -335,22 +335,76 @@
 		"endpoint": null,
 		"ru": "Пожалуйста, войдите под учетной записью для смены пользователя"
 	},
-	"Start chat with": {
+
+	"FIND CHATBOT": {
 		"endpoint": null,
-		"ru": "Начните чат с"
+		"ru": "НАЙТИ ЧАТБОТ"
 	},
-	"or scan QR code bellow to authenticate": {
+	"SEND REQUEST": {
 		"endpoint": null,
-		"ru": "или отсканируйте QR код для аутентификации"
+		"ru": "ОТПРАВИТЬ ЗАПРОС"
 	},
-	"Personal Identification Number (PIN)": {
+	"SUBMIT PIN": {
 		"endpoint": null,
-		"ru": "Персональный идентификационный код (ПИН)"
+		"ru": "ОТПРАВИТЬ ПИН"
 	},
-	"Confirm": {
+	"CONFIRM PASSWORD": {
 		"endpoint": null,
-		"ru": "Подтвердить"
+		"ru": "ПОДТВЕРДИТЬ ПАРОЛЬ"
 	},
+	"Next": {
+		"endpoint": null,
+		"ru": "Далее"
+	},
+	"Please, click or scan QR-code above": {
+		"endpoint": null,
+		"ru": "Пожалуйста, кликните или отсканируйте QR-код выше"
+	},
+	"to start interaction with chatbot": {
+		"endpoint": null,
+		"ru": "для начала взаимодействия с чатботом"
+	},
+	"Press (START) to interact with chatbot": {
+		"endpoint": null,
+		"ru": "Нажимет (СТАРТ) для взаимодействия с чатботом"
+	},
+	"Use (1) request link to authenticate on website": {
+		"endpoint": null,
+		"ru": "Используйте (1) запрос ссылки для аутентификации на вебсайте"
+	},
+	"Or (2) request PIN to use it within sign in form": {
+		"endpoint": null,
+		"ru": "Или (2) запрос ПИН для использования в рамках формы входа"
+	},
+	"Use here received from chatbot": {
+		"endpoint": null,
+		"ru": "Используйте здесь полученный от чатбота"
+	},
+	"6-digit PIN": {
+		"endpoint": null,
+		"ru": "6-ти значный ПИН"
+	},
+	"Submit PIN first to get password": {
+		"endpoint": null,
+		"ru": "Сначала отправьте ПИН для получения пароля"
+	},
+	"Confirm password above to chatbot": {
+		"endpoint": null,
+		"ru": "Подтвердите пароль выше чатботу"
+	},
+	"After successful confirmation wait for webpage redirect": {
+		"endpoint": null,
+		"ru": "После успешного подтверждения ждите перенаправления веб-страницы"
+	},
+	"Wrong PIN": {
+		"endpoint": null,
+		"ru": "Неверный ПИН"
+	},
+	"Empty PIN": {
+		"endpoint": null,
+		"ru": "Пустой ПИН"
+	},
+	
 
 	"Select user below or create new user": {
 		"endpoint": null,

@@ -1,5 +1,5 @@
 {%- extends "layout_inner.html" -%}
-{%- set title -%}{{ __('Sign in') }}{%- endset -%}
+{%- set title -%}{{ __('Sign In') }}{%- endset -%}
 {%- set ga_disable = True -%}
 {%- block body_content -%}
 	<div class="card col-12 offset-sm-2 col-sm-8 offset-md-3 col-md-6 offset-lg-4 col-lg-4 text-left shadow">
@@ -13,7 +13,7 @@
 						<img src="{{ url_for('static', filename='est_identica.png') }}" class="w-50 mb-1">
 					</a>
 					<div>{{ __('Please, click or scan QR-code above')}}</div>
-					<div>{{ __('to start interaction with')}}</div>
+					<div>{{ __('to start interaction with chatbot')}}</div>
 					<div class="my-1">
 						<img src="{{ url_for('static', filename='telegram-logo.webp') }}" style="height: 1.5rem;" class="my-1">
 						<div class="d-inline py-1 px-2 my-1" style="border-radius: 15px; background-color: #1e96c8; color: white; font-weight: bold;">@crammer_identica_bot</div>
@@ -34,7 +34,7 @@
 						<span class="oi oi-chevron-right d-inline text-muted"></span>
 						<img src="{{ url_for('static', filename='chatbot-2.png') }}" class="m-2 shadow" style="width: 30%; background-color: lightgrey;">
 					</div>
-					<div>{{ __('Press "START" to initiate chatbot') }}</div>
+					<div>{{ __('Press (START) to interact with chatbot') }}</div>
 					<div class="my-1">
 						<img src="{{ url_for('static', filename='telegram-logo.webp') }}" style="height: 1.5rem;" class="my-1">
 						<div class="d-inline py-1 px-2 my-1" style="border-radius: 15px; background-color: #1e96c8; color: white; font-weight: bold;">@crammer_identica_bot</div>

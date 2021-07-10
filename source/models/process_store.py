@@ -324,7 +324,7 @@ def _get_list_query(filter_name: str, filter_extension: str,
 			Test.extension.ilike('%' + filter_extension + '%'),
 		True if filter_hide_completed is None or \
 			filter_hide_completed is False else \
-			Process.result == None,
+				Process.answer_count < Test.answer_count,
 		True if filter_user_uid is None else \
 			filter_user_uid == Process.user_uid,
 		True if filter_anonymous_token is None else \

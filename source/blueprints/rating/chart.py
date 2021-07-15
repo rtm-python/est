@@ -22,30 +22,34 @@ from blueprints.testing.player import get_crammers_expression
 # Additional libraries import
 from flask import render_template
 from flask import redirect
+from flask import session
 from flask import request
 from flask import url_for
 from flask_login import current_user
 
+CRITERIAS = ['crammers', 'passed-tests', 'correct-answers']
+ALL_EXTENSIONS = 'all-extensions'
 
-@blueprint.route('/chart/personal/<extension>/<criteria>/', methods=('GET',))
-def get_chart(extension: str, criteria: str):
+
+@blueprint.route('/personal/', methods=('GET',))
+@blueprint.route('/personal/<extension>/<criteria>/', methods=('GET',))
+def get_chart(extension: str = ALL_EXTENSIONS, criteria: str = CRITERIAS[0]):
 	"""
 	Return personal chart page.
 	"""
-	criterias = ['crammers', 'passed-tests', 'correct-answers']
-	if (extension not in EXTENSION_LIST and extension != 'all-extensions') or \
-			criteria not in criterias:
-		return redirect(
-			url_for('rating.get_chart', extension='all-extensions', criteria='crammers')
-		)
-	until = datetime.datetime.utcnow() + datetime.timedelta(days=1)
+	if session.get('timezone_offset') is None:
+		return redirect(url_for('base.get_home'))
+	if (extension not in EXTENSION_LIST and extension != ALL_EXTENSIONS) or \
+			criteria not in CRITERIAS:
+		return redirect(url_for('rating.get_chart'))
+	until = datetime.datetime.utcnow() + datetime.timedelta(days=1) - \
+		datetime.timedelta(minutes=session['timezone_offset'])
 	until = until.replace(hour=0, minute=0, second=0, microsecond=0)
 	since = until - datetime.timedelta(days=30)
 	chart_data = ProcessStore.get_chart_data(
-		None if extension == 'all-extensions' else extension,
+		None if extension == ALL_EXTENSIONS else extension,
 		current_user.get_id(), current_user.get_token(),
-		None, get_crammers_expression(), since, until,
-		datetime.timedelta(days=0)
+		None, get_crammers_expression(), since, until
 	)
 	days = []
 	date_index_dict = {}
@@ -67,17 +71,17 @@ def get_chart(extension: str, criteria: str):
 				'fg-color': hex_color
 			}
 			data[name_value] = name_data
-		if criteria == 'crammers':
+		if criteria == CRITERIAS[0]:
 			name_data['value'][date_index_dict[process_date_local]] = total
-		elif criteria == 'passed-tests':
+		elif criteria == CRITERIAS[1]:
 			name_data['value'][date_index_dict[process_date_local]] = process_count
-		elif criteria == 'correct-answers':
+		elif criteria == CRITERIAS[2]:
 			name_data['value'][date_index_dict[process_date_local]] = correct_count
 	return render_template(
 		'rating/chart.html',
-		extensions=EXTENSION_LIST,
+		extensions=[ ALL_EXTENSIONS ] + EXTENSION_LIST,
 		current_extension=extension,
-		criterias=criterias,
+		criterias=CRITERIAS,
 		current_criteria=criteria,
 		days=days,
 		data=data,

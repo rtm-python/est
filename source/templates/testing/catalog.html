@@ -5,10 +5,12 @@
 		<div class="card shadow px-3 py-2 bg-gradient-yellow">
 			<div class="d-flex w-100 align-items-center">
 				<h5 class="flex-grow-1 my-2 mr-2 py-1">{{ title }}</h5>
-				{%- if current_user.is_authenticated -%}
-					<a class="btn btn-sm btn-styled btn-styled-light m-1" href="{{ url_for('testing.create') }}"><span class="oi oi-plus"></span><div class="d-none d-sm-inline ml-1">{{ __('Create Test') }}</div></a>
-				{%- endif -%}
-				{%- include 'lister.html' -%}
+				<div class="d-inline-block text-end">
+					{%- if current_user.is_authenticated -%}
+						<a class="btn btn-sm btn-styled btn-styled-light m-1" href="{{ url_for('testing.create') }}"><span class="oi oi-plus"></span><div class="d-inline ml-1">{{ __('Create Test') }}</div></a>
+					{%- endif -%}
+					{%- include 'lister.html' -%}
+				</div>
 			</div>
 		</div>
 		{%- for test in tests -%}

@@ -27,6 +27,7 @@ from plugins.identica import Plugin as IdenticaPlugin
 from flask import render_template
 from flask import redirect
 from flask import request
+from flask import session
 from flask import url_for
 from flask_wtf import FlaskForm
 from wtforms import StringField
@@ -88,13 +89,17 @@ def start(uid: str):
 	"""
 	Start testing and redirect to testing player page.
 	"""
+	if session.get('timezone_offset') is None:
+		return redirect(url_for('base.get_home'))
 	test = TestStore.read(uid)
 	if test is None:
 		return redirect(url_for('testing.get_catalog'))
 	name = current_user.get_name()
 	process = ProcessStore.create(
 		test.id, current_user.get_id(), current_user.get_token(),
-		name.uid if name is not None else None
+		name.uid if name is not None else None,
+		datetime.datetime.utcnow() - \
+			datetime.timedelta(minutes=session['timezone_offset'])
 	)
 	if current_user.is_authenticated and \
 			current_user.user.notification_test_start:
@@ -113,6 +118,8 @@ def play(uid: str):
 	"""
 	Return testing player page.
 	"""
+	if session.get('timezone_offset') is None:
+		return redirect(url_for('base.get_home'))
 	process, test, _, _ = ProcessStore.read_with_test(uid)
 	if not verify_process_owner(process):
 		if request.method == 'POST' and request.form.get('ajax'):
@@ -143,7 +150,10 @@ def play(uid: str):
 			player.errors = validation_errors
 		else:
 			task = TaskStore.set_answer(task.uid, user_answer)
-			process = ProcessStore.add_answer(process.uid, task)
+			process = ProcessStore.add_answer(
+				process.uid, task, datetime.datetime.utcnow() - \
+					datetime.timedelta(minutes=session['timezone_offset'])
+			)
 			if process.answer_count == test.answer_count:
 				if current_user.is_authenticated and \
 							current_user.user.notification_test_complete:
@@ -197,6 +207,8 @@ def hold(uid: str):
 	"""
 	Hold testing and redirect to testing catalog page.
 	"""
+	if session.get('timezone_offset') is None:
+		return redirect(url_for('base.get_home'))
 	process, test, _, _ = ProcessStore.read_with_test(uid)
 	if not verify_process_owner(process):
 		return redirect(url_for('testing.get_catalog'))
@@ -210,6 +222,8 @@ def hold(uid: str):
 	ProcessStore.update(
 		process.uid, process.test_id, process.user_uid,
 		process.anonymous_token, process.name_uid,
+		datetime.datetime.utcnow() - \
+			datetime.timedelta(minutes=session['timezone_offset']),
 		process.answer_count, process.correct_count,
 		process.limit_time, process.answer_time + 10
 	)

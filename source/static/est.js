@@ -2,6 +2,7 @@ var cardWidth = 0;
 var sound_state = true;
 
 $(window).on("load", function() {
+	localizeTimestamp();
 	initRotatedBackgroundCards();
 	$(".player-form").submit(function(e) {
 		e.preventDefault();
@@ -108,5 +109,16 @@ function postTimezoneOffset(timezoneOffset) {
 			console.log(timezoneOffset);
 			console.log(data);
 		}
+	});
+}
+
+function localizeTimestamp() {
+	var user_tz = moment.tz.guess();
+	moment.locale("{{ session['language'] }}");
+	$(".timestamp").each(function() {
+		this.innerText = moment(this.innerText).tz(user_tz).fromNow() + moment(this.innerText).tz(user_tz).format(', HH:mm:ss, DD MMMM YYYY, dddd');
+	});
+	$(".timestamp-short").each(function() {
+		this.innerText = moment(this.innerText).tz(user_tz).fromNow();
 	});
 }

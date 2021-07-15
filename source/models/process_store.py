@@ -214,7 +214,7 @@ class ProcessStore(Store):
 			pre.c.name_id
 		).order_by(
 			desc('total'),
-			pre.c.process_modified_utc
+			pre.c.process_modified_local
 		).limit(limit).offset(offset).all()
 
 	@staticmethod
@@ -319,7 +319,7 @@ def _get_crammers_subquery(filter_extension: str,
 		Name.value.label('name_value'),
 		Name.id.label('name_id'),
 		(cast(crammers_expression, sqlalchemy.Integer)).label('crammers'),
-		(Process.modified_local).label('process_modified_utc')
+		(Process.modified_local).label('process_modified_local')
 	).join(
 		Test
 	).outerjoin(

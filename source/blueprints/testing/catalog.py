@@ -161,8 +161,8 @@ def create(extension: str = None):
 	"""
 	Return create test page.
 	"""
-	# if not current_user.is_authenticated:
-	# 	return redirect(url_for('testing.get_catalog'))
+	if not current_user.is_authenticated:
+		return redirect(url_for('testing.get_catalog'))
 	if extension is not None:
 		try:
 			extension_module = importlib.import_module('extensions.%s' % extension)
@@ -189,16 +189,16 @@ def create(extension: str = None):
 	)
 
 
-@blueprint.route('/catalog/update/<uid>/', methods=('GET', 'POST'))
+@blueprint.route('/update/<uid>/', methods=('GET', 'POST'))
 def update(uid: str):
 	"""
-	Return test update page.
+	Return update test page.
 	"""
 	if not current_user.is_authenticated:
-		return redirect(url_for('test.get_catalog'))
+		return redirect(url_for('testing.get_catalog'))
 	test = TestStore.read(uid)
 	if not verify_test_owner(test):
-		return reidrect(url_for('test.get_catalog'))
+		return reidrect(url_for('testing.get_catalog'))
 	try:
 		extension_module = importlib.import_module('extensions.%s' % test.extension)
 	except:
@@ -208,30 +208,30 @@ def update(uid: str):
 		updater = TestForm(extension_module, test)
 	else:
 		updater = TestForm(extension_module)
-	if updater.validate_on_submit(): # Valid post request
+	if updater.validate_on_submit():
 		TestStore.update(
 			uid,
 			updater.name.data,
 			updater.options.data,
-			int(updater.answer_count.data),
-			int(updater.limit_time.data)
+			int(updater.answer_count.data)
 		)
-		return redirect(url_for('test.get_catalog'))
+		return redirect(url_for('testing.get_catalog'))
 	return render_template(
-		'test/editor.html',
-		type='update',
-		editor=updater,
-		nav_active='catalog'
+		'testing/editor.html',
+		current_extension=test.extension,
+		editor=updater
 	)
 
 
-@blueprint.route('/catalog/delete/<uid>/', methods=('GET',))
+@blueprint.route('/delete/<uid>/', methods=('GET',))
 def delete(uid: str):
 	"""
-	Delete test and redirect to test catalog.
+	Delete test and redirect to testing catalog.
 	"""
+	if not current_user.is_authenticated:
+		return redirect(url_for('testing.get_catalog'))
 	test = TestStore.read(uid)
 	if not verify_test_owner(test):
-		return reidrect(url_for('test.get_catalog'))
+		return reidrect(url_for('testing.get_catalog'))
 	TestStore.delete(uid)
-	return redirect(url_for('test.get_catalog'))
+	return redirect(url_for('testing.get_catalog'))

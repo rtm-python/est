@@ -81,5 +81,5 @@ def get_chart(extension: str, criteria: str):
 		current_criteria=criteria,
 		days=days,
 		data=data,
-		nav_active='ratings'
+		subtitle='personal'
 	)

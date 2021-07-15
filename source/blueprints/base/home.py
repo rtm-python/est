@@ -4,6 +4,9 @@
 Blueprint module to handle landing routes.
 """
 
+# Standard libraries import
+import datetime
+
 # Application modules import
 from blueprints import application
 from blueprints.base import blueprint
@@ -77,3 +80,19 @@ def select_name(uid: str):
 		session['name'] = name.uid
 		return redirect(url_for('testing.get_catalog'))
 	return redirect(url_for('base.get_home'))
+
+
+@blueprint.route('/timezone/', methods=('POST',))
+def set_timezone():
+	"""
+	Set timezone for session.
+	"""
+	try:
+		session['timezone_offset'] = int(request.form.get('timezoneOffset'))
+		utc_now = datetime.datetime.utcnow()
+		return {
+			'utc': utc_now,
+			'local': utc_now - datetime.timedelta(minutes=session['timezone_offset'])
+		}
+	except:
+		pass

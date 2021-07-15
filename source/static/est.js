@@ -97,3 +97,16 @@ function setShow(state) {
 	$("#collapse-show").collapse("toggle");
 	$("#collapse-show-frame").collapse("toggle");
 }
+
+function postTimezoneOffset(timezoneOffset) {
+	$.ajax({
+		type: "post",
+		async: false,
+		url: "/timezone",
+		data: "timezoneOffset=" + timezoneOffset.toString(),
+		success: function (data, textStatus, request) {
+			console.log(timezoneOffset);
+			console.log(data);
+		}
+	});
+}

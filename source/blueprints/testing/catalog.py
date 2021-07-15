@@ -111,7 +111,11 @@ def get_catalog():
 	"""
 	# Filters
 	filters = []
-	for filter in CATALOG_FILTERS:
+	if current_user.is_authenticated:
+		start_index = 0
+	else:
+		start_index = 1
+	for filter in CATALOG_FILTERS[start_index: ]:
 		filter_value = get_boolean(filter['name']) or False
 		filters += [
 			{
@@ -125,11 +129,13 @@ def get_catalog():
 			}
 		]
 	# Prepare list data
+	filter_hide_global = filters[0]['value'] \
+		if current_user.is_authenticated else None
 	pagination = get_pagination(
 		'catalog',
 		 TestStore.count_list(
 			None, None, current_user.get_id(),
-			current_user.get_admin_uid_list() if not filters[0]['value'] else []
+			current_user.get_admin_uid_list() if not filter_hide_global else []
 		)
 	)
 	pagination['endpoint'] = 'testing.get_catalog'
@@ -138,7 +144,7 @@ def get_catalog():
 		(pagination['page_index'] - 1) * pagination['per_page'],
 		pagination['per_page'],
 		None, None, current_user.get_id(),
-		current_user.get_admin_uid_list() if not filters[0]['value'] else []
+		current_user.get_admin_uid_list() if not filter_hide_global else []
 	)
 	return render_template(
 		'testing/catalog.html',

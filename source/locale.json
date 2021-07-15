@@ -442,7 +442,7 @@
 	},
 	"30-days": {
 		"endpoint": null,
-		"en": "20 Days",
+		"en": "30 Days",
 		"ru": "30 дней"
 	},
 	"7-days": {

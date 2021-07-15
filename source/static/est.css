@@ -297,3 +297,13 @@ body, html {
 	display: inline-block;
 	line-height: 3;
 }
+
+.rating-place {
+	position: relative;
+	top: -5px;
+}
+
+.rating-first {
+	font-weight: 500;
+	font-size: 1.5rem;
+}

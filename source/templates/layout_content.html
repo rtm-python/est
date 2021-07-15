@@ -1,6 +1,6 @@
 {%- extends "layout.html" -%}
 {%- set username = current_user.get_name()|default({ 'value': None }, True) -%}
-{%- set menu_items = [ (url_for('testing.get_catalog'), 'caret-right', __('Testing')), (url_for('base.get_home'), 'graph', __('Ratings')) ] -%}
+{%- set menu_items = [ (url_for('testing.get_catalog'), 'caret-right', __('Testing')), (url_for('rating.get_top'), 'graph', __('Ratings')) ] -%}
 {%- if current_user.is_authenticated -%}
 	{%- set menu_items = menu_items + [ (url_for('base.get_home'), 'person', username.value) ] -%}
 {%- else -%}

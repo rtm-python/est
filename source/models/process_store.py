@@ -33,13 +33,13 @@ class ProcessStore(Store):
 
 	@staticmethod
 	def create(test_id: int, user_uid: str, anonymous_token: str,
-						 name_uid: str) -> Process:
+						 name_uid: str, modified_local: datetime.datetime) -> Process:
 		"""
 		Create and return process.
 		"""
 		return super(ProcessStore, ProcessStore).create(
 			Process(
-				test_id, user_uid, anonymous_token, name_uid
+				test_id, user_uid, anonymous_token, name_uid, modified_local
 			)
 		)
 
@@ -55,6 +55,7 @@ class ProcessStore(Store):
 	@staticmethod
 	def update(uid: str, test_id: int,
 						 user_uid: str, anonymous_token: str, name_uid: str,
+						 modified_local: datetime.datetime,
 						 answer_count: int, correct_count: int,
 						 limit_time: int, answer_time: int) -> Process:
 		"""
@@ -65,6 +66,7 @@ class ProcessStore(Store):
 		process.user_uid = user_uid
 		process.anonymous_token = anonymous_token
 		process.name_uid = name_uid
+		process.modified_local = modified_local
 		process.answer_count = answer_count
 		process.correct_count = correct_count
 		process.limit_time = limit_time
@@ -116,7 +118,8 @@ class ProcessStore(Store):
 		))
 
 	@staticmethod
-	def add_answer(uid: str, task: Task) -> Process:
+	def add_answer(uid: str, task: Task,
+								 modified_local: datetime.datetime) -> Process:
 		"""
 		Return process after increment answer count and
 		if answer is correct then insrement correct count.
@@ -137,6 +140,7 @@ class ProcessStore(Store):
 			if speed > 100:
 				speed = 100
 			# process.result = int(correctness * speed / 100)
+		process.modified_local = modified_local
 		return super(ProcessStore, ProcessStore).update(
 			process
 		)
@@ -150,7 +154,7 @@ class ProcessStore(Store):
 		binded_count = 0
 		while True:
 			process_list = ProcessStore.read_list(
-				0, 100, None, None, None, None, anonymous_token, None)
+				0, 100, None, None, None, anonymous_token, None)
 			if len(process_list) == 0:
 				break
 			else:
@@ -195,11 +199,10 @@ class ProcessStore(Store):
 											 filter_name_uid: str,
 											 crammers_expression,
 											 since: datetime.datetime,
-											 until: datetime.datetime,
-											 tz_delta: datetime.timedelta) -> list:
+											 until: datetime.datetime) -> list:
 		pre = _get_crammers_subquery(
 			filter_extension, filter_user_uid, filter_anonymous_token,
-			filter_name_uid, crammers_expression, since, until, tz_delta
+			filter_name_uid, crammers_expression, since, until
 		)
 		return database.session.query(
 			pre.c.name_value.label('name'),
@@ -221,29 +224,26 @@ class ProcessStore(Store):
 										 filter_name_uid: str,
 										 crammers_expression,
 										 since: datetime.datetime,
-										 until: datetime.datetime,
-										 tz_delta: datetime.timedelta) -> list:
+										 until: datetime.datetime) -> list:
 		pre = _get_crammers_subquery(
 			filter_extension, filter_user_uid, filter_anonymous_token,
-			filter_name_uid, crammers_expression, since, until, tz_delta
+			filter_name_uid, crammers_expression, since, until
 		)
 		pre_local = database.session.query(
 			pre.c.process_correct_count,
 			pre.c.process_answer_time,
 			pre.c.process_id,
-			# pre.c.test_extension,
 			pre.c.test_id,
 			pre.c.name_value,
 			pre.c.name_id,
 			pre.c.crammers,
-			pre.c.process_modified_utc.label('process_modified_local'),
+			pre.c.process_modified_local,
 			func.strftime(
-				'%Y-%m-%d', pre.c.process_modified_utc
+				'%Y-%m-%d', pre.c.process_modified_local
 			).label('process_date_local')
 		).subquery()
 		return database.session.query(
 			pre_local.c.name_value.label('name_value'),
-			# pre_local.c.test_extension,
 			func.count(pre_local.c.process_id).label('process_count'),
 			func.sum(pre_local.c.process_correct_count).label('correct_count'),
 			func.sum(pre_local.c.process_answer_time).label('answer_time'),
@@ -251,7 +251,6 @@ class ProcessStore(Store):
 			pre_local.c.process_date_local
 		).group_by(
 			pre_local.c.name_value,
-			# pre_local.c.test_extension,
 			pre_local.c.process_date_local
 		).order_by(
 			pre_local.c.process_modified_local
@@ -310,8 +309,7 @@ def _get_crammers_subquery(filter_extension: str,
 													 filter_name_uid: str,
 													 crammers_expression,
 													 since: datetime.datetime,
-													 until: datetime.datetime,
-													 tz_delta: datetime.timedelta):
+													 until: datetime.datetime):
 	return database.session.query(
 		Process.correct_count.label('process_correct_count'),
 		Process.answer_time.label('process_answer_time'),
@@ -321,7 +319,7 @@ def _get_crammers_subquery(filter_extension: str,
 		Name.value.label('name_value'),
 		Name.id.label('name_id'),
 		(cast(crammers_expression, sqlalchemy.Integer)).label('crammers'),
-		(Process.modified_utc).label('process_modified_utc')
+		(Process.modified_local).label('process_modified_utc')
 	).join(
 		Test
 	).outerjoin(
@@ -338,9 +336,9 @@ def _get_crammers_subquery(filter_extension: str,
 		True if filter_name_uid is None else \
 			filter_name_uid == Process.name_uid,
 		and_(
-			Process.modified_utc >= since + tz_delta,
-			Process.modified_utc < until + tz_delta
+			Process.modified_local >= since,
+			Process.modified_local < until
 		) if since is not None else \
-			Process.modified_utc < until + tz_delta,
+			Process.modified_local < until,
 		Test.deleted_utc == None
 	).subquery()

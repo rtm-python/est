@@ -55,7 +55,7 @@ def redirect_on_invalid_session():
 	"""
 	Return redirect on invalid session.
 	"""
-	return redirect(url_for('base.get_landing'))
+	return redirect(url_for('base.get_home'))
 
 
 @application.before_request

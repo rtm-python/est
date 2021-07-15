@@ -25,9 +25,7 @@ blueprint = Blueprint(
 
 # Routes import
 from blueprints.base import home
-from blueprints.base import landing
 from blueprints.base import account
-from blueprints.base import name
 
 
 # HTTP_400_BAD_REQUEST

@@ -30,7 +30,6 @@ from flask import request
 from flask import url_for
 from flask_wtf import FlaskForm
 from wtforms import StringField
-from wtforms import SelectField
 from wtforms import SubmitField
 from flask_login import current_user
 from sqlalchemy import func

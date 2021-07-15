@@ -17,7 +17,7 @@ from blueprints.__locale__ import __
 from models.process_store import ProcessStore
 from models.entity.process import Process
 from config import EXTENSION_LIST
-from blueprints.test.process import get_crammers_expression
+from blueprints.testing.player import get_crammers_expression
 
 # Additional libraries import
 from flask import render_template

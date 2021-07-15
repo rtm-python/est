@@ -5,9 +5,6 @@ Blueprint module to handle test catalog routes.
 """
 
 # Standard libraries import
-import sys
-import json
-import datetime
 import importlib
 import logging
 
@@ -16,9 +13,7 @@ from blueprints import application
 from blueprints.testing import blueprint
 from blueprints.__locale__ import __
 from blueprints.__pagination__ import get_pagination
-from blueprints.__args__ import get_string
 from blueprints.__args__ import get_boolean
-from blueprints.__args__ import set_value
 from config import EXTENSION_LIST
 from models.test_store import TestStore
 from models.entity.test import Test
@@ -30,7 +25,6 @@ from flask import request
 from flask import url_for
 from flask_wtf import FlaskForm
 from wtforms import StringField
-from wtforms import BooleanField
 from wtforms import SelectField
 from wtforms import SubmitField
 from wtforms import validators

@@ -29,7 +29,7 @@ application = Flask(
 )
 application.config['SECRET_KEY'] = CONFIG['key']
 paranoid = Paranoid(application)
-paranoid.redirect_view = 'base.get_landing'
+paranoid.redirect_view = 'base.get_home'
 
 # Blueprint modules import and blueprints registration
 # (prevent circular imports)
@@ -37,7 +37,6 @@ for module_name in \
 		[
 			'base',
 			'testing',
-			'test',
 			'rating'
 		]:
 	module = importlib.import_module('blueprints.%s' % module_name)

@@ -14,6 +14,8 @@ import logging
 from blueprints import application
 from blueprints.testing import blueprint
 from blueprints.__locale__ import __
+from blueprints.__args__ import get_boolean
+from blueprints.__pagination__ import get_pagination
 from models.process_store import ProcessStore
 from models.test_store import TestStore
 from models.task_store import TaskStore
@@ -35,6 +37,22 @@ from sqlalchemy import func
 
 # Global constants
 process_template = __('TEST') + ': %s\n' + __('STATUS') + ': %s'
+HISTORY_FILTERS = [
+	{
+		'name': 'filterHistoryHideCompleted',
+		'label': {
+			False: 'Hide Completed',
+			True: 'Show Completed'
+		}
+	},
+	{
+		'name': 'filterHistoryHideOthers',
+		'label': {
+			False: 'Hide Others',
+			True: 'Show Others'
+		}
+	}
+]
 
 
 class PlayerForm(FlaskForm):
@@ -172,7 +190,6 @@ def play(uid: str):
 		passed_tasks=passed_tasks,
 		player=player,
 		player_audio=player_audio,
-		nav_active='testing'
 	)
 
 
@@ -230,7 +247,63 @@ def get_result(uid: str):
 		passed_tasks=passed_tasks,
 		name_value=name_value,
 		player_audio=player_audio,
-		nav_active='testing'
+	)
+
+
+@blueprint.route('/history/<uid>/', methods=('GET',))
+def get_history(uid: str):
+	"""
+	Return testing history page.
+	"""
+	test = TestStore.read(uid)
+	if test is None:
+		return redirect(url_for('testing.get_catalog'))
+	# Filters
+	filters = []
+	for filter in HISTORY_FILTERS:
+		filter_value = get_boolean(filter['name']) or False
+		filters += [
+			{
+				'name': filter['name'],
+				'label': filter['label'][filter_value],
+				'value': filter_value,
+				'url': url_for(
+					'testing.get_history', uid=test.uid,
+					**{ filter['name']: not filter_value }
+				)
+			}
+		]
+	# Prepare list data
+	name = current_user.get_name() if filters[1]['value'] else None
+	pagination = get_pagination(
+		'process',
+		ProcessStore.count_list(
+			test.uid,
+			filters[0]['value'],
+			current_user.get_id(),
+			current_user.get_token(),
+			name.uid if name is not None else None
+		)
+	)
+	pagination['endpoint'] = 'test.get_process'
+	pagination['prefix'] = 'process'
+	processes = ProcessStore.read_list(
+		(pagination['page_index'] - 1) * pagination['per_page'],
+		pagination['per_page'],
+		test.uid,
+		filters[0]['value'],
+		current_user.get_id(),
+		current_user.get_token(),
+		name.uid if name is not None else None,
+		get_result_expression(),
+		get_crammers_expression()
+	)
+	return render_template(
+		'testing/history.html',
+		current_test=test,
+		filters=filters,
+		processes=processes,
+		pagination=pagination,
 	)
 
 

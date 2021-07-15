@@ -1,0 +1,148 @@
+{%- extends "layout_content.html" -%}
+{%- set title -%}{{ __('Testing') }}{%- endset -%}
+{%- block content -%}
+	<div class="w-100">
+		<div class="card shadow px-3 py-2 bg-gradient-yellow">
+			<div class="d-flex w-100 align-items-center">
+				<h5 class="flex-grow-1 my-2 mr-2 py-1">{{ title }}<small class="text-muted ml-2">{{ __('History') }}</small></h5>
+				<a class="btn btn-sm btn-styled btn-styled-green m-1" href="{{ url_for('testing.start', uid=current_test.uid) }}"><span class="oi oi-caret-right"></span><div class="d-none d-sm-inline ml-1">{{ __('Start') }}</div></a>
+				{%- include 'lister.html' -%}
+			</div>
+		</div>
+		{%- for process, test, name, result, crammers in processes -%}
+			<div class="card shadow p-3 bg-gradient-whitesmoke w-100 my-2">
+				<div class="d-flex w-100 align-items-center">
+					<div class="flex-grow-1 mr-2">
+						<div>
+							{%- if name.value -%}<div class="d-inline-block mr-2">{{ name.value + ':' }}</div>{%- endif -%}
+							<strong>{{ result }}%</strong>
+						</div>
+						{%- if process.answer_count == test.answer_count -%}
+							<div>{{ crammers }}<small class="ml-1">{{ __('crammers') }}</small></div>
+						{%- else -%}
+							<div class="small text-muted">{{ __('Incomplete') }}</div>
+						{%- endif -%}
+					</div>
+					<small class="d-inline-block m-1 p-1 text-muted">{{ __('Correct') }}: {{ process.correct_count }} / {{ process.answer_count }}</small>
+					<small class="d-inline-block m-1 p-1 text-muted">{{ __('Time') }}: {{ process.answer_time }} / {{ process.limit_time }}</small>
+					{%- if process.answer_count < test.answer_count -%}
+						<a class="btn btn-sm btn-styled btn-styled-green m-1" href="{{ url_for('testing.play', uid=process.uid) }}"><span class="oi oi-caret-right"></span><div class="d-none d-sm-inline ml-1">{{ __('Continue') }}</div></a>
+					{%- else -%}
+						<a class="btn btn-sm btn-styled btn-styled-light m-1" href="{{ url_for('testing.get_result', uid=process.uid) }}"><span class="oi oi-list"></span><div class="d-none d-sm-inline ml-1">{{ __('Result') }}</div></a>
+					{%- endif -%}
+				</div>
+			</div>
+		{%- endfor -%}
+	</div>
+{%- endblock content -%}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{%- block style -%}
+	<style>
+  	@media (max-width: 768px) {
+			.card-columns {
+	  	  column-count: 1;
+	    }
+	  }
+	</style>
+{%- endblock -%}
+{% set filter_link -%}{{ '#' }}{%- endset %}
+{%- block filter -%}
+	<form method="post" actions="">
+		{{ filter.csrf_token }}
+		<div class="form-row">
+			<div class="col-12 col-md-3 mb-2">
+				<small>{{ __('Name') }}</small>
+				<input autofocus type="text" class="form-control form-control-sm" id="{{ filter.prefix + filter.name.label.text }}" name="{{ filter.prefix + filter.name.label.text }}" placeholder="{{ __('Name') }}" value="{{ filter.name.data|default('', True) }}" />	
+			</div>
+			<div class="col-12 col-md-3 mb-2">
+				<small>{{ __('Extension') }}</small>
+				<input type="text" class="form-control form-control-sm" id="{{ filter.prefix + filter.extension.label.text }}" name="{{ filter.prefix + filter.extension.label.text }}" placeholder="{{ __('Extension') }}" value="{{ filter.extension.data|default('', True) }}" />
+			</div>
+			<div class="col-12 col-md-2 mb-2">
+				<small>{{ __('Completed') }}</small>
+				<div class="custom-control custom-checkbox mr-sm-2">
+					<input type="checkbox" class="custom-control-input" id="{{ filter.prefix + filter.hide_completed.label.text }}" name="{{ filter.prefix + filter.hide_completed.label.text }}" {%- if (filter.hide_completed.data == 'true' or filter.hide_completed.data == 'True') or filter.hide_completed.data == 'on' or filter.hide_completed.data is true -%}checked{%- endif -%}>
+					<label class="custom-control-label" for="{{ filter.prefix + filter.hide_completed.label.text }}" style="font-size: smaller; padding-top: 2px; margin-top: 3px;">{{ __('Hide Completed Processes') }}</label>
+				</div>
+			</div>
+			<div class="col-12 col-md-2 mb-2">
+				<small>{{ __('Hide Others') }}</small>
+				<div class="custom-control custom-checkbox mr-sm-2">
+					<input type="checkbox" class="custom-control-input" id="{{ filter.prefix + filter.hide_others.label.text }}" name="{{ filter.prefix + filter.hide_others.label.text }}" {%- if (filter.hide_others.data == 'true' or filter.hide_others.data == 'True') or filter.hide_others.data == 'on' or filter.hide_others.data is true -%}checked{%- endif -%}>
+					<label class="custom-control-label" for="{{ filter.prefix + filter.hide_others.label.text }}" style="font-size: smaller; padding-top: 2px; margin-top: 3px;">{{ __('Hide Others Processes') }}</label>
+				</div>
+			</div>
+			<div class="col-12 col-md-2 my-2">
+				<div class="form-row">
+					<div class="mb-2 col-6 col-md-12">
+						<input type="submit" class="btn btn-sm btn-block btn-outline-dark" name="{{ filter.prefix + filter.submit.label.text }}" id="{{ filter.prefix + filter.submit.label.text }}" value="{{ __('Apply') }}" />
+					</div>
+					<div class="mb-2 col-6 col-md-12">
+						<a href="{{ url_for('test.get_process', processFilterReset='true') }}" class="btn btn-sm btn-block btn-outline-dark">{{ __('Reset') }}</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>
+{%- endblock -%}
+{%- block list_content -%}
+	<div class="card-columns">
+		{%- for process, test, name, result, crammers in processes -%}
+			<div class="card p-2 shadow-sm mb-3 rounded text-center">
+				<blockquote class="blockquote mb-0 card-body">
+					<div class="d-flex w-100 justify-content-between">
+						<small class="text-muted">{{ __(test.extension) }}</small>
+						<small class="text-muted">
+							{%- if process.answer_count == test.answer_count -%}
+								{{ __('Completed') }}
+							{%- else -%}
+								{{ __('In process') }}
+							{%- endif -%}
+						</small>
+					</div>
+					<div class="card-title p-4">
+						<h4 class="m-0"><strong>{{ test.name }}</strong></h4>
+						<h3 class="mt-3">{{ name.value }}</h3>
+						{%- if process.answer_count == test.answer_count -%}
+							<small class="text-muted">{{ __('Result') }}: </small>
+							<h4 class="m-0">{{ result }}%</h4>
+							<small class="text-muted">{{ __('Crammers') }}: </small>
+							<h4>{{ crammers }}</h4>
+						{%- else -%}
+							<small class="text-muted">{{ __('Progress') }}: </small>
+							<p class="m-0">{{ process.correct_count }} ({{ process.answer_count }} / {{ test.answer_count }})</p>
+						{%- endif -%}
+					</div>
+					{%- if process.answer_count == test.answer_count -%}
+						<a href="{{ url_for('test.get_result', uid=process.uid) }}" class="btn btn-outline-dark w-75">{{ __('Details') }}</a>
+						<a href="{{ url_for('test.start', uid=test.uid) }}" class="mt-2 btn btn-outline-dark w-75">{{ __('Restart') }}</a>
+					{%- else -%}
+						<a href="{{ url_for('test.play', uid=process.uid) }}" class="btn btn-outline-dark w-75">{{ __('Continue') }}</a>
+					{%- endif -%}
+				</blockquote>
+			</div>
+		{% endfor %}
+		{% if processes|length == 0 %}
+			<div class="card p-2 shadow-sm mb-3 rounded text-center" style="background: whitesmoke;">
+				<blockquote class="blockquote mb-0 card-body">
+					<p class="card-text">{{ __('No tests found') }}</p>
+				</blockquote>
+			</div>
+		{%- endif -%}
+	</div>
+{%- endblock -%}

@@ -84,7 +84,7 @@ class ProcessStore(Store):
 
 	@staticmethod
 	def read_list(offset: int, limit: int,
-								filter_name: str, filter_extension: str,
+								filter_test_uid: str,
 								filter_hide_completed: bool,
 								filter_user_uid: str, filter_anonymous_token: str,
 								filter_name_uid: str,
@@ -94,13 +94,13 @@ class ProcessStore(Store):
 		Return list of processes by arguments.
 		"""
 		return _get_list_query(
-			filter_name, filter_extension, filter_hide_completed,
+			filter_test_uid, filter_hide_completed,
 			filter_user_uid, filter_anonymous_token, filter_name_uid,
 			result_expression, crammers_expression
 		).limit(limit).offset(offset).all()
 
 	@staticmethod
-	def count_list(filter_name: str, filter_extension: str,
+	def count_list(filter_test_uid: str,
 								 filter_hide_completed: bool,
 								 filter_user_uid: str, filter_anonymous_token: str,
 								 filter_name_uid: str,
@@ -110,7 +110,7 @@ class ProcessStore(Store):
 		Return number of processes in list.
 		"""
 		return Store.count(_get_list_query(
-			filter_name, filter_extension, filter_hide_completed,
+			filter_test_uid, filter_hide_completed,
 			filter_user_uid, filter_anonymous_token, filter_name_uid,
 			result_expression, crammers_expression
 		))
@@ -188,36 +188,6 @@ class ProcessStore(Store):
 		).first()
 
 	@staticmethod
-	def read_charts(offset: int, limit: int,
-								  filter_name: str, filter_extension: str,
-								  user_uid: str, anonymous_token: str,
-									name_uid) -> list:
-		"""
-		Return list of process charts by arguments.
-		"""
-		return _get_charts_query(
-			filter_name, filter_extension,
-			user_uid, anonymous_token, name_uid, False
-		).limit(limit).offset(offset).all()
-
-	@staticmethod
-	def count_charts(filter_name: str, filter_extension: str,
-								   user_uid: str, anonymous_token: str,
-									 name_uid: str) -> int:
-		"""
-		Return number of process charts in list.
-		"""
-		return _get_charts_query(
-			filter_name, filter_extension,
-			user_uid, anonymous_token, name_uid, True
-		)
-		# TODO: Issue with simplified query
-		return Store.count(_get_charts_query(
-			filter_name, filter_extension,
-			user_uid, anonymous_token, name_uid, True
-		))
-
-	@staticmethod
 	def get_top_crammers(offset: int, limit: int,
 											 filter_extension: str,
 											 filter_user_uid: str,
@@ -288,7 +258,7 @@ class ProcessStore(Store):
 		).all()
 
 
-def _get_list_query(filter_name: str, filter_extension: str,
+def _get_list_query(filter_test_uid: str,
 										filter_hide_completed: bool,
 										filter_user_uid: str, filter_anonymous_token: str,
 										filter_name_uid: str,
@@ -317,10 +287,8 @@ def _get_list_query(filter_name: str, filter_extension: str,
 			Name, Name.uid == filter_name_uid
 		)
 	return pre.filter(
-		True if filter_name is None else \
-			Test.name.ilike('%' + filter_name + '%'),
-		True if filter_extension is None else \
-			Test.extension.ilike('%' + filter_extension + '%'),
+		True if filter_test_uid is None else \
+			Test.uid == filter_test_uid,
 		True if filter_hide_completed is None or \
 			filter_hide_completed is False else \
 				Process.answer_count < Test.answer_count,
@@ -333,109 +301,6 @@ def _get_list_query(filter_name: str, filter_extension: str,
 		Process.deleted_utc == None
 	).order_by(
 		Process.modified_utc.desc()
-	)
-
-
-def _get_charts_query(filter_name: str, filter_extension: str,
-										  filter_user_uid: str, filter_anonymous_token: str,
-											filter_name_uid: str, is_count_query: bool):
-	"""
-	Return query object for process charts.
-	"""
-	pre = database.session.query(
-		Test.id.label('test_id'), Test.name.label('name'),
-		Process.modified_utc.label('modified_utc'),
-		func.strftime('%w', Process.modified_utc).label('weekday'),
-		Process.result.label('result')
-	).join(
-		Process
-	).filter(
-		True if filter_name is None else \
-			Test.name.ilike('%' + filter_name + '%'),
-		True if filter_extension is None else \
-			Test.extension.ilike('%' + filter_extension + '%'),
-		True if filter_user_uid is None else \
-			filter_user_uid == Process.user_uid,
-		True if filter_anonymous_token is None else \
-			filter_anonymous_token == Process.anonymous_token,
-		True if filter_name_uid is None else \
-			filter_name_uid == Process.name_uid,
-		Process.modified_utc >= \
-				datetime.datetime.utcnow() - datetime.timedelta(days=7),
-		Test.deleted_utc == None
-	).subquery()
-	if is_count_query: # Return simplified query for count
-		return len(
-			database.session.query(
-				Test.id
-			).join(
-				pre, pre.c.test_id == Test.id
-			).group_by(
-				Test.id
-			).all()
-		)
-	# Prepare queries for each weekday
-	weekday = int(datetime.datetime.utcnow().strftime('%w'))
-	weekdays = []
-	for index in range(7):
-		weekday = weekday + 1 if weekday < 6 else 0
-		weekdays += [
-			database.session.query(
-				pre.c.test_id, pre.c.modified_utc, pre.c.weekday,
-				func.count(pre.c.result).label('count'),
-				func.avg(pre.c.result).label('result')
-			).filter(
-				pre.c.weekday == str(weekday),
-				pre.c.result != None
-			).group_by(
-				pre.c.test_id
-			).order_by(
-				pre.c.modified_utc.desc()
-			).subquery()
-		]
-	return database.session.query(
-		Test.uid, Test.name, Test.extension,
-		weekdays[0].c.weekday, weekdays[0].c.count, weekdays[0].c.result,
-		weekdays[1].c.weekday, weekdays[1].c.count, weekdays[1].c.result,
-		weekdays[2].c.weekday, weekdays[2].c.count, weekdays[2].c.result,
-		weekdays[3].c.weekday, weekdays[3].c.count, weekdays[3].c.result,
-		weekdays[4].c.weekday, weekdays[4].c.count, weekdays[4].c.result,
-		weekdays[5].c.weekday, weekdays[5].c.count, weekdays[5].c.result,
-		weekdays[6].c.weekday, weekdays[6].c.count, weekdays[6].c.result
-	).outerjoin(
-		weekdays[0], Test.id == weekdays[0].c.test_id
-	).outerjoin(
-		weekdays[1], Test.id == weekdays[1].c.test_id
-	).outerjoin(
-		weekdays[2], Test.id == weekdays[2].c.test_id
-	).outerjoin(
-		weekdays[3], Test.id == weekdays[3].c.test_id
-	).outerjoin(
-		weekdays[4], Test.id == weekdays[4].c.test_id
-	).outerjoin(
-		weekdays[5], Test.id == weekdays[5].c.test_id
-	).outerjoin(
-		weekdays[6], Test.id == weekdays[6].c.test_id
-	).filter(
-		or_(
-			weekdays[0].c.result != None,
-			weekdays[1].c.result != None,
-			weekdays[2].c.result != None,
-			weekdays[3].c.result != None,
-			weekdays[4].c.result != None,
-			weekdays[5].c.result != None,
-			weekdays[6].c.result != None
-		)
-	).group_by(
-		Test.id
-	).order_by(
-		weekdays[6].c.modified_utc.desc(),
-		weekdays[5].c.modified_utc.desc(),
-		weekdays[4].c.modified_utc.desc(),
-		weekdays[3].c.modified_utc.desc(),
-		weekdays[2].c.modified_utc.desc(),
-		weekdays[1].c.modified_utc.desc(),
-		weekdays[6].c.modified_utc.desc()
 	)
 
 

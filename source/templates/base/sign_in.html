@@ -76,6 +76,9 @@
 									<button type="submit" class="btn btn-sm btn-styled btn-styled-green w-100"><span class="oi oi-check"></span><div class="d-inline ml-1">{{ __('Submit') }}</div></button>
 								</div>
 							{%- endif -%}
+							<div class="offset-1 col-10 my-2">
+								<a class="btn btn-sm btn-styled btn-styled-light w-100" href="{{ url_for('base.get_home') }}"><span class="oi oi-x"></span><div class="d-inline ml-1">{{ __('Cancel') }}</div></a>
+							</div>
 						</form>
 					</div>
 				</div>

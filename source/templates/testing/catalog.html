@@ -6,7 +6,9 @@
 		<div class="card shadow px-3 py-2 bg-gradient-yellow">
 			<div class="d-flex w-100 align-items-center">
 				<h5 class="flex-grow-1 my-2 mr-2 py-1">{{ title }}</h5>
-				<a class="btn btn-sm btn-styled btn-styled-light m-1" href="{{ url_for('testing.create') }}"><span class="oi oi-plus"></span><div class="d-none d-sm-inline ml-1">{{ __('Create Test') }}</div></a>
+				{%- if current_user.is_authenticated -%}
+					<a class="btn btn-sm btn-styled btn-styled-light m-1" href="{{ url_for('testing.create') }}"><span class="oi oi-plus"></span><div class="d-none d-sm-inline ml-1">{{ __('Create Test') }}</div></a>
+				{%- endif -%}
 				<div id="filterGroup" class="d-inline-block text-center">
 					<div class="collapse show" id="collapse-filter" data-parent="#filterGroup">
 						<a class="btn btn-sm btn-styled btn-styled-light mx-1" href="#" data-toggle="collapse" data-target="#collapse-filter-links" aria-expanded="true" aria-controls="collapse-filter-links"><span class="oi oi-tags"></span><div class="d-none d-sm-inline ml-1">{{ __('Filter') }}</div></a>
@@ -30,7 +32,7 @@
 					</div>
 					<a class="btn btn-sm btn-styled btn-styled-green m-1" href="{{ url_for('testing.start', uid=test.uid) }}"><span class="oi oi-caret-right"></span><div class="d-none d-sm-inline ml-1">{{ __('Start') }}</div></a>
 					<a class="btn btn-sm btn-styled btn-styled-light m-1" href="#"><span class="oi oi-list"></span><div class="d-none d-sm-inline ml-1">{{ __('Results') }}</div></a>
-					{%- if current_user.get_id() == test.user_uid or  or current_user.get_id() in current_user.get_admin_uid_list() -%}
+					{%- if current_user.get_id() == test.user_uid or current_user.get_id() in current_user.get_admin_uid_list() -%}
 						<a class="btn btn-sm btn-styled btn-styled-light m-1" href="{{ url_for('testing.update', uid=test.uid) }}"><span class="oi oi-pencil"></span><div class="d-none d-sm-inline ml-1">{{ __('Edit') }}</div></a>
 						<div id="deleteGroup-{{ test.uid }}" class="d-inline-block text-center">
 							<div class="collapse show" id="collapse-delete-{{ test.uid }}" data-parent="#deleteGroup-{{ test.uid }}">

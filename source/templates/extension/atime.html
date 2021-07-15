@@ -14,9 +14,9 @@
 	<div class="d-flex col-12 mt-2 mb-0" style="margin: 0 auto; width: max-content;">
 		{%- if answer -%}
 			<div>
-				<div class="d-inline item-font form-control">{{ answer.split(":")[0] }}</div>
-				<div class="d-inline item-font" style="margin: auto 5px;">:</div>
-				<div class="d-inline item-font form-control">{{ answer.split(":")[1] }}</div>
+				<div class="d-inline form-control">{{ answer.split(":")[0] }}</div>
+				<div class="d-inline" style="margin: auto 5px;">:</div>
+				<div class="d-inline form-control">{{ answer.split(":")[1] }}</div>
 			</div>
 		{%- else -%}
 			<select autofocus required id="hours" name="hours" class="item-font form-control{%- if player.answer.errors -%}{{ ' is-invalid' }}{%- endif -%}">

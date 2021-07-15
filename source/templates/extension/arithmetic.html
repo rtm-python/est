@@ -1,5 +1,5 @@
 {%- macro html(task, answer) -%}
-	<div class="item-font">
+	<div>
 		{%- for value in task[1] -%}
 			{%- if not loop.first -%}
 				{%- if not loop.last -%}
@@ -11,14 +11,14 @@
 			<div class="item-center">
 				{%- if value == '?' -%}
 					{%- if answer -%}
-						<div class="item-font text-center form-control">
+						<div class="text-center form-control">
 							{{ answer }}
 						</div>
 					{%- else -%}
-						<input autofocus id="answer" type="text" class="item-font text-center form-control{%- if player.answer.errors -%}{{ ' is-invalid' }}{%- endif -%}" name="answer" placeholder="? " value="{{ player.answer.data|default('', True) }}" autocomplete="off" pattern="[0-9]+" style="width: 75px; min-width: 75px; max-width: max-content;" oninput="resizeInputWidth();" />
+						<input autofocus id="answer" type="text" class="text-center form-control{%- if player.answer.errors -%}{{ ' is-invalid' }}{%- endif -%}" name="answer" placeholder="? " value="{{ player.answer.data|default('', True) }}" autocomplete="off" pattern="[0-9]+" style="width: 75px; min-width: 75px; max-width: max-content;" oninput="resizeInputWidth();" />
 					{%- endif -%}
 				{%- else -%}
-					<div class="item-font text-center form-control" style="border-radius: 55px; min-width: 55px;">
+					<div class="text-center form-control" style="border-radius: 55px; min-width: 55px;">
 						{{ value }}
 					</div>
 				{%- endif -%}

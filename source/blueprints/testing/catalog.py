@@ -14,7 +14,6 @@ import logging
 # Application modules import
 from blueprints import application
 from blueprints.testing import blueprint
-from blueprints.__filter__ import FilterForm
 from blueprints.__locale__ import __
 from blueprints.__pagination__ import get_pagination
 from blueprints.__args__ import get_string
@@ -38,20 +37,15 @@ from wtforms import validators
 from flask_login import current_user
 
 
-class CatalogFilterForm(FilterForm):
-	"""
-	This is CatalogFilterForm class to retrieve form data.
-	"""
-	name = StringField('FilterName')
-	extension = StringField('FilterExtension')
-	hide_global = BooleanField('FilterHideGlobal')
-	submit = SubmitField('FilterSubmit')
-
-	def __init__(self) -> 'CatalogFilterForm':
-		"""
-		Initiate object with values from request
-		"""
-		super(CatalogFilterForm, self).__init__('catalog')
+CATALOG_FILTERS = [
+	{
+		'name': 'filterCatalogHideGlobal',
+		'label': {
+			False: 'Hide Global Tasks',
+			True: 'Show Global Tasks'
+		}
+	}
+]
 
 
 class ExtensionOptionsField(StringField):
@@ -121,21 +115,24 @@ def get_catalog():
 	"""
 	Return testing catalog page.
 	"""
-	# Handle filter form
-	filter = CatalogFilterForm()
-	if filter.is_submit(filter.submit.label.text) and \
-			filter.validate_on_submit(): # Valid post request
-		filter.store_fields()
-		return redirect(filter.url_for_with_fields('testing.get_catalog'))
-	filter.define_fields()
+	# Filters
+	filters = []
+	for filter in CATALOG_FILTERS:
+		filter_value = get_boolean(filter['name']) or False
+		filters += [
+			{
+				'name': filter['name'],
+				'label': filter['label'][filter_value],
+				'value': filter_value,
+				'url_args': { filter['name']: not filter_value }
+			}
+		]
 	# Prepare list data
 	pagination = get_pagination(
 		'catalog',
 		 TestStore.count_list(
-			filter.name.data,
-			filter.extension.data,
-			current_user.get_id(),
-			current_user.get_admin_uid_list() if not filter.hide_global.data else []
+			None, None, current_user.get_id(),
+			current_user.get_admin_uid_list() if not filters[0]['value'] else []
 		)
 	)
 	pagination['endpoint'] = 'testing.get_catalog'
@@ -143,13 +140,12 @@ def get_catalog():
 	tests =  TestStore.read_list(
 		(pagination['page_index'] - 1) * pagination['per_page'],
 		pagination['per_page'],
-		filter.name.data,
-		filter.extension.data,
-		current_user.get_id(),
-		current_user.get_admin_uid_list() if not filter.hide_global.data else []
+		None, None, current_user.get_id(),
+		current_user.get_admin_uid_list() if not filters[0]['value'] else []
 	)
 	return render_template(
 		'testing/catalog.html',
+		filters=filters,
 		tests=tests,
 		pagination=pagination
 	)

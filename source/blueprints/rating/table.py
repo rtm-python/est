@@ -24,6 +24,7 @@ from config import EXTENSION_LIST
 # Additional libraries import
 from flask import render_template
 from flask import redirect
+from flask import session
 from flask import request
 from flask import url_for
 from flask_login import current_user
@@ -39,10 +40,13 @@ def get_top(period: str = ALL_PERIODS, extension: str = ALL_EXTENSIONS):
 	"""
 	Return top rating table page.
 	"""
+	if session.get('timezone_offset') is None:
+		return redirect(url_for('base.get_home'))
 	if (period not in PERIODS and period != ALL_PERIODS) or \
 			(extension not in EXTENSION_LIST and extension != ALL_EXTENSIONS):
 		return redirect(url_for('rating.get_top'))
-	until = datetime.datetime.utcnow() + datetime.timedelta(days=1)
+	until = datetime.datetime.utcnow() + datetime.timedelta(days=1) - \
+		datetime.timedelta(minutes=session['timezone_offset'])
 	until = until.replace(hour=0, minute=0, second=0, microsecond=0)
 	if period == ALL_PERIODS:
 		since = None
@@ -56,6 +60,14 @@ def get_top(period: str = ALL_PERIODS, extension: str = ALL_EXTENSIONS):
 		0, 10, None if extension == ALL_EXTENSIONS else extension,
 		None, None, None, get_crammers_expression(), since, until
 	)
+	if not current_user.is_authenticated:
+		session['anonymous-rating'] = (session.get('anonymous-rating') or 0) + 1
+		if session['anonymous-rating'] > 5:
+			del session['anonymous-rating']
+			session['alert'] = {
+				'glyph': 'key', 'url': url_for('base.sign_in'),
+				'message': 'Do you want to enter crammers top 10 rating?'
+			}
 	return render_template(
 		'rating/table.html',
 		periods=[ ALL_PERIODS ] + PERIODS,

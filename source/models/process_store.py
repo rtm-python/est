@@ -158,7 +158,7 @@ class ProcessStore(Store):
 			if len(process_list) == 0:
 				break
 			else:
-				for process, test in process_list:
+				for process, test, _, _, _ in process_list:
 					process.user_uid = user_uid
 					process.anonymous_token = None
 					super(ProcessStore, ProcessStore).update(process)

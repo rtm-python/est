@@ -63,6 +63,8 @@ def make_session_permanent():
 	"""
 	Make all sessions permanent.
 	"""
+	if session.get('alert'):
+		del session['alert']
 	session.permanent = True
 
 

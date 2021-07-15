@@ -309,7 +309,7 @@ def sign_in():
 							verify_data['from'].get('username')
 						)
 					)
-					ProcessStore.bind_token(user.uid, current_user.anonymous_token)
+					ProcessStore.bind_token(user.uid, current_user.get_token())
 					login_user(SignedInUser(user), remember=True)
 					user_info = '%s (%s)' % \
 						(

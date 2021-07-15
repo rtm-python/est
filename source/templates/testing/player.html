@@ -1,0 +1,51 @@
+{%- extends "testing/process.html" -%}
+{%- block testing_content -%}
+	<div class="text-center">
+		<h5>{{ test.name }}</h5>
+		<form id="player" actions="" method="post" class="player-form">
+			{%- include 'testing/form.html' -%}
+		</form>
+	</div>
+	<div class="content-delimeter my-3"></div>
+	<div class="d-inline text-center">
+		<div id="soundGroup" class="d-inline-block text-center my-1">
+			<div class="collapse show" id="collapse-sound" data-parent="#soundGroup">
+				<a class="btn btn-sm btn-styled btn-styled-light mx-1" href="#" data-toggle="collapse" data-target="#collapse-sound-frame" aria-expanded="true" aria-controls="collapse-sound-frame">
+					<span class="oi oi-musical-note"></span>
+					<div class="d-inline ml-1">{{ __('Sound') }}</div>
+					<div id="sound-state-on" class="d-inline">:<span class="oi oi-volume-high mx-1"></span>{{ __('On') }}</div>
+					<div id="sound-state-off" class="d-none">:<span class="oi oi-volume-off mx-1"></span>{{ __('Off') }}</div>
+				</a>
+			</div>
+			<div class="collapse collapse-frame" id="collapse-sound-frame" data-parent="#soundGroup">
+				<div>
+					<div class="m-2">{{ __('Sound') + ':' }}</div>
+					<a class="btn btn-sm btn-styled btn-styled-light m-1" href="javascript:setSound(true);"><span class="oi oi-volume-high"></span><div class="d-inline ml-1">{{ __('On') }}</div></a>
+					<a class="btn btn-sm btn-styled btn-styled-light m-1" href="javascript:setSound(false);"><span class="oi oi-volume-off"></span><div class="d-inline ml-1">{{ __('Off') }}</div></a>
+					<a class="btn btn-sm btn-styled btn-styled-light" href="#" data-toggle="collapse" data-target="#collapse-sound" aria-expanded="true" aria-controls="collapse-sound"><span class="oi oi-x"></span><div class="d-inline ml-1">{{ __('Close') }}</div></a>
+				</div>
+			</div>
+		</div>
+		<div id="showGroup" class="d-inline-block text-center my-1">
+			<div class="collapse show" id="collapse-show" data-parent="#showGroup">
+				<a class="btn btn-sm btn-styled btn-styled-light mx-1" href="#" data-toggle="collapse" data-target="#collapse-show-frame" aria-expanded="true" aria-controls="collapse-show-frame">
+					<span class="oi oi-eye"></span>
+					<div class="d-inline ml-1">{{ __('Show') }}</div>
+					<div id="show-state-answers" class="d-inline">:<span class="oi oi-layers mx-1"></span>{{ __('Answers') }}</div>
+					<div id="show-state-nothing" class="d-none">:<span class="oi oi-ban mx-1"></span>{{ __('Nothing') }}</div>
+				</a>
+			</div>
+			<div class="collapse collapse-frame" id="collapse-show-frame" data-parent="#showGroup">
+				<div>
+					<div class="d-inline m-2">{{ __('Show') + ':' }}</div>
+					<a class="btn btn-sm btn-styled btn-styled-light m-1" href="javascript:setShow(true);"><span class="oi oi-layers"></span><div class="d-inline ml-1">{{ __('Answers') }}</div></a>
+					<a class="btn btn-sm btn-styled btn-styled-light m-1" href="javascript:setShow(false);"><span class="oi oi-ban"></span><div class="d-inline ml-1">{{ __('Nothing') }}</div></a>
+					<a class="btn btn-sm btn-styled btn-styled-light" href="#" data-toggle="collapse" data-target="#collapse-show" aria-expanded="true" aria-controls="collapse-show"><span class="oi oi-x"></span><div class="d-inline ml-1">{{ __('Close') }}</div></a>
+				</div>
+			</div>
+		</div>
+		<div class="w-100 mt-1">
+			<a class="btn btn-sm btn-styled btn-styled-light col-8 col-md-6" href="{{ url_for('testing.hold', uid=process.uid) }}"><span class="oi oi-media-pause"></span><div class="d-inline ml-1">{{ __('Hold') }}</div></a>
+		</div>
+	</div>
+{%- endblock testing_content -%}

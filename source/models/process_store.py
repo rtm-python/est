@@ -129,8 +129,7 @@ class ProcessStore(Store):
 			process.correct_count += 1
 		process.answer_time += \
 			int((task.modified_utc - task.created_utc).total_seconds())
-		process.limit_time += \
-			int(data['limit_time'] / test.limit_time * 100)
+		process.limit_time += int(data['limit_time'])
 		if process.answer_count >= test.answer_count:
 			correctness = int(process.correct_count / process.answer_count * 100)
 			speed = \

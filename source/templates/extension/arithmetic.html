@@ -1,4 +1,4 @@
-{%- macro show(index, task, answer) -%}
+{%- macro html(task, answer) -%}
 	<div class="item-font">
 		{%- for value in task[1] -%}
 			{%- if not loop.first -%}
@@ -10,12 +10,12 @@
 			{%- endif -%}
 			<div class="item-center">
 				{%- if value == '?' -%}
-					{%- if index == -1 -%}
-						<input autofocus id="answer" type="text" class="item-font text-center form-control{%- if player.answer.errors -%}{{ ' is-invalid' }}{%- endif -%}" name="answer" placeholder="? " value="{{ player.answer.data|default('', True) }}" autocomplete="off" pattern="[0-9]+" style="width: 75px; min-width: 75px; max-width: max-content;" oninput="resizeInputWidth();" />
-					{%- else -%}
+					{%- if answer -%}
 						<div class="item-font text-center form-control">
 							{{ answer }}
 						</div>
+					{%- else -%}
+						<input autofocus id="answer" type="text" class="item-font text-center form-control{%- if player.answer.errors -%}{{ ' is-invalid' }}{%- endif -%}" name="answer" placeholder="? " value="{{ player.answer.data|default('', True) }}" autocomplete="off" pattern="[0-9]+" style="width: 75px; min-width: 75px; max-width: max-content;" oninput="resizeInputWidth();" />
 					{%- endif -%}
 				{%- else -%}
 					<div class="item-font text-center form-control" style="border-radius: 55px; min-width: 55px;">
@@ -25,7 +25,16 @@
 			</div>
 		{%- endfor -%}
 	</div>
+{%- endmacro -%}
+{%- macro script() -%}
 	<script type="text/javascript">
+		$(window).on('load', function() { play(); });
+
+		function play() {
+			resizeInputWidth();
+			$("#answer").focus();
+		}
+
 		function resizeInputWidth() {
 			var answer = $("#answer")
 			answer.width(answer.val().length * 16);

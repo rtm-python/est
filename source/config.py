@@ -85,5 +85,6 @@ class UrlPrefix(Enum):
 	Application url_prefix enumeration.
 	"""
 	base = '/'
+	testing = '/testing/'
 	test = '/test/'
 	rating = '/rating/'

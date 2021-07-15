@@ -16,7 +16,6 @@ from config import INFO_TEMPLATE_LIST
 from flask import render_template
 
 
-@blueprint.route('/', methods=('GET',))
 @blueprint.route('/landing/', methods=('GET',))
 def get_landing():
 	"""

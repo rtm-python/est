@@ -1,0 +1,90 @@
+{%- extends "layout_content.html" -%}
+{%- set title -%}{{ __('Testing') }}{%- endset -%}
+{%- set filter_global_tests = ('#', __('Hide Global Tests')) -%}
+{%- block content -%}
+	<div class="w-100">
+		<div class="card shadow px-3 py-2 bg-gradient-yellow">
+			<div class="d-flex w-100 align-items-center">
+				<h5 class="flex-grow-1 my-2 mr-2 py-1">{{ title }}</h5>
+				<a class="btn btn-sm btn-styled btn-styled-light m-1" href="{{ url_for('testing.create') }}"><span class="oi oi-plus"></span><div class="d-none d-sm-inline ml-1">{{ __('Create Test') }}</div></a>
+				<div id="filterGroup" class="d-inline-block text-center">
+					<div class="collapse show" id="collapse-filter" data-parent="#filterGroup">
+						<a class="btn btn-sm btn-styled btn-styled-light mx-1" href="#" data-toggle="collapse" data-target="#collapse-filter-links" aria-expanded="true" aria-controls="collapse-filter-links"><span class="oi oi-tags"></span><div class="d-none d-sm-inline ml-1">{{ __('Filter') }}</div></a>
+					</div>
+					<div class="collapse collapse-frame" id="collapse-filter-links" data-parent="#filterGroup">
+						<div>
+							<div class="m-2">{{ __('Filter') + ':' }}</div>
+							<a class="btn btn-sm btn-styled btn-styled-light m-1" href="{{ filter_global_tests[0] }}"><span class="oi oi-tag"></span><div class="d-none d-sm-inline ml-1">{{ filter_global_tests[1] }}</div></a>
+							<a class="btn btn-sm btn-styled btn-styled-light" href="#" data-toggle="collapse" data-target="#collapse-filter" aria-expanded="true" aria-controls="collapse-filter"><span class="oi oi-x"></span><div class="d-none d-sm-inline ml-1">{{ __('Close') }}</div></a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		{%- for test in tests -%}
+			<div class="card shadow p-3 bg-gradient-whitesmoke w-100 my-2">
+				<div class="d-flex w-100 align-items-center">
+					<div class="flex-grow-1 mr-2">
+						<div><strong>{{ test.name }}</strong></div>
+						<div>{{ __(test.extension) }}</div>
+					</div>
+					<a class="btn btn-sm btn-styled btn-styled-green m-1" href="{{ url_for('testing.start', uid=test.uid) }}"><span class="oi oi-caret-right"></span><div class="d-none d-sm-inline ml-1">{{ __('Start') }}</div></a>
+					<a class="btn btn-sm btn-styled btn-styled-light m-1" href="#"><span class="oi oi-list"></span><div class="d-none d-sm-inline ml-1">{{ __('History') }}</div></a>
+					{%- if current_user.get_id() == test.user_uid or True -%}
+						<div id="deleteGroup-{{ test.uid }}" class="d-inline-block text-center">
+							<div class="collapse show" id="collapse-delete-{{ test.uid }}" data-parent="#deleteGroup-{{ test.uid }}">
+								<a class="btn btn-sm btn-styled btn-styled-red mx-1" href="#" data-toggle="collapse" data-target="#collapse-confirm-{{ test.uid }}" aria-expanded="true" aria-controls="collapse-confirm-{{ test.uid }}"><span class="oi oi-trash"></span><div class="d-none d-sm-inline ml-1">{{ __('Delete') }}</div></a>
+							</div>
+							<div class="collapse text-center collapse-frame" id="collapse-confirm-{{ test.uid }}" data-parent="#deleteGroup-{{ test.uid }}">
+								<div>
+									<div class="m-2">{{ __('Delete') + '?' }}</div>
+									<a class="btn btn-sm btn-styled btn-styled-red m-1" href="#"><span class="oi oi-check"></span><div class="d-none d-sm-inline ml-1">{{ __('Yes') }}</div></a>
+									<a class="btn btn-sm btn-styled btn-styled-light" href="#" data-toggle="collapse" data-target="#collapse-delete-{{ test.uid }}" aria-expanded="true" aria-controls="collapse-delete-{{ test.uid }}"><span class="oi oi-x"></span><div class="d-none d-sm-inline ml-1">{{ __('No') }}</div></a>
+								</div>
+							</div>
+						</div>
+					{%- endif -%}
+				</div>
+			</div>
+		{%- endfor -%}
+	</div>
+{%- endblock content -%}
+
+
+{%- block list_content -%}
+	<div class="card-columns">
+		{%- for test in tests -%}
+			<div class="card p-2 shadow-sm mb-3 rounded text-center">
+				<blockquote class="blockquote mb-0 card-body">
+					<div class="d-flex w-100 justify-content-between">
+						<small class="text-muted">{{ __(test.extension) }}</small>
+						{%- if current_user.get_id() == test.user_uid or current_user.get_id() in current_user.get_admin_uid_list() -%}
+							<small>
+								<a class="text-muted p-1" href="{{ url_for('test.update', uid=test.uid) }}"><span class="oi oi-pencil"></span></a>
+								<a class="text-muted p-1" href="#" data-toggle="collapse" data-target="#collapse-{{ test.uid }}" aria-expanded="true" aria-controls="collapse-{{ test.uid }}"><span class="oi oi-x"></span></a>
+							</small>
+						{%- endif -%}
+					</div>
+					{%- if current_user.get_id() == test.user_uid -%}
+						<div class="collapse mt-2 shadow-sm" id="collapse-{{ test.uid }}">
+							<div class="alert alert-danger text-center p-3" role="alert">
+								<p><small>{{ __('Do you really want to delete test from catalog?') }}</small></p>
+								<a class="btn btn-sm btn-outline-danger" href="{{ url_for('test.delete', uid=test.uid) }}">{{ __('Delete') }}</a>
+								<a class="btn btn-sm btn-outline-dark" href="#" data-toggle="collapse" data-target="#collapse-{{ test.uid }}" aria-expanded="true" aria-controls="collapse-{{ test.uid }}">{{ __('Cancel') }}</a>
+							</div>
+						</div>
+					{%- endif -%}
+					<h4 class="card-title p-4"><strong>{{ test.name }}</strong></h4>
+					<a href="{{ url_for('test.start', uid=test.uid) }}" class="btn btn-outline-dark w-75">{{ __('Start') }}</a>
+				</blockquote>
+			</div>
+		{% endfor %}
+		{% if tests|length == 0 %}
+			<div class="card p-2 shadow-sm mb-3 rounded text-center" style="background: whitesmoke;">
+				<blockquote class="blockquote mb-0 card-body">
+					<p class="card-text">{{ __('No tests found') }}</p>
+				</blockquote>
+			</div>
+		{%- endif -%}
+	</div>
+{%- endblock -%}

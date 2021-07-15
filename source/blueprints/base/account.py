@@ -275,15 +275,15 @@ def get_profile():
 	)
 
 
-@blueprint.route('/account/sign-in/<step>/', methods=('GET', 'POST'))
-def sign_in(step: str):
+@blueprint.route('/account/sign-in/', methods=('GET', 'POST'))
+def sign_in():
 	"""
-	Return sign-in page and login user.
+	Return sign-in page and login user on success.
 	"""
-	if current_user.is_authenticated or step not in '1234':
-		return redirect(url_for('base.get_landing'))
+	if current_user.is_authenticated:
+		return redirect(url_for('base.get_home'))
 	sign_in = SignInForm()
-	if sign_in.validate_on_submit() and step in '34':
+	if sign_in.validate_on_submit():
 		if sign_in.pin.data is None:
 			sign_in.pin.errors = [ __('Empty PIN') ]
 		else:
@@ -295,12 +295,11 @@ def sign_in(step: str):
 					sign_in.pin.errors = [ __('Wrong PIN') ]
 				else:
 					sign_in.password.data = password
-					step = '4'
 			else:
 				verify_data = IdenticaPlugin.verify_pin(sign_in.pin.data)
 				if verify_data is None:
 					logging.debug('Wrong password submitted')
-					return { 'redirect': url_for('base.sign_in', step=3) }
+					return { 'redirect': url_for('base.sign_in') }
 				elif verify_data.get('from'):
 					user = UserStore().get_or_create_user(
 						verify_data['from']['id'],
@@ -316,13 +315,11 @@ def sign_in(step: str):
 							user.name, user.from_id
 						) if user is not None else None
 					logging.debug('Signed in as user %s' % user_info)
-					return { 'redirect': url_for('base.get_landing') }
+					return { 'redirect': url_for('base.get_home') }
 				return { 'wait': True }
 	return render_template(
 		'base/sign_in.html',
-		step=step,
-		sign_in=sign_in,
-		nav_active='account'
+		sign_in=sign_in
 	)
 
 
@@ -361,4 +358,4 @@ def sign_out():
 	"""
 	if current_user.is_authenticated:
 		logout_user()
-	return redirect(url_for('base.get_profile'))
+	return redirect(url_for('base.get_home'))

@@ -19,13 +19,13 @@ class TestStore(Store):
 
 	@staticmethod
 	def create(name: str, extension: str, extension_options: str,
-						 answer_count: int, limit_time: int, user_uid: str) -> Test:
+						 answer_count: int, user_uid: str) -> Test:
 		"""
 		Create and return test.
 		"""
 		return super(TestStore, TestStore).create(
 			Test(
-				name, extension, extension_options, answer_count, limit_time, user_uid
+				name, extension, extension_options, answer_count, user_uid
 			)
 		)
 
@@ -40,7 +40,7 @@ class TestStore(Store):
 
 	@staticmethod
 	def update(uid: str, name: str, extension_options: str,
-						 answer_count: int, limit_time: int) -> Test:
+						 answer_count: int) -> Test:
 		"""
 		Update and return test.
 		"""
@@ -48,7 +48,6 @@ class TestStore(Store):
 		test.name = name
 		test.extension_options = extension_options
 		test.answer_count = answer_count
-		test.limit_time = limit_time
 		return super(TestStore, TestStore).update(
 			test
 		)

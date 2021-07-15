@@ -1,121 +1,97 @@
-{%- extends "layout_inner.html" -%}
-{%- set title -%}{{ __('Sign In') }}{%- endset -%}
-{%- set ga_disable = True -%}
-{%- block body_content -%}
-	<div class="card col-12 offset-sm-2 col-sm-8 offset-md-3 col-md-6 offset-lg-4 col-lg-4 text-left shadow">
-		<div class="card-body text-dark px-0 pb-2" style="text-shadow: none;">
-			<a href="{{ url_for('base.sign_in', step=1) }}" class="w-100 text-dark" style="text-decoration: none;">
-				<h5><div class="d-inline mr-3 px-2" style="border: 1px solid black; border-radius: 5px;">1</div>{{ __('FIND CHATBOT') }}</h5>
-			</a>
-			{%- if step == '1' -%}
-				<div class="text-center my-3">
-					<a href="https://t.me/crammer_identica_bot">
-						<img src="{{ url_for('static', filename='est_identica.png') }}" class="w-50 mb-1">
-					</a>
-					<div>{{ __('Please, click or scan QR-code above')}}</div>
-					<div>{{ __('to start interaction with chatbot')}}</div>
-					<div class="my-1">
-						<img src="{{ url_for('static', filename='telegram-logo.webp') }}" style="height: 1.5rem;" class="my-1">
-						<div class="d-inline py-1 px-2 my-1" style="border-radius: 15px; background-color: #1e96c8; color: white; font-weight: bold;">@crammer_identica_bot</div>
+{%- extends "layout_center.html" -%}
+{%- block content -%}
+	<div class="card shadow p-5 rotated-background-card bg-gradient-whitesmoke" angle="l3">
+		<div class="logo d-flex align-items-center justify-content-center">
+			<img class="mr-2" src="{{ url_for('static', filename='est_o.png') }}">
+			<div class="mr-2">{{ __(basename) }}</div>
+		</div>
+		<div class="content-delimeter my-3"></div>
+		<div class="text-center">
+			<div id="enterGroup" class="d-inline-block text-center">
+				<div class="collapse collapse-affect-background" id="collapse-enter-find" data-parent="#enterGroup">
+					<div class="my-4">
+						<h5><span class="number-glyph number-glyph-grey">1</span>{{ __('Find chatbot') }}</h5>
+						<a href="https://t.me/crammer_identica_bot">
+							<img src="{{ url_for('static', filename='est_identica.png') }}" class="w-50 mb-1">
+						</a>
+						<div>{{ __('Please, click or scan QR-code above')}}</div>
+						<div>{{ __('to start interaction with chatbot')}}</div>
+						{%- include 'base/chatbot.html' -%}
 					</div>
+					<a class="btn btn-sm btn-styled btn-styled-light m-1" href="#" data-toggle="collapse" data-target="#collapse-enter-request" aria-expanded="true" aria-controls="collapse-enter-request"><span class="number-glyph number-glyph-grey">2</span>{{ __('Send request') }}</a>
+					<a class="btn btn-sm btn-styled btn-styled-light m-1" href="#" data-toggle="collapse" data-target="#collapse-enter-pin" aria-expanded="true" aria-controls="collapse-enter-pin"><span class="number-glyph number-glyph-grey">3</span>{{ __('Submit PIN') }}</a>
 				</div>
-				<div class="d-flex justify-content-center">
-					<a href="{{ url_for('base.sign_in', step=2) }}" class="btn btn-outline-dark mx-1" style="width: 60%;"><span class="oi oi-chevron-bottom mr-2"></span>{{ __('Next') }}</a>
-				</div>
-				{%- endif -%}
-			<hr/>
-			<a href="{{ url_for('base.sign_in', step=2) }}" class="w-100 text-dark" style="text-decoration: none;">
-				<h5><div class="d-inline mr-3 px-2" style="border: 1px solid black; border-radius: 5px;">2</div>{{ __('SEND REQUEST') }}</h5>
-			</a>
-			{%- if step == '2' -%}
-				<div class="text-center my-3">
-					<div class="w-100 h-100" style="position: relative;">
-						<img src="{{ url_for('static', filename='chatbot-1.png') }}" class="m-2 shadow" style="width: 30%; background-color: lightgrey;">
-						<span class="oi oi-chevron-right d-inline text-muted"></span>
-						<img src="{{ url_for('static', filename='chatbot-2.png') }}" class="m-2 shadow" style="width: 30%; background-color: lightgrey;">
-					</div>
-					<div>{{ __('Press (START) to interact with chatbot') }}</div>
-					<div class="my-1">
-						<img src="{{ url_for('static', filename='telegram-logo.webp') }}" style="height: 1.5rem;" class="my-1">
-						<div class="d-inline py-1 px-2 my-1" style="border-radius: 15px; background-color: #1e96c8; color: white; font-weight: bold;">@crammer_identica_bot</div>
-					</div>
-					<div class="mb-1 mt-2">
-						<div class="ml-1">{{ __('Use (1) request link to authenticate on website') }}</div>
-						<div class="ml-1">{{ __('Or (2) request PIN to use it within sign in form') }}</div>
-					</div>
-				</div>
-				<div class="d-flex justify-content-center">
-					<a href="{{ url_for('base.sign_in', step=3) }}" class="btn btn-outline-dark mx-1" style="width: 60%;"><span class="oi oi-chevron-bottom mr-2"></span>{{ __('Next') }}</a>
-				</div>
-			{%- endif -%}
-			<hr/>
-			<a href="{{ url_for('base.sign_in', step=3) }}" class="w-100 text-dark" style="text-decoration: none;">
-				<h5><div class="d-inline mr-3 px-2" style="border: 1px solid black; border-radius: 5px;">3</div>{{ __('SUBMIT PIN') }}</h5>
-			</a>
-			{%- if step == '3' -%}
-				<form id="signInForm" method="post" actions="">
-					{{ sign_in.csrf_token }}
-					<div class="text-center my-3">
-						<div class="my-1">{{ __('Use here received from chatbot') }}</div>
+				<div class="collapse collapse-affect-background" id="collapse-enter-request" data-parent="#enterGroup">
+					<a class="btn btn-sm btn-styled btn-styled-light m-1" href="#" data-toggle="collapse" data-target="#collapse-enter-find" aria-expanded="true" aria-controls="collapse-enter-find"><span class="number-glyph number-glyph-grey">1</span>{{ __('Find chatbot') }}</a>
+					<div class="my-4">
+						<h5><span class="number-glyph number-glyph-grey">2</span>{{ __('Send request') }}</h5>
+						<div class="w-100 h-100 position-relative">
+							<img src="{{ url_for('static', filename='chatbot-1.png') }}" class="m-2 shadow w-25 bg-light">
+							<span class="oi oi-chevron-right d-inline text-muted"></span>
+							<img src="{{ url_for('static', filename='chatbot-2.png') }}" class="m-2 shadow w-25 bg-light">
+						</div>
+						<div>{{ __('Press (START) to interact with chatbot') }}</div>
+						{%- include 'base/chatbot.html' -%}
 						<div class="my-1">
-							<img src="{{ url_for('static', filename='telegram-logo.webp') }}" style="height: 1.5rem;" class="my-1">
-							<div class="d-inline py-1 px-2 my-1" style="border-radius: 15px; background-color: #1e96c8; color: white; font-weight: bold;">@crammer_identica_bot</div>
+							<div class="ml-1">{{ __('Use (1) request link to authenticate on website') }}</div>
+							<div class="ml-1">{{ __('Or (2) request PIN to use it within sign in form') }}</div>
 						</div>
-						<div class="my-1">{{ __('6-digit PIN') }}</div>
-						<div class="offset-1 col-10 text-center my-2">
-							<input autofocus type="password" class="form-control form-control-sm text-center{%- if sign_in.pin.errors -%}{{ ' is-invalid' }}{%- endif -%}" id="{{ sign_in.pin.label.text }}" name="{{ sign_in.pin.label.text }}" placeholder="{{ __('6-digit PIN') }}" value="{{ sign_in.pin.data|default('', True) }}"/>
-							{%- for error in sign_in.pin.errors -%}
-								<div class="invalid-feedback">
-									{{ error }}
+					</div>
+					<a class="btn btn-sm btn-styled btn-styled-light m-1" href="#" data-toggle="collapse" data-target="#collapse-enter-pin" aria-expanded="true" aria-controls="collapse-enter-pin"><span class="number-glyph number-glyph-grey">3</span>{{ __('Submit PIN') }}</a>
+				</div>
+				<div class="collapse show collapse-affect-background" id="collapse-enter-pin" data-parent="#enterGroup">
+					<a class="btn btn-sm btn-styled btn-styled-light m-1" href="#" data-toggle="collapse" data-target="#collapse-enter-find" aria-expanded="true" aria-controls="collapse-enter-find"><span class="number-glyph number-glyph-grey">1</span>{{ __('Find chatbot') }}</a>
+					<a class="btn btn-sm btn-styled btn-styled-light m-1" href="#" data-toggle="collapse" data-target="#collapse-enter-request" aria-expanded="true" aria-controls="collapse-enter-request"><span class="number-glyph number-glyph-grey">2</span>{{ __('Send request') }}</a>
+					<div class="my-4">
+						<h5><span class="number-glyph number-glyph-grey">3</span>{{ __('Submit PIN') }}</h5>
+						<form id="signInForm" method="post" actions="">
+							{{ sign_in.csrf_token }}
+							{%- if sign_in.password.data -%}
+								<div class="text-center my-3">
+									<input type="password" class="d-none" id="{{ sign_in.pin.label.text }}" name="{{ sign_in.pin.label.text }}" placeholder="{{ __('6-digit PIN') }}" value="{{ sign_in.pin.data|default('', True) }}"/>
+									<div class="text-center my-3">
+										<div class="offset-1 col-10 text-center my-2">
+											<input class="form-control form-control-sm text-center" id="{{ sign_in.password.label.text }}" name="{{ sign_in.password.label.text }}" placeholder="{{ __('Password') }}" value="{{ sign_in.password.data|default('', True) }}" readonly />
+										</div>
+										<div class="my-1">{{ __('Confirm password above to chatbot') }}</div>
+										{%- include 'base/chatbot.html' -%}
+										<div class="my-1">{{ __('After successful confirmation wait for webpage redirect') }}</div>
+									</div>
 								</div>
-							{%- endfor -%}
-						</div>
+							{%- else -%}
+								<div class="text-center my-3">
+									<div class="my-1">{{ __('Use here received from chatbot') }}</div>
+									{%- include 'base/chatbot.html' -%}
+									<div class="my-1">{{ __('6-digit PIN') }}</div>
+									<div class="offset-1 col-10 my-2">
+										<input autofocus id="pin" type="password" class="form-control form-control-sm text-center{%- if sign_in.pin.errors -%}{{ ' is-invalid' }}{%- endif -%}" id="{{ sign_in.pin.label.text }}" name="{{ sign_in.pin.label.text }}" placeholder="{{ __('6-digit PIN') }}" value="{{ sign_in.pin.data|default('', True) }}"/>
+										{%- for error in sign_in.pin.errors -%}
+											<div class="invalid-feedback">
+												{{ error }}
+											</div>
+										{%- endfor -%}
+									</div>
+								</div>
+								<div class="offset-1 col-10 my-2">
+									<button type="submit" class="btn btn-sm btn-styled btn-styled-green w-100"><span class="oi oi-check"></span><div class="d-inline ml-1">{{ __('Submit') }}</div></button>
+								</div>
+							{%- endif -%}
+						</form>
 					</div>
-					<div class="d-flex justify-content-center">
-						<input type="submit" id="{{ sign_in.submit.label.text }}" name="{{ sign_in.submit.label.text }}" class="d-none"/>
-						<label for="{{ sign_in.submit.label.text }}" class="btn btn-outline-dark mx-1 mb-0" style="width: 60%;"><span class="oi oi-chevron-bottom mr-2"></span>{{ __('Submit') }}</label>
-					</div>
-				</form>
-				{%- endif -%}
-			<hr/>
-			<a href="{{ url_for('base.sign_in', step=4) }}" class="w-100 text-dark" style="text-decoration: none;">
-				<h5><div class="d-inline mr-3 px-2" style="border: 1px solid black; border-radius: 5px;">4</div>{{ __('CONFIRM PASSWORD') }}</h5>
-			</a>
-			{%- if step == '4' -%}
-				{%- if sign_in.password.data -%}
-					<form id="signInForm" method="post" actions="">
-						{{ sign_in.csrf_token }}
-						<input type="password" class="d-none" id="{{ sign_in.pin.label.text }}" name="{{ sign_in.pin.label.text }}" placeholder="{{ __('6-digit PIN') }}" value="{{ sign_in.pin.data|default('', True) }}"/>
-						<div class="text-center my-3">
-							<div class="offset-1 col-10 text-center my-2">
-								<input class="form-control form-control-sm text-center" id="{{ sign_in.password.label.text }}" name="{{ sign_in.password.label.text }}" placeholder="{{ __('Password') }}" value="{{ sign_in.password.data|default('', True) }}" readonly />
-							</div>
-							<div class="my-1">{{ __('Confirm password above to chatbot') }}</div>
-							<div class="my-1">
-								<img src="{{ url_for('static', filename='telegram-logo.webp') }}" style="height: 1.5rem;" class="my-1">
-								<div class="d-inline py-1 px-2 my-1" style="border-radius: 15px; background-color: #1e96c8; color: white; font-weight: bold;">@crammer_identica_bot</div>
-							</div>
-							<div class="my-1">{{ __('After successful confirmation wait for webpage redirect') }}</div>
-						</div>
-					</form>
-				{%- else -%}
-					<div class="text-center my-3">
-						<div class="my-1">{{ __('Submit PIN first to get password') }}</div>
-					</div>
-				{%- endif -%}
-			{%- endif -%}
+				</div>
+			</div>
 		</div>
 	</div>
-{%- endblock -%}
-{%- block body_script -%}
 	<script type="text/javascript">
-		var timezone_offet = (new Date()).getTimezoneOffset();
-		$("[timezone$='local']").val("timezone_offet");
-		$(window).on('load', function() {
-			if ($("#{{ sign_in.password.label.text }}").val()) {
-				setInterval(verifyPin, 5000);
-			}
+		$(window).on("load", function() {
+			$(".collapse-affect-background").on('shown.bs.collapse', function(){
+				cardWidth = 0;
+				initRotatedBackgroundCards();
+				$("#pin").focus();
+			});
+			if ($("#{{ sign_in.password.label.text }}").val()) { setInterval(verifyPin, 5000); }
 		});
+	
 		function verifyPin() {
 			$.ajax({
 				type: "post",
@@ -131,5 +107,5 @@
 				}
 			});
 		}
-	</script>	
-{%- endblock -%}
+	</script>
+{%- endblock content -%}

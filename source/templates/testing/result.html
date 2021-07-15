@@ -1,0 +1,14 @@
+{%- extends "testing/process.html" -%}
+{%- block testing_content -%}
+	<div class="text-center">
+		<h5>{{ test.name }}</h5>
+		<h3>{{ name_value }}</h3>
+		<h1 class="m-2"><strong>{{ result }}<small class="ml-1">%</small></strong></h1>
+		<h4 class="m-2">{{ __('Crammers') }}: {{ crammers }}</h4>
+		<p class="m-0 text-muted">{{ __('Correct') }}: {{ process.correct_count }} / {{ process.answer_count }} <small class="text-muted">{{ __('answers') }}</small></p>
+		<p class="m-0 text-muted">{{ __('Time') }}: {{ process.answer_time }} / {{ process.limit_time }} <small class="text-muted">{{ __('seconds') }}</small></p>
+	</div>
+	<div class="content-delimeter my-3"></div>
+	<a class="btn btn-sm btn-styled btn-styled-green offset-2 col-8 offset-md-3 col-md-6 my-1" href="{{ url_for('testing.start', uid=test.uid) }}"><span class="oi oi-caret-right"></span><div class="d-inline ml-1">{{ __('Start') }}</div></a>
+	<a class="btn btn-sm btn-styled btn-styled-light offset-2 col-8 offset-md-3 col-md-6" href="{{ url_for('testing.get_catalog') }}"><span class="oi oi-x"></span><div class="d-inline ml-1">{{ __('Close') }}</div></a>
+{%- endblock testing_content -%}

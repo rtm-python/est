@@ -36,6 +36,7 @@ paranoid.redirect_view = 'base.get_landing'
 for module_name in \
 		[
 			'base',
+			'testing',
 			'test',
 			'rating'
 		]:

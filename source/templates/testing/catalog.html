@@ -8,20 +8,7 @@
 				{%- if current_user.is_authenticated -%}
 					<a class="btn btn-sm btn-styled btn-styled-light m-1" href="{{ url_for('testing.create') }}"><span class="oi oi-plus"></span><div class="d-none d-sm-inline ml-1">{{ __('Create Test') }}</div></a>
 				{%- endif -%}
-				<div id="filterGroup" class="d-inline-block text-center">
-					<div class="collapse show" id="collapse-filter" data-parent="#filterGroup">
-						<a class="btn btn-sm btn-styled btn-styled-light mx-1" href="#" data-toggle="collapse" data-target="#collapse-filter-links" aria-expanded="true" aria-controls="collapse-filter-links"><span class="oi oi-tags"></span><div class="d-none d-sm-inline ml-1">{{ __('Filter') }}</div></a>
-					</div>
-					<div class="collapse collapse-frame" id="collapse-filter-links" data-parent="#filterGroup">
-						<div>
-							<div class="m-2">{{ __('Filter') + ':' }}</div>
-							{%- for filter in filters -%}
-								<a class="btn btn-sm btn-styled btn-styled-light m-1" href="{{ url_for('testing.get_catalog', **filter.url_args) }}"><span class="oi oi-tag"></span><div class="d-none d-sm-inline ml-1">{{ __(filter['label']) }}</div></a>
-							{%- endfor -%}
-							<a class="btn btn-sm btn-styled btn-styled-light" href="#" data-toggle="collapse" data-target="#collapse-filter" aria-expanded="true" aria-controls="collapse-filter"><span class="oi oi-x"></span><div class="d-none d-sm-inline ml-1">{{ __('Close') }}</div></a>
-						</div>
-					</div>
-				</div>
+				{%- include 'lister.html' -%}
 			</div>
 		</div>
 		{%- for test in tests -%}

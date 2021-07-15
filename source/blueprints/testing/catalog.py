@@ -124,7 +124,10 @@ def get_catalog():
 				'name': filter['name'],
 				'label': filter['label'][filter_value],
 				'value': filter_value,
-				'url_args': { filter['name']: not filter_value }
+				'url': url_for(
+					'testing.get_catalog',
+					**{ filter['name']: not filter_value }
+				)
 			}
 		]
 	# Prepare list data
@@ -166,7 +169,7 @@ def create(extension: str = None):
 			logging.error('Extension import error', exc_info=1)
 			redirect(url_for('testing.get_catalog'))
 		creator = TestForm(extension_module=extension_module)
-		if creator.validate_on_submit(): # Valid post request
+		if creator.validate_on_submit():
 			TestStore.create(
 				creator.name.data,
 				extension,

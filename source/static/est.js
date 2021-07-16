@@ -10,6 +10,10 @@ $(window).on("load", function() {
 	});
 	$(".info-page").modal("show");
 	$(".info-page-closer").on("click", function(){ $(".info-page").modal("hide"); });
+	$(".feedback-form").submit(function(e) {
+		e.preventDefault();
+		postFeedbackForm($(this));
+	});
 });
 
 $(window).on("resize", function() {
@@ -122,5 +126,29 @@ function localizeTimestamp() {
 	});
 	$(".timestamp-short").each(function() {
 		this.innerText = moment(this.innerText).tz(user_tz).fromNow();
+	});
+}
+
+function postFeedbackForm(el) {
+	var formData = $(el).serialize();
+	var controls = $("#" + $(el).attr("id") + " *").filter(":input");
+	$(controls).each(function () { $(this).attr("disabled", true) });
+	$.ajax({
+		type: "post",
+		url: $(el).attr("actions"),
+		data: formData ,
+		success: function(response, status, xhr){ 
+			var ct = xhr.getResponseHeader("content-type") || "";
+			if (ct.indexOf('html') > -1) {
+				window.document.write(response);
+			}
+			if (ct.indexOf('json') > -1) {
+				if (response.redirect) location.pathname = response.redirect;
+				if (response.message) {
+					$(el).html(response.message);
+					$(".feedback-close").removeClass("d-none");
+				}
+			} 
+		}
 	});
 }

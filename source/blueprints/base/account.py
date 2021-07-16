@@ -40,7 +40,6 @@ from wtforms import validators
 
 # Constants
 PROFILE_TEMPLATE = 'EVENT: %s'
-FEEDBACK_TEMPLATE = '%s [%s]: %s'
 LINK_TEMPLATE = 'https://t.me/user?id=%s'
 
 
@@ -159,123 +158,6 @@ class SignInForm(FlaskForm):
 				field.data = data if data is not None and len(data) > 0 else None
 
 
-class ProfilerForm(FlaskForm):
-	"""
-	This is a ProfileForm class to retrieve form data.
-	"""
-	notification_profile = SelectField(
-		'profilerNotificationProfile',
-		validators=[validators.DataRequired()]
-	)
-	notification_test_start = SelectField(
-		'profilerNotificationTestStart',
-		validators=[validators.DataRequired()]
-	)
-	notification_test_complete = SelectField(
-		'profilerNotificationTestComplete',
-		validators=[validators.DataRequired()]
-	)
-	submit = SubmitField('profilerSubmit')
-
-	def __init__(self, user: object = None) -> "ProfilerForm":
-		"""
-		Inititate object with choices.
-		"""
-		super(ProfilerForm, self).__init__()
-		self.notification_profile.choices = [
-			('yes', __('Send notification')),
-			('no', __('Keep silence')),
-		]
-		self.notification_test_start.choices = [
-			('yes', __('Send notification')),
-			('no', __('Keep silence')),
-		]
-		self.notification_test_complete.choices = [
-			('yes', __('Send notification')),
-			('no', __('Keep silence')),
-		]
-		if user:
-			self.notification_profile.data = 'yes' \
-				if user.notification_profile else 'no'
-			self.notification_test_start.data = 'yes' \
-				if user.notification_test_start else 'no'
-			self.notification_test_complete.data = 'yes' \
-				if user.notification_test_complete else 'no'
-		else:
-			for field in self:
-				if field.name != 'csrf_token':
-					field.data = request.form.get(field.label.text)
-
-
-class FeedbackerForm(FlaskForm):
-	"""
-	This is a FeedbackForm class to retrieve form data.
-	"""
-	message = StringField(
-		'feedbackerMessage',
-		validators=[validators.DataRequired()]
-	)
-	submit = SubmitField('feedbackerSubmit')
-
-	def __init__(self, post: bool) -> "ProfilerForm":
-		"""
-		Inititate object with choices.
-		"""
-		super(FeedbackerForm, self).__init__()
-		if post:
-			for field in self:
-				if field.name != 'csrf_token':
-					field.data = request.form.get(field.label.text)
-
-
-@blueprint.route('/account/', methods=('GET', 'POST'))
-@blueprint.route('/account/profile/', methods=('GET', 'POST'))
-def get_profile():
-	"""
-	Return profile page.
-	"""
-	if not current_user.is_authenticated:
-		return redirect(url_for('base.sign_in', step=3))
-	if request.method == 'GET':
-		profiler = ProfilerForm(current_user.user)
-	else:
-		if current_user.user.notification_profile:
-			IdenticaPlugin.notify_user(
-				current_user.user.from_id,
-				PROFILE_TEMPLATE % __('Profile updated')
-			)
-		profiler = ProfilerForm()
-	if request.form.get('profilerSubmit') and \
-			profiler.validate_on_submit(): # Valid post request
-		UserStore.update_notifications(
-			current_user.user.uid,
-			profiler.notification_profile.data == 'yes',
-			profiler.notification_test_start.data == 'yes',
-			profiler.notification_test_complete.data == 'yes'
-		)
-	feedbacker = FeedbackerForm(request.method == 'POST')
-	if request.form.get('feedbackerSubmit') and \
-			 feedbacker.validate_on_submit(): # Valid post request
-		IdenticaPlugin.notify_user(
-			current_user.user.from_id,
-			__('Thank you for your feedback!')
-		)
-		IdenticaPlugin.notify_user(
-			CONFIG['feedback'],
-			FEEDBACK_TEMPLATE % (
-				LINK_TEMPLATE % current_user.user.from_id,
-				current_user.user.name, feedbacker.message.data[:100]
-			)
-		)
-		return redirect(url_for('base.get_profile'))
-	return render_template(
-		'base/profile.html',
-		profiler=profiler,
-		feedbacker=feedbacker,
-		nav_active='account'
-	)
-
-
 @blueprint.route('/account/sign-in/', methods=('GET', 'POST'))
 def sign_in():
 	"""
@@ -386,4 +268,25 @@ def set_timezone():
 		'message': {
 			'text': 'Timezone initiation error'
 		}
+	}
+
+
+@blueprint.route('/feedback/', methods=('POST',))
+def send_feedback():
+	"""
+	Send feedback.
+	"""
+	IdenticaPlugin.notify_user(
+		CONFIG['feedback'],
+		'ID: %s\nName: %s\nContact: %s\nMessage: %s' % (
+			current_user.user.from_id \
+				if current_user.is_authenticated else 'anonymous',
+			request.form.get('feedbackerName'),
+			request.form.get('feedbackerContact'),
+			request.form.get('feedbackerMessage')
+		)
+	)
+	return {
+		'redirect': None,
+		'message': __('Thank you for your feedback!')
 	}

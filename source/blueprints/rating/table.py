@@ -63,7 +63,7 @@ def get_top(period: str = ALL_PERIODS, extension: str = ALL_EXTENSIONS):
 	info_page = None
 	if not current_user.is_authenticated:
 		session['anonymous-rating'] = (session.get('anonymous-rating') or 0) + 1
-		if session['anonymous-rating'] > 5 or True:
+		if session['anonymous-rating'] > 5:
 			del session['anonymous-rating']
 			info_page = render_template('info/join_rating.html')
 	return render_template(

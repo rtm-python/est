@@ -252,11 +252,11 @@ def get_result(uid: str):
 		player_audio = 'correct-audio' \
 			if passed_tasks[0].correct_answer else 'incorrect-audio'
 		# TODO: show info_page (top10.html) if earned a place
-		info_page = render_template(
-			'info/top10.html',
-			name=current_user.get_name(),
-			place=1
-		)
+		# info_page = render_template(
+		# 	'info/top10.html',
+		# 	name=current_user.get_name(),
+		# 	place=1
+		# )
 	return render_template(
 		'testing/result.html',
 		process=process,

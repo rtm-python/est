@@ -223,6 +223,16 @@ body, html {
 	color: white;
 }
 
+.btn-styled-white {
+	border: 1px solid ghostwhite;
+	color: ghostwhite;
+}
+
+.btn-styled-white:hover {
+	background-color: ghostwhite;
+	color: slategrey;
+}
+
 .menu-item-styled {
 	border-radius: 3px;
 	padding: 2px 12px;
@@ -312,3 +322,58 @@ body, html {
 	background: rgba(0, 0, 0, 0.65);
 }
 
+.footer {
+	position: fixed;
+	bottom: 0;
+	width: 100%;
+	background: ghostwhite;
+	z-index: 1100;
+}
+
+.footer > div {
+	background: orange;
+	border-top: 1px solid rgba(0, 0, 0, 0.5);
+}
+
+.dot {
+	text-shadow: 0px 2px 2px black;
+	background-image: linear-gradient(to top, orange, orange 70%, #ffd07b);
+	color: white !important;
+	background-color: orange;
+	height: min(15vw, 15vh);
+	width: min(15vw, 15vh);
+	top: max(calc(-5.15vw), calc(-5.15vh));
+	border-radius: 50%;
+	position: absolute;
+	display: inline-block;
+}
+
+.dot > span {
+	top: max(calc(0.2vw), calc(0.2vh));
+	font-size: min(3.5vw, 3.5vh);
+}
+
+span.dot {
+	height: min(calc(15vw) + 2px, calc(15vh) + 2px);
+	width: min(calc(15vw) + 2px, calc(15vh) + 2px);
+	top: max(calc(-5.15vw) - 1px, calc(-5.15vh) - 1px);
+	background-color: rgba(0, 0, 0, 0.5);
+	border: 1px solid rgba(0, 0, 0, 0.5);
+	z-index: -100;
+}
+
+.dot:hover {
+	text-decoration: none;
+}
+
+.collapse-content {
+	z-index: 100;
+	position: relative;
+	max-width: 1024px;
+	margin: 0 auto;
+}
+
+a.text-dark:hover {
+	color: whitesmoke !important;
+	text-decoration: none;
+}

@@ -103,8 +103,6 @@ function setShow(state) {
 
 function initTimezoneOffset(sessionTimezoneOffset) {
 	var timezoneOffset = (new Date()).getTimezoneOffset();
-	console.log(timezoneOffset.toString());
-	console.log(sessionTimezoneOffset);
 	if (timezoneOffset.toString() != sessionTimezoneOffset) {
 		$.ajax({
 			type: "post",

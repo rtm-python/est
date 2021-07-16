@@ -1,0 +1,45 @@
+<div class="footer d-flex justify-content-center">
+	<span class="dot"></span>
+	<a href="#" class="dot text-center" data-toggle="collapse" data-target="#collapse-footer" aria-expanded="true" aria-controls="collapse-footer"><span class="oi oi-paperclip"></span></a>
+	<div class="d-inline-block w-100 text-center">
+		<div class="collapse collapse-content p-3" id="collapse-footer">
+			<div class="d-flex">
+				<div class="flex-grow-1 text-start mb-3">
+					<a href="{{ url_for('base.get_home') }}" class="logo-mini d-flex align-items-center">
+						<img class="mr-2" src="{{ url_for('static', filename='est_w.png') }}">
+						<div class="mr-2 text-light">{{ __(basename) }}</div>
+					</a>
+					<div class="small text-dark">{{ __('Description for website') }}</div>
+					<div id="footerGroup" class="d-inline-block w-100 mt-3">
+						<div class="collapse show" id="collapse-footer-base" data-parent="#footerGroup">
+							<p>Base description</p>
+							<a class="btn btn-sm btn-styled btn-styled-white ml-1" href="#" data-toggle="collapse" data-target="#collapse-footer-links" aria-expanded="true" aria-controls="collapse-footer-links"><span class="oi oi-chevron-down"></span><div class="d-inline ml-1">{{ __('Donate') }}</div></a>
+						</div>
+						<div class="collapse" id="collapse-footer-links" data-parent="#footerGroup">
+							Links description
+							<a class="btn btn-sm btn-styled btn-styled-white ml-1" href="#" data-toggle="collapse" data-target="#collapse-footer-base" aria-expanded="true" aria-controls="collapse-footer-base"><span class="oi oi-chevron-up"></span><div class="d-inline ml-1">{{ __('Close') }}</div></a>
+						</div>
+					</div>		
+				</div>
+				<div class="d-block d-sm-flex text-start">
+					<div class="d-block d-sm-inline-block ml-4 mb-3 text-start">
+						<a class="d-block text-dark" href="#"><strong>{{ __('Testing') }}</strong></a>
+						<a class="d-block text-dark" href="#">{{ __('Arithmetic') }}</a>
+						<a class="d-block text-dark" href="#">{{ __('Clock') }}</a>
+					</div>
+					<div class="d-block d-sm-inline-block ml-4 mb-3 text-start">
+						<a class="d-block text-dark" href="#"><strong>{{ __('Ratings') }}</strong></a>
+						<a class="d-block text-dark" href="#">{{ __('Top 10') }} <small class="d-inline-block">{{ __('30 Days') }}</small></a>
+						<a class="d-block text-dark" href="#">{{ __('Top 10') }} <small class="d-inline-block">{{ __('7 Days') }}</small></a>
+						<a class="d-block text-dark" href="#">{{ __('Top 10') }} <small class="d-inline-block">{{ __('Today') }}</small></a>
+						<a class="d-block text-dark" href="#">{{ __('Personal') }} <small class="d-inline-block">{{ __('Crammers') }}</small></a>
+						<a class="d-block text-dark" href="#">{{ __('Personal') }} <small class="d-inline-block">{{ __('Passed Tests') }}</small></a>
+						<a class="d-block text-dark" href="#">{{ __('Personal') }} <small class="d-inline-block">{{ __('Correct Answers') }}</small></a>
+					</div>
+				</div>
+			</div>
+			<div class="d-flex align-items-center justify-content-center small text-light w-100 mt-2">2021<span class="oi oi-lightbulb mx-2 mb-1"></span>P1A-7CK</div>
+		</div>
+	</div>
+</div>
+

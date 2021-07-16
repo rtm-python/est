@@ -33,12 +33,15 @@
 	</head>
 	{%- block body -%}
 		<body>
-			<div class="d-none d-md-block bg-img bg-img-landscape"></div>
-			<div class="d-block d-md-none bg-img bg-img-portrait"></div>
-			<div class="bg-link"><a href="https://ru.freepik.com/photos/frame">Frame фото создан(а) freepik - ru.freepik.com</a></div>
-			{%- block main -%}
-			{%- endblock main -%}
-			{{ info_page|safe }}
+			<div>
+				<div class="d-none d-md-block bg-img bg-img-landscape"></div>
+				<div class="d-block d-md-none bg-img bg-img-portrait"></div>
+				<div class="bg-link"><a href="https://ru.freepik.com/photos/frame">Frame фото создан(а) freepik - ru.freepik.com</a></div>
+				{%- block main -%}
+				{%- endblock main -%}
+			</div>
+			{{ info_page|default('', True)|safe }}
+			{%- include 'footer.html' -%}
 		</body>
 	{%- endblock body -%}
 	<script type="text/javascript">initTimezoneOffset("{{ session.get('timezone_offset') }}");</script>

@@ -213,7 +213,7 @@ def authenticate_identica(url_token: str):
 	Verify token and login user on success.
 	"""
 	if current_user.is_authenticated:
-		return redirect(url_for('base.get_landing'))
+		return redirect(url_for('base.get_home'))
 	verify_data = IdenticaPlugin.verify_url(url_token)
 	if verify_data is None:
 		logging.debug('Wrong TOKEN submitted')
@@ -232,7 +232,7 @@ def authenticate_identica(url_token: str):
 				user.name, user.from_id
 			) if user is not None else None
 		logging.debug('Signed in as user %s' % user_info)
-	return redirect(url_for('base.get_landing'))
+	return redirect(url_for('base.get_home'))
 
 
 @blueprint.route('/account/sign-out/', methods=('GET',))

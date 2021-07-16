@@ -1,0 +1,87 @@
+{%- extends "layout_center.html" -%}
+{%- block content -%}
+	<div class="card shadow p-5 rotated-background-card bg-gradient-whitesmoke" angle="l3">
+		<div class="logo d-flex align-items-center justify-content-center">
+			<img class="mr-2" src="{{ url_for('static', filename='est_o.png') }}">
+			<div class="mr-2">{{ __(basename) }}</div>
+		</div>
+		<div class="content-delimeter my-3"></div>
+		{%- if current_user.is_authenticated -%}
+			{%- if names -%}
+				{%- set list_show = 'show' -%}
+				{%- set name_show = '' -%}
+			{%- else -%}
+				{%- set list_show = '' -%}
+				{%- set name_show = 'show' -%}
+			{%- endif -%}
+			<div id="nameGroup" class="d-inline-block text-center">
+				<div class="collapse {{ list_show }} collapse-affect-background" id="collapse-name-list" data-parent="#nameGroup">
+					<div class="my-3">
+						<h5>{{ __('Names') }}</h5>
+						{%- for name_uid, name_value in names -%}
+							<div class="d-inline-block col-10 col-md-8 my-2">
+								<a href="{{ url_for('base.select_name', uid=name_uid) }}" class="btn btn-styled btn-styled-green w-100">{{ name_value }}</a>
+							</div>
+						{%- endfor -%}
+					</div>
+					<div class="d-inline-block col-10 col-md-8 my-2">
+						<a class="btn btn-sm btn-styled btn-styled-light w-100" href="#" data-toggle="collapse" data-target="#collapse-name-create" aria-expanded="true" aria-controls="collapse-name-create">{{ __('Create Name') }}</a>
+						<a class="btn btn-sm btn-styled btn-styled-red w-100 mt-1" href="#" data-toggle="collapse" data-target="#collapse-name-exit" aria-expanded="true" aria-controls="collapse-name-exit">{{ __('Exit Account') }}</a>
+					</div>
+				</div>
+				<div class="collapse {{ name_show }} collapse-affect-background" id="collapse-name-create" data-parent="#nameGroup">
+					<div class="my-3">
+						<h5>{{ __('Create Name') }}</h5>
+						<form id="namerForm" method="post" actions="">
+							{{ namer.csrf_token }}
+							<div class="d-inline-block col-10 col-md-8 my-2">
+								<small class="text-muted">{{ __('Name') }}</small>
+								<input autofocus id="value" type="text" class="form-control form-control-sm text-center{%- if namer.value.errors -%}{{ ' is-invalid' }}{%- endif -%}" id="{{ namer.value.label.text }}" name="{{ namer.value.label.text }}" placeholder="{{ __('Name') }}" value="{{ namer.value.data|default('', True) }}"/>
+								{%- for error in namer.value.errors -%}
+									<div class="invalid-feedback">
+										{{ error }}
+									</div>
+								{%- endfor -%}
+							</div>
+							<div class="d-inline-block col-10 col-md-8">
+								<button type="submit" class="btn btn-sm btn-styled btn-styled-green w-100"><span class="oi oi-check"></span><div class="d-inline ml-1">{{ __('Submit') }}</div></button>
+							</div>
+						</form>
+					</div>
+					{%- if names -%}
+						<div class="d-inline-block col-10 col-md-8">
+							<a class="btn btn-sm btn-styled btn-styled-light w-100" href="#" data-toggle="collapse" data-target="#collapse-name-list" aria-expanded="true" aria-controls="collapse-name-list">{{ __('Cancel') }}</a>
+						</div>
+					{%- endif -%}
+				</div>
+				<div class="collapse collapse-affect-background" id="collapse-name-exit" data-parent="#nameGroup">
+					<div class="my-3">
+						<h5>{{ __('Exit Account') }}</h5>
+						<div class="d-inline-block col-10 col-md-8">
+							<a href="{{ url_for('base.sign_out') }}" class="btn btn-sm btn-styled btn-styled-red w-100"><span class="oi oi-key mr-1"></span>{{ __('Exit') }}</a>
+						</div>
+					</div>
+					<div class="d-inline-block col-10 col-md-8">
+						<a class="btn btn-sm btn-styled btn-styled-light w-100" href="#" data-toggle="collapse" data-target="#collapse-name-list" aria-expanded="true" aria-controls="collapse-name-list">{{ __('Cancel') }}</a>
+					</div>
+				</div>
+			</div>
+		{%- else -%}
+			<div class="d-inline-block col-12 offset-sm-1 col-sm-8 offset-md-2 col-md-8 my-2">
+				<a href="{{ url_for('testing.get_catalog') }}" class="btn btn-styled btn-styled-light w-100"><span class="oi oi-caret-right mr-1"></span>{{ __('Testing') }}</a>
+			</div>
+			<div class="d-inline-block col-12 offset-sm-1 col-sm-8 offset-md-2 col-md-8 my-2">
+				<a href="{{ url_for('base.sign_in') }}" class="btn btn-styled btn-styled-green w-100"><span class="oi oi-key mr-1"></span>{{ __('Enter') }}</a>
+			</div>
+		{%- endif -%}
+	</div>
+	<script type="text/javascript">
+		$(window).on("load", function() {
+			$(".collapse-affect-background").on('shown.bs.collapse', function(){
+				cardWidth = 0;
+				initRotatedBackgroundCards();
+				$("#value").focus();
+			});
+		});
+	</script>
+{%- endblock content -%}

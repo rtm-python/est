@@ -1,43 +1,75 @@
-{%- macro show(index, task, answer) -%}
+{%- macro html(task, answer) -%}
 	<div class="d-flex">
 		<div width="50%" padding-top="50%" style="margin: auto;">
-			<canvas id="nowClock{{ index }}" width="100%" height="100%"></canvas>
+			<canvas class="clock m-1" width="100%" height="100%" hours="{{ task[0][0] }}" minutes="{{ task[0][1] }}"></canvas>
+			<div class="my-2">{{ __(task[0][2]) }}</div>
 		</div>
 		{%- if task[1] -%}
 			<div width="50%" padding-top="50%" style="margin: auto;">
-				<canvas id="nextClock{{ index }}" width="100%" height="100%"></canvas>
+				<canvas class="clock m-1" width="100%" height="100%" hours="{{ task[1][0] }}" minutes="{{ task[1][1] }}"></canvas>
+				<div class="my-2">{{ __(task[1][2]) }}</div>
 			</div>
 		{%- endif -%}
 	</div>
+	<div class="d-flex col-12 mt-2 mb-0" style="margin: 0 auto; width: max-content;">
+		{%- if answer -%}
+			<div>
+				<div class="d-inline form-control">{{ answer.split(":")[0] }}</div>
+				<div class="d-inline" style="margin: auto 5px;">:</div>
+				<div class="d-inline form-control">{{ answer.split(":")[1] }}</div>
+			</div>
+		{%- else -%}
+			<select autofocus required id="hours" name="hours" class="item-font form-control{%- if player.answer.errors -%}{{ ' is-invalid' }}{%- endif -%}">
+				{%- for hour in range(24) -%}
+					<option value="{{ '%02d' % hour }}">{{ '%02d' % hour }}</option>
+				{%- endfor -%}
+			</select>
+			<div class="item-font" style="margin: auto 5px;">:</div>
+			<select required name="minutes" class="item-font form-control{%- if player.answer.errors -%}{{ ' is-invalid' }}{%- endif -%}">
+				{%- for minute in range(0, 59, 5) -%}
+					<option value="{{ '%02d' % minute }}">{{ '%02d' % minute }}</option>
+				{%- endfor -%}
+			</select>
+		{%- endif -%}
+	</div>
+	{%- if player -%}
+		{%- for error in player.answer.errors -%}
+			<div class="invalid-feedback">
+				{{ __(error) }}
+			</div>
+		{%- endfor -%}
+	{%- endif -%}
+{%- endmacro -%}
+{%- macro script() -%}
 	<script type="text/javascript">
-		$(window).on('load', function() {
-			var nowCanvas = $("#nowClock{{ index }}")[0];
-			var nowCtx = nowCanvas.getContext("2d");
-			var radius = nowCanvas.height / 2;
-			nowCtx.translate(radius, radius);
-			var nextCanvas = $("#nextClock{{ index }}")[0];
-			if (nextCanvas) {
-				var nextCtx = nextCanvas.getContext("2d");
-				nextCtx.translate(radius, radius);
-			}
-			radius = radius * 0.95;
-			drawClock(nowCtx, radius, "{{ task[0][0] }}", "{{ task[0][1] }}");
-			if (nextCanvas) {
-				drawClock(nextCtx, radius, "{{ task[1][0] }}", "{{ task[1][1] }}");
-			}
-		})
+		$(window).on('load', function() { play(); });
 
-		function drawClock(ctx, radius, hours, minutes) {
-			if (hours >= 6 && hours < 18) {
-				var bg_color = "aliceblue";
-				var fg_color = "darkslateblue";
-			} else {
-				var bg_color = "darkslateblue";
-				var fg_color = "aliceblue";
+		function play() {
+			$(".clock").each(function() { drawClock($(this)) });
+			$("#hours").focus();
+		}
+
+		function drawClock(el) {
+			var hours = $(el).attr("hours");
+			var minutes = $(el).attr("minutes");
+			if (hours && minutes) {
+				$(el).removeAttr("hours");
+				$(el).removeAttr("minutes");
+				var ctx = $(el)[0].getContext("2d");
+				var radius = $(el)[0].height / 2;
+				ctx.translate(radius, radius);
+				radius = radius * 0.95;
+				if (hours >= 6 && hours < 18) {
+					var bg_color = "aliceblue";
+					var fg_color = "darkslateblue";
+				} else {
+					var bg_color = "darkslateblue";
+					var fg_color = "aliceblue";
+				}
+				drawFace(ctx, radius, bg_color, fg_color);
+				drawNumbers(ctx, radius, fg_color);
+				drawTime(ctx, radius, hours, minutes, fg_color);
 			}
-			drawFace(ctx, radius, bg_color, fg_color);
-			drawNumbers(ctx, radius, fg_color);
-			drawTime(ctx, radius, hours, minutes, fg_color);
 		}
 
 		function drawFace(ctx, radius, bg_color, fg_color) {
@@ -100,32 +132,4 @@
 			ctx.rotate(-pos);
 		}
 	</script>
-	<div class="d-flex col-12 mt-2 mb-0" style="margin: 0 auto; width: max-content;">
-		{%- if index >= 0 -%}
-			<div>
-				<div class="d-inline item-font form-control">{{ answer.split(":")[0] }}</div>
-				<div class="d-inline item-font" style="margin: auto 5px;">:</div>
-				<div class="d-inline item-font form-control">{{ answer.split(":")[1] }}</div>
-			</div>
-		{%- else -%}
-			<select autofocus required name="hours" class="item-font form-control{%- if player.answer.errors -%}{{ ' is-invalid' }}{%- endif -%}">
-				{%- for hour in range(24) -%}
-					<option value="{{ '%02d' % hour }}">{{ '%02d' % hour }}</option>
-				{%- endfor -%}
-			</select>
-			<div class="item-font" style="margin: auto 5px;">:</div>
-			<select autofocus required name="minutes" class="item-font form-control{%- if player.answer.errors -%}{{ ' is-invalid' }}{%- endif -%}">
-				{%- for minute in range(60) -%}
-					<option value="{{ '%02d' % minute }}">{{ '%02d' % minute }}</option>
-				{%- endfor -%}
-			</select>
-		{%- endif -%}
-	</div>
-	{%- if player -%}
-		{%- for error in player.answer.errors -%}
-			<div class="invalid-feedback">
-				{{ __(error) }}
-			</div>
-		{%- endfor -%}
-	{%- endif -%}
 {%- endmacro -%}

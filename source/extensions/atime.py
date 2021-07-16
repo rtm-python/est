@@ -9,8 +9,8 @@ import json
 from random import randint
 
 # Performance constants
-DEFINITION_TIME_PER_TASK = 3.0
-CALCULATION_TIME_PER_TASK = 9.0
+DEFINITION_TIME_PER_TASK = 9.0
+CALCULATION_TIME_PER_TASK = 20.0
 
 # Default constants
 MAX_MINUTES = 24 * 60
@@ -18,11 +18,11 @@ MAX_MINUTES = 24 * 60
 # Plugin options
 options = [
 	{
-		'name':	'difficulty',
-		'label': {'text': 'difficulty'},
-		'description': 'Difficulty',
+		'name':	'accuracy',
+		'label': {'text': 'accuracy'},
+		'description': 'Accuracy',
 		'choices': [
-			('easy', 'Easy'), ('normal', 'Normal'), ('hard', 'Hard')
+			('15', '15 minutes'), ('10', '10 minutes'), ('5', '5 minutes')
 		]
 	},
 	{
@@ -62,7 +62,7 @@ def parse_options(request_form, indent=None) -> str:
 	"""
 	return json.dumps(
 		{
-			'difficulty': get_valid_value(request_form, 'difficulty', 'difficulty'),
+			'accuracy': get_valid_value(request_form, 'accuracy', 'accuracy'),
 			'definition': get_valid_value(request_form, 'definition', 'definition'),
 			'calculation': get_valid_value(request_form, 'calculation', 'calculation')
 		},
@@ -125,6 +125,20 @@ def round_minutes(minutes: int, multiplicity: int) -> int:
 	return int(minutes / multiplicity) * multiplicity
 
 
+def get_name(hours: int) -> str:
+	"""
+	Return name for hours.
+	"""
+	if hours >= 0 and hours < 6:
+		return 'night'
+	elif hours >= 6 and hours < 12:
+		return 'morning'
+	elif hours >= 12 and hours < 18:
+		return 'afternoon'
+	elif hours >= 18:
+		return 'evening'
+
+
 def get_definition(multiplicity: int) -> (tuple, tuple, int):
 	"""
 	Return values and result for definition.
@@ -132,7 +146,11 @@ def get_definition(multiplicity: int) -> (tuple, tuple, int):
 	minutes = randint(0, MAX_MINUTES)
 	hours = int(minutes / 60)
 	minutes = round_minutes(minutes - hours * 60, multiplicity)
-	return ((hours, minutes), None, '%02d:%02d' % (hours, minutes))
+	return (
+		(hours, minutes, get_name(hours)),
+		None,
+		'%02d:%02d' % (hours, minutes)
+	)
 
 
 def get_calculation(multiplicity: int) -> (tuple, tuple, int):
@@ -150,8 +168,8 @@ def get_calculation(multiplicity: int) -> (tuple, tuple, int):
 	diff_hours = int(diff_minutes / 60)
 	diff_minutes = diff_minutes - diff_hours * 60
 	return (
-		(hours, minutes),
-		(next_hours, next_minutes),
+		(hours, minutes, get_name(hours)),
+		(next_hours, next_minutes, get_name(next_hours)),
 		'%02d:%02d' % (diff_hours, diff_minutes)
 	)
 
@@ -160,12 +178,7 @@ def get_data(options: dict) -> dict:
 	"""
 	Return data dictionary.
 	"""
-	if options['difficulty'] == 'easy':
-		multiplicity = 15
-	elif options['difficulty'] == 'normal':
-		multiplicity = 10
-	else:
-		multiplicity = 5
+	multiplicity = int(options['accuracy'])
 	operation = get_random_operation(options)
 	source_hours_minutes, next_hours_minutes, answer = \
 		operation(multiplicity)

@@ -1,0 +1,14 @@
+{%- import 'extension/' + test.extension + '.html' as extension with context -%}
+{%- set passed_data = __dict(passed_task.data) -%}
+<div class="card shadow my-4 p-5 bg-gradient-{%- if passed_task.correct_answer -%}{{ 'whitesmoke' }}{%- else -%}{{ 'red' }}{%- endif -%}">
+	<div class="text-center">
+		{{ extension.html(passed_data.task, passed_data.answer) }}
+		{%- if passed_task.correct_answer -%}
+			<div class="answer correct-answer mt-4">{{ __('Correct') }}</div>
+			<div class="answer correct-answer mt-1">{{ passed_task.answer }}</div>
+		{%- else -%}
+			<div class="answer incorrect-answer mt-4">{{ __('Incorrect') }}</div>
+			<div class="answer incorrect-answer mt-1">{{ passed_task.answer }}</div>
+		{%- endif -%}
+	</div>
+</div>

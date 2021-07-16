@@ -33,13 +33,13 @@ class ProcessStore(Store):
 
 	@staticmethod
 	def create(test_id: int, user_uid: str, anonymous_token: str,
-						 name_uid: str) -> Process:
+						 name_uid: str, modified_local: datetime.datetime) -> Process:
 		"""
 		Create and return process.
 		"""
 		return super(ProcessStore, ProcessStore).create(
 			Process(
-				test_id, user_uid, anonymous_token, name_uid
+				test_id, user_uid, anonymous_token, name_uid, modified_local
 			)
 		)
 
@@ -55,6 +55,7 @@ class ProcessStore(Store):
 	@staticmethod
 	def update(uid: str, test_id: int,
 						 user_uid: str, anonymous_token: str, name_uid: str,
+						 modified_local: datetime.datetime,
 						 answer_count: int, correct_count: int,
 						 limit_time: int, answer_time: int) -> Process:
 		"""
@@ -65,6 +66,7 @@ class ProcessStore(Store):
 		process.user_uid = user_uid
 		process.anonymous_token = anonymous_token
 		process.name_uid = name_uid
+		process.modified_local = modified_local
 		process.answer_count = answer_count
 		process.correct_count = correct_count
 		process.limit_time = limit_time
@@ -84,7 +86,7 @@ class ProcessStore(Store):
 
 	@staticmethod
 	def read_list(offset: int, limit: int,
-								filter_name: str, filter_extension: str,
+								filter_test_uid: str,
 								filter_hide_completed: bool,
 								filter_user_uid: str, filter_anonymous_token: str,
 								filter_name_uid: str,
@@ -94,13 +96,13 @@ class ProcessStore(Store):
 		Return list of processes by arguments.
 		"""
 		return _get_list_query(
-			filter_name, filter_extension, filter_hide_completed,
+			filter_test_uid, filter_hide_completed,
 			filter_user_uid, filter_anonymous_token, filter_name_uid,
 			result_expression, crammers_expression
 		).limit(limit).offset(offset).all()
 
 	@staticmethod
-	def count_list(filter_name: str, filter_extension: str,
+	def count_list(filter_test_uid: str,
 								 filter_hide_completed: bool,
 								 filter_user_uid: str, filter_anonymous_token: str,
 								 filter_name_uid: str,
@@ -110,13 +112,14 @@ class ProcessStore(Store):
 		Return number of processes in list.
 		"""
 		return Store.count(_get_list_query(
-			filter_name, filter_extension, filter_hide_completed,
+			filter_test_uid, filter_hide_completed,
 			filter_user_uid, filter_anonymous_token, filter_name_uid,
 			result_expression, crammers_expression
 		))
 
 	@staticmethod
-	def add_answer(uid: str, task: Task) -> Process:
+	def add_answer(uid: str, task: Task,
+								 modified_local: datetime.datetime) -> Process:
 		"""
 		Return process after increment answer count and
 		if answer is correct then insrement correct count.
@@ -129,8 +132,7 @@ class ProcessStore(Store):
 			process.correct_count += 1
 		process.answer_time += \
 			int((task.modified_utc - task.created_utc).total_seconds())
-		process.limit_time += \
-			int(data['limit_time'] / test.limit_time * 100)
+		process.limit_time += int(data['limit_time'])
 		if process.answer_count >= test.answer_count:
 			correctness = int(process.correct_count / process.answer_count * 100)
 			speed = \
@@ -138,6 +140,7 @@ class ProcessStore(Store):
 			if speed > 100:
 				speed = 100
 			# process.result = int(correctness * speed / 100)
+		process.modified_local = modified_local
 		return super(ProcessStore, ProcessStore).update(
 			process
 		)
@@ -151,11 +154,11 @@ class ProcessStore(Store):
 		binded_count = 0
 		while True:
 			process_list = ProcessStore.read_list(
-				0, 100, None, None, None, None, anonymous_token, None)
+				0, 100, None, None, None, anonymous_token, None)
 			if len(process_list) == 0:
 				break
 			else:
-				for process, test in process_list:
+				for process, test, _, _, _ in process_list:
 					process.user_uid = user_uid
 					process.anonymous_token = None
 					super(ProcessStore, ProcessStore).update(process)
@@ -189,36 +192,6 @@ class ProcessStore(Store):
 		).first()
 
 	@staticmethod
-	def read_charts(offset: int, limit: int,
-								  filter_name: str, filter_extension: str,
-								  user_uid: str, anonymous_token: str,
-									name_uid) -> list:
-		"""
-		Return list of process charts by arguments.
-		"""
-		return _get_charts_query(
-			filter_name, filter_extension,
-			user_uid, anonymous_token, name_uid, False
-		).limit(limit).offset(offset).all()
-
-	@staticmethod
-	def count_charts(filter_name: str, filter_extension: str,
-								   user_uid: str, anonymous_token: str,
-									 name_uid: str) -> int:
-		"""
-		Return number of process charts in list.
-		"""
-		return _get_charts_query(
-			filter_name, filter_extension,
-			user_uid, anonymous_token, name_uid, True
-		)
-		# TODO: Issue with simplified query
-		return Store.count(_get_charts_query(
-			filter_name, filter_extension,
-			user_uid, anonymous_token, name_uid, True
-		))
-
-	@staticmethod
 	def get_top_crammers(offset: int, limit: int,
 											 filter_extension: str,
 											 filter_user_uid: str,
@@ -226,11 +199,10 @@ class ProcessStore(Store):
 											 filter_name_uid: str,
 											 crammers_expression,
 											 since: datetime.datetime,
-											 until: datetime.datetime,
-											 tz_delta: datetime.timedelta) -> list:
+											 until: datetime.datetime) -> list:
 		pre = _get_crammers_subquery(
 			filter_extension, filter_user_uid, filter_anonymous_token,
-			filter_name_uid, crammers_expression, since, until, tz_delta
+			filter_name_uid, crammers_expression, since, until
 		)
 		return database.session.query(
 			pre.c.name_value.label('name'),
@@ -242,7 +214,7 @@ class ProcessStore(Store):
 			pre.c.name_id
 		).order_by(
 			desc('total'),
-			pre.c.process_modified_utc
+			pre.c.process_modified_local
 		).limit(limit).offset(offset).all()
 
 	@staticmethod
@@ -252,29 +224,26 @@ class ProcessStore(Store):
 										 filter_name_uid: str,
 										 crammers_expression,
 										 since: datetime.datetime,
-										 until: datetime.datetime,
-										 tz_delta: datetime.timedelta) -> list:
+										 until: datetime.datetime) -> list:
 		pre = _get_crammers_subquery(
 			filter_extension, filter_user_uid, filter_anonymous_token,
-			filter_name_uid, crammers_expression, since, until, tz_delta
+			filter_name_uid, crammers_expression, since, until
 		)
 		pre_local = database.session.query(
 			pre.c.process_correct_count,
 			pre.c.process_answer_time,
 			pre.c.process_id,
-			# pre.c.test_extension,
 			pre.c.test_id,
 			pre.c.name_value,
 			pre.c.name_id,
 			pre.c.crammers,
-			pre.c.process_modified_utc.label('process_modified_local'),
+			pre.c.process_modified_local,
 			func.strftime(
-				'%Y-%m-%d', pre.c.process_modified_utc
+				'%Y-%m-%d', pre.c.process_modified_local
 			).label('process_date_local')
 		).subquery()
 		return database.session.query(
 			pre_local.c.name_value.label('name_value'),
-			# pre_local.c.test_extension,
 			func.count(pre_local.c.process_id).label('process_count'),
 			func.sum(pre_local.c.process_correct_count).label('correct_count'),
 			func.sum(pre_local.c.process_answer_time).label('answer_time'),
@@ -282,14 +251,13 @@ class ProcessStore(Store):
 			pre_local.c.process_date_local
 		).group_by(
 			pre_local.c.name_value,
-			# pre_local.c.test_extension,
 			pre_local.c.process_date_local
 		).order_by(
 			pre_local.c.process_modified_local
 		).all()
 
 
-def _get_list_query(filter_name: str, filter_extension: str,
+def _get_list_query(filter_test_uid: str,
 										filter_hide_completed: bool,
 										filter_user_uid: str, filter_anonymous_token: str,
 										filter_name_uid: str,
@@ -318,10 +286,8 @@ def _get_list_query(filter_name: str, filter_extension: str,
 			Name, Name.uid == filter_name_uid
 		)
 	return pre.filter(
-		True if filter_name is None else \
-			Test.name.ilike('%' + filter_name + '%'),
-		True if filter_extension is None else \
-			Test.extension.ilike('%' + filter_extension + '%'),
+		True if filter_test_uid is None else \
+			Test.uid == filter_test_uid,
 		True if filter_hide_completed is None or \
 			filter_hide_completed is False else \
 				Process.answer_count < Test.answer_count,
@@ -337,117 +303,13 @@ def _get_list_query(filter_name: str, filter_extension: str,
 	)
 
 
-def _get_charts_query(filter_name: str, filter_extension: str,
-										  filter_user_uid: str, filter_anonymous_token: str,
-											filter_name_uid: str, is_count_query: bool):
-	"""
-	Return query object for process charts.
-	"""
-	pre = database.session.query(
-		Test.id.label('test_id'), Test.name.label('name'),
-		Process.modified_utc.label('modified_utc'),
-		func.strftime('%w', Process.modified_utc).label('weekday'),
-		Process.result.label('result')
-	).join(
-		Process
-	).filter(
-		True if filter_name is None else \
-			Test.name.ilike('%' + filter_name + '%'),
-		True if filter_extension is None else \
-			Test.extension.ilike('%' + filter_extension + '%'),
-		True if filter_user_uid is None else \
-			filter_user_uid == Process.user_uid,
-		True if filter_anonymous_token is None else \
-			filter_anonymous_token == Process.anonymous_token,
-		True if filter_name_uid is None else \
-			filter_name_uid == Process.name_uid,
-		Process.modified_utc >= \
-				datetime.datetime.utcnow() - datetime.timedelta(days=7),
-		Test.deleted_utc == None
-	).subquery()
-	if is_count_query: # Return simplified query for count
-		return len(
-			database.session.query(
-				Test.id
-			).join(
-				pre, pre.c.test_id == Test.id
-			).group_by(
-				Test.id
-			).all()
-		)
-	# Prepare queries for each weekday
-	weekday = int(datetime.datetime.utcnow().strftime('%w'))
-	weekdays = []
-	for index in range(7):
-		weekday = weekday + 1 if weekday < 6 else 0
-		weekdays += [
-			database.session.query(
-				pre.c.test_id, pre.c.modified_utc, pre.c.weekday,
-				func.count(pre.c.result).label('count'),
-				func.avg(pre.c.result).label('result')
-			).filter(
-				pre.c.weekday == str(weekday),
-				pre.c.result != None
-			).group_by(
-				pre.c.test_id
-			).order_by(
-				pre.c.modified_utc.desc()
-			).subquery()
-		]
-	return database.session.query(
-		Test.uid, Test.name, Test.extension,
-		weekdays[0].c.weekday, weekdays[0].c.count, weekdays[0].c.result,
-		weekdays[1].c.weekday, weekdays[1].c.count, weekdays[1].c.result,
-		weekdays[2].c.weekday, weekdays[2].c.count, weekdays[2].c.result,
-		weekdays[3].c.weekday, weekdays[3].c.count, weekdays[3].c.result,
-		weekdays[4].c.weekday, weekdays[4].c.count, weekdays[4].c.result,
-		weekdays[5].c.weekday, weekdays[5].c.count, weekdays[5].c.result,
-		weekdays[6].c.weekday, weekdays[6].c.count, weekdays[6].c.result
-	).outerjoin(
-		weekdays[0], Test.id == weekdays[0].c.test_id
-	).outerjoin(
-		weekdays[1], Test.id == weekdays[1].c.test_id
-	).outerjoin(
-		weekdays[2], Test.id == weekdays[2].c.test_id
-	).outerjoin(
-		weekdays[3], Test.id == weekdays[3].c.test_id
-	).outerjoin(
-		weekdays[4], Test.id == weekdays[4].c.test_id
-	).outerjoin(
-		weekdays[5], Test.id == weekdays[5].c.test_id
-	).outerjoin(
-		weekdays[6], Test.id == weekdays[6].c.test_id
-	).filter(
-		or_(
-			weekdays[0].c.result != None,
-			weekdays[1].c.result != None,
-			weekdays[2].c.result != None,
-			weekdays[3].c.result != None,
-			weekdays[4].c.result != None,
-			weekdays[5].c.result != None,
-			weekdays[6].c.result != None
-		)
-	).group_by(
-		Test.id
-	).order_by(
-		weekdays[6].c.modified_utc.desc(),
-		weekdays[5].c.modified_utc.desc(),
-		weekdays[4].c.modified_utc.desc(),
-		weekdays[3].c.modified_utc.desc(),
-		weekdays[2].c.modified_utc.desc(),
-		weekdays[1].c.modified_utc.desc(),
-		weekdays[6].c.modified_utc.desc()
-	)
-
-
 def _get_crammers_subquery(filter_extension: str,
 													 filter_user_uid: str,
 													 filter_anonymous_token: str,
 													 filter_name_uid: str,
 													 crammers_expression,
 													 since: datetime.datetime,
-													 until: datetime.datetime,
-													 tz_delta: datetime.timedelta):
+													 until: datetime.datetime):
 	return database.session.query(
 		Process.correct_count.label('process_correct_count'),
 		Process.answer_time.label('process_answer_time'),
@@ -457,7 +319,7 @@ def _get_crammers_subquery(filter_extension: str,
 		Name.value.label('name_value'),
 		Name.id.label('name_id'),
 		(cast(crammers_expression, sqlalchemy.Integer)).label('crammers'),
-		(Process.modified_utc).label('process_modified_utc')
+		(Process.modified_local).label('process_modified_local')
 	).join(
 		Test
 	).outerjoin(
@@ -474,9 +336,9 @@ def _get_crammers_subquery(filter_extension: str,
 		True if filter_name_uid is None else \
 			filter_name_uid == Process.name_uid,
 		and_(
-			Process.modified_utc >= since + tz_delta,
-			Process.modified_utc < until + tz_delta
+			Process.modified_local >= since,
+			Process.modified_local < until
 		) if since is not None else \
-			Process.modified_utc < until + tz_delta,
+			Process.modified_local < until,
 		Test.deleted_utc == None
 	).subquery()

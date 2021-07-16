@@ -1,0 +1,87 @@
+{%- extends "layout_center.html" -%}
+{%- set title -%}{{ __('Testing') }}{%- endset -%}
+{%- block content -%}
+	<div class="card shadow p-5 rotated-background-card bg-gradient-whitesmoke" angle="l3">
+		<div class="logo d-flex align-items-center justify-content-center">
+			<img class="mr-2" src="{{ url_for('static', filename='est_o.png') }}">
+			<div class="mr-2">{{ __(basename) }}</div>
+		</div>
+		<div class="content-delimeter my-3"></div>
+		<div class="text-center">
+			<h5>{{ __('Test') }}</h5>
+			{%- if editor -%}
+				<form id="editor" actions="" method="post" class="editor-form">
+					{{ editor.csrf_token }}
+					<div class="form-row">
+						<div class="col-12 my-1">
+							<small class="d-flex align-self-start">{{ __('Name') }}</small>
+							<input autofocus type="text" class="form-control{%- if editor.name.error -%}{{ ' is-invalid' }}{%- endif -%}" id="{{ editor.name.label.text }}" name="{{ editor.name.label.text }}" placeholder="{{ __('Name') }}" value="{{ editor.name.data|default('', True) }}" />	
+							{%- for error in editor.name.errors -%}
+								<div class="invalid-feedback">
+									{{ __(error) }}
+								</div>
+							{%- endfor -%}
+						</div>
+						{%- for option in editor.options.get_items() -%}
+							<div class="col-12 my-1">
+								<small class="d-flex align-self-start">{{ __(option.description) }}</small>
+								<select class="custom-select" name="{{ option.label.text }}">
+									<option{%- if option.data == '' -%}{{ ' selected' }}{%- endif -%}>{{ __('Choose') }}</option>
+									{%- for choice in option.choices -%}
+										<option value="{{ choice[0] }}"{%- if option.data == choice[0] -%}{{ ' selected' }}{%- endif -%}>{{ __(choice[1]) }}</option>
+									{%- endfor -%}
+								</select>		
+							</div>
+						{%- endfor -%}
+						<div class="col-12 my-1">
+							<small class="d-flex align-self-start">{{ __('Task Count') }}</small>
+							<select class="custom-select{%- if editor.answer_count.erros -%}{{ ' is-invalid' }}{%- endif -%}" id="{{ editor.answer_count.label.text }}" name="{{ editor.answer_count.label.text }}">
+								<option{%- if editor.answer_count.data == '' -%}{{ ' selected' }}{%- endif -%}>{{ __('Choose..') }}</option>
+								{%- for choice in editor.answer_count.choices -%}
+									<option value="{{ choice[0] }}"{%- if editor.answer_count.data == choice[0] -%}{{ ' selected' }}{%- endif -%}>{{ __(choice[1]) }}</option>
+								{%- endfor -%}
+							</select>
+							{%- for error in editor.answer_count.errors -%}
+								<div class="invalid-feedback">
+									{{ __(error) }}
+								</div>
+							{%- endfor -%}
+						</div>
+						<div class="col-12 my-2">
+							<button type="submit" class="btn btn-sm btn-styled btn-styled-green col-8 col-md-6"><span class="oi oi-check"></span><div class="d-inline ml-1">{{ __('Submit') }}</div></button>
+							<a class="btn btn-sm btn-styled btn-styled-light col-8 col-md-6 mt-2" href="{{ url_for('testing.get_catalog') }}"><span class="oi oi-x"></span><div class="d-inline ml-1">{{ __('Cancel') }}</div></a>
+						</div>
+					</div>
+				</form>
+				<div class="content-delimeter my-3"></div>
+			{%- endif -%}
+			<div id="extensionGroup" class="d-inline-block text-center w-100 my-1">
+				<div class="collapse show" id="collapse-extension" data-parent="#extensionGroup">
+					<a class="btn btn-sm btn-styled btn-styled-light col-8 col-md-6" href="#" data-toggle="collapse" data-target="#collapse-extension-frame" aria-expanded="true" aria-controls="collapse-extension-frame">
+						<span class="oi oi-box"></span>
+						{%- if editor -%}
+							<div class="d-inline ml-1">{{ __('Extension') }}</div>
+							<div class="d-inline">:</span>{{ __(current_extension) }}</div>
+						{%- else -%}
+							<div class="d-inline ml-1">{{ __('Select Extension') }}</div>
+						{%- endif -%}
+					</a>
+				</div>
+				<div class="collapse collapse-frame" id="collapse-extension-frame" data-parent="#extensionGroup">
+					<div>
+						<div class="d-inline m-2">{{ __('Extensions') + ':' }}</div>
+						{%- for extension in extensions -%}
+							<a class="btn btn-sm btn-styled btn-styled-light m-1" href="{{ url_for('testing.create', extension=extension) }}">{{ __(extension) }}</a>
+						{%- endfor -%}
+						<a class="btn btn-sm btn-styled btn-styled-light m-1" href="#" data-toggle="collapse" data-target="#collapse-extension" aria-expanded="true" aria-controls="collapse-extension"><span class="oi oi-x"></span><div class="d-inline ml-1">{{ __('Close') }}</div></a>
+					</div>
+				</div>
+			</div>
+			{%- if not editor -%}
+				<div class="w-100 mt-1">
+					<a class="btn btn-sm btn-styled btn-styled-light col-8 col-md-6" href="{{ url_for('testing.get_catalog') }}"><span class="oi oi-x"></span><div class="d-inline ml-1">{{ __('Cancel') }}</div></a>
+				</div>	
+			{%- endif -%}
+		</div>
+	</div>
+{%- endblock content -%}

@@ -1,0 +1,16 @@
+{%- extends "info/base.html" -%}
+{% block info_content %}
+	<div class="text-center my-2">
+		<h4 class="d-inline-block">{{ __('Congratulations')}}!</h4>
+		<h3 class="mt-2 mb-4">
+			<strong>
+				<div class="mb-2">{{ name }}</div>
+				<div class="d-inline-block mr-3">
+					{{ place }}<span class="small ml-1 rating-place"></span><strong>{{ __('place') }}</strong>
+					{{ __('in Top 10 Rating') }}
+				</div>
+			</strong>
+		</h3>
+	</div>
+	<a href="{{ url_for('rating.get_top') }}" class="btn btn-sm btn-styled btn-styled-orange w-50 m-1"><span class="oi oi-graph mr-1"></span>{{ __('Ratings') }}</a>
+{% endblock info_content %}

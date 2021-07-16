@@ -1,9 +1,9 @@
 {%- extends "rating/base.html" -%}
 {% set endpoint = 'rating.get_chart' -%}
-{%- block rating_content -%}
+{%- block ratings_content -%}
 	<div class="card w-100 my-3">
 		<div class="d-none d-md-inline-block p-3">
-			<canvas id="chart-landscape" style="display: block; width: 600px; height: 300px;" width="600" height="300" class="chartjs-render-monitor"></canvas>
+			<canvas id="chart-landscape" style="display: block; width: 600px; height: 250px;" width="600" height="250" class="chartjs-render-monitor"></canvas>
 		</div>
 		<div class="d-inline-block d-md-none p-3">
 			<canvas id="chart-portrait" style="display: block; width: 600px; height: 600px;" width="600" height="600" class="chartjs-render-monitor"></canvas>
@@ -63,7 +63,7 @@
 			}
 		});
 	</script>
-{%- endblock rating_content -%}
+{%- endblock ratings_content -%}
 {%- block script -%}
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
 {%- endblock -%}

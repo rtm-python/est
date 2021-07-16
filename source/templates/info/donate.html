@@ -1,0 +1,7 @@
+{%- extends "info/base.html" -%}
+{% block info_content %}
+	<div class="text-start my-2">
+
+	</div>
+	<a href="{{ url_for('base.sign_in') }}" class="btn btn-sm btn-styled btn-styled-green w-50 m-1"><span class="oi oi-check mr-1"></span>{{ __('Enter') }}</a>
+{% endblock info_content %}

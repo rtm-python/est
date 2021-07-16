@@ -15,13 +15,11 @@ from enum import Enum
 CONFIG_PATH_KEY = 'EST_CONFIG_PATH'
 LOCALE_PATH_KEY = 'EST_LOCALE_PATH'
 EXTENSION_PATH_KEY = 'EST_EXTENSION_PATH'
-INFO_TEMPLATE_PATH_KEY = 'EST_INFO_TEMPLATE_PATH'
 
 # Application constants
 CONFIG_PATH = 'config/app.json'
 LOCALE_PATH = 'source/locale.json'
 EXTENSION_PATH = 'source/extensions'
-INFO_TEMPLATE_PATH = 'source/templates/info'
 
 # Initiate configuration
 try:
@@ -57,21 +55,6 @@ except Exception as exc:
 	logging.error(getattr(exc, 'message', repr(exc)))
 	sys.exit(0)
 
-# Initiate extensions list
-try:
-	if not os.path.exists(os.environ.get(
-			INFO_TEMPLATE_PATH_KEY, INFO_TEMPLATE_PATH)):
-		raise ValueError('Info template folder undefined!')
-	INFO_TEMPLATE_LIST = []
-	for filename in os.listdir(os.environ.get(
-			INFO_TEMPLATE_PATH_KEY, INFO_TEMPLATE_PATH)):
-		if filename.endswith('.html'):
-			INFO_TEMPLATE_LIST += [os.path.join('info', filename)]
-	INFO_TEMPLATE_LIST = sorted(INFO_TEMPLATE_LIST)
-except Exception as exc:
-	logging.error(getattr(exc, 'message', repr(exc)))
-	sys.exit(0)
-
 # Initiate logging
 if CONFIG.get('logging'):
 	logging.basicConfig(
@@ -85,5 +68,5 @@ class UrlPrefix(Enum):
 	Application url_prefix enumeration.
 	"""
 	base = '/'
-	test = '/test/'
+	testing = '/testing/'
 	rating = '/rating/'

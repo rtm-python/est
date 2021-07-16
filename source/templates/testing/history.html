@@ -1,5 +1,61 @@
-{%- extends "layout_list.html" -%}
-{% set title -%}{{ __('Testing') }}{%- endset %}
+{%- extends "layout_content.html" -%}
+{%- set title -%}{{ __('Testing') }}{%- endset -%}
+{%- block content -%}
+	<div class="w-100">
+		<div class="card shadow px-3 py-2 bg-gradient-yellow">
+			<div class="d-flex w-100 align-items-center">
+				<h5 class="flex-grow-1 my-2 mr-2 py-1">{{ title }}<small class="text-muted ml-2">{{ __('History') }}</small></h5>
+				<div class="d-inline-block text-end">
+					<a class="btn btn-sm btn-styled btn-styled-green m-1" href="{{ url_for('testing.start', uid=current_test.uid) }}"><span class="oi oi-caret-right"></span><div class="d-inline ml-1">{{ __('Start') }}</div></a>
+					{%- include 'lister.html' -%}
+				</div>
+			</div>
+		</div>
+		{%- for process, test, name, result, crammers in processes -%}
+			<div class="card shadow p-3 bg-gradient-whitesmoke w-100 my-2">
+				<div class="d-flex w-100 align-items-center">
+					<div class="flex-grow-1 mr-2">
+						<div>
+							{%- if name.value -%}<div class="d-inline-block mr-2">{{ name.value + ':' }}</div>{%- endif -%}
+							<strong>{{ result }}%</strong>
+						</div>
+						{%- if process.answer_count == test.answer_count -%}
+							<div>{{ crammers }}<small class="ml-1">{{ __('crammers') }}</small></div>
+						{%- else -%}
+							<div class="small text-muted">{{ __('Incomplete') }}</div>
+						{%- endif -%}
+					</div>
+					{%- if process.answer_count == test.answer_count -%}
+						<small class="d-none d-md-inline-block m-1 p-1 text-muted">{{ __('Completed') }}:<div class="d-inline timestamp ml-1">{{ process.modified_utc }}+0000</div></small>
+					{%- endif -%}
+					<small class="d-inline-block m-1 p-1 text-muted">{{ __('Correct') }}: {{ process.correct_count }} / {{ process.answer_count }}</small>
+					<small class="d-inline-block m-1 p-1 text-muted">{{ __('Time') }}: {{ process.answer_time }} / {{ process.limit_time }}</small>
+					{%- if process.answer_count < test.answer_count -%}
+						<a class="btn btn-sm btn-styled btn-styled-green m-1" href="{{ url_for('testing.play', uid=process.uid) }}"><span class="oi oi-caret-right"></span><div class="d-none d-sm-inline ml-1">{{ __('Continue') }}</div></a>
+					{%- else -%}
+						<a class="btn btn-sm btn-styled btn-styled-light m-1" href="{{ url_for('testing.get_result', uid=process.uid) }}"><span class="oi oi-list"></span><div class="d-none d-sm-inline ml-1">{{ __('Result') }}</div></a>
+					{%- endif -%}
+				</div>
+			</div>
+		{%- endfor -%}
+	</div>
+{%- endblock content -%}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 {%- block style -%}
 	<style>
   	@media (max-width: 768px) {

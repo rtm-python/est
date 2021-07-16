@@ -7,6 +7,7 @@ Blueprint module to handle account routes.
 # Standard libraries import
 import secrets
 import logging
+import datetime
 
 # Application modules import
 from blueprints import application
@@ -39,7 +40,6 @@ from wtforms import validators
 
 # Constants
 PROFILE_TEMPLATE = 'EVENT: %s'
-FEEDBACK_TEMPLATE = '%s [%s]: %s'
 LINK_TEMPLATE = 'https://t.me/user?id=%s'
 
 
@@ -158,132 +158,15 @@ class SignInForm(FlaskForm):
 				field.data = data if data is not None and len(data) > 0 else None
 
 
-class ProfilerForm(FlaskForm):
+@blueprint.route('/account/sign-in/', methods=('GET', 'POST'))
+def sign_in():
 	"""
-	This is a ProfileForm class to retrieve form data.
+	Return sign-in page and login user on success.
 	"""
-	notification_profile = SelectField(
-		'profilerNotificationProfile',
-		validators=[validators.DataRequired()]
-	)
-	notification_test_start = SelectField(
-		'profilerNotificationTestStart',
-		validators=[validators.DataRequired()]
-	)
-	notification_test_complete = SelectField(
-		'profilerNotificationTestComplete',
-		validators=[validators.DataRequired()]
-	)
-	submit = SubmitField('profilerSubmit')
-
-	def __init__(self, user: object = None) -> "ProfilerForm":
-		"""
-		Inititate object with choices.
-		"""
-		super(ProfilerForm, self).__init__()
-		self.notification_profile.choices = [
-			('yes', __('Send notification')),
-			('no', __('Keep silence')),
-		]
-		self.notification_test_start.choices = [
-			('yes', __('Send notification')),
-			('no', __('Keep silence')),
-		]
-		self.notification_test_complete.choices = [
-			('yes', __('Send notification')),
-			('no', __('Keep silence')),
-		]
-		if user:
-			self.notification_profile.data = 'yes' \
-				if user.notification_profile else 'no'
-			self.notification_test_start.data = 'yes' \
-				if user.notification_test_start else 'no'
-			self.notification_test_complete.data = 'yes' \
-				if user.notification_test_complete else 'no'
-		else:
-			for field in self:
-				if field.name != 'csrf_token':
-					field.data = request.form.get(field.label.text)
-
-
-class FeedbackerForm(FlaskForm):
-	"""
-	This is a FeedbackForm class to retrieve form data.
-	"""
-	message = StringField(
-		'feedbackerMessage',
-		validators=[validators.DataRequired()]
-	)
-	submit = SubmitField('feedbackerSubmit')
-
-	def __init__(self, post: bool) -> "ProfilerForm":
-		"""
-		Inititate object with choices.
-		"""
-		super(FeedbackerForm, self).__init__()
-		if post:
-			for field in self:
-				if field.name != 'csrf_token':
-					field.data = request.form.get(field.label.text)
-
-
-@blueprint.route('/account/', methods=('GET', 'POST'))
-@blueprint.route('/account/profile/', methods=('GET', 'POST'))
-def get_profile():
-	"""
-	Return profile page.
-	"""
-	if not current_user.is_authenticated:
-		return redirect(url_for('base.sign_in', step=3))
-	if request.method == 'GET':
-		profiler = ProfilerForm(current_user.user)
-	else:
-		if current_user.user.notification_profile:
-			IdenticaPlugin.notify_user(
-				current_user.user.from_id,
-				PROFILE_TEMPLATE % __('Profile updated')
-			)
-		profiler = ProfilerForm()
-	if request.form.get('profilerSubmit') and \
-			profiler.validate_on_submit(): # Valid post request
-		UserStore.update_notifications(
-			current_user.user.uid,
-			profiler.notification_profile.data == 'yes',
-			profiler.notification_test_start.data == 'yes',
-			profiler.notification_test_complete.data == 'yes'
-		)
-	feedbacker = FeedbackerForm(request.method == 'POST')
-	if request.form.get('feedbackerSubmit') and \
-			 feedbacker.validate_on_submit(): # Valid post request
-		IdenticaPlugin.notify_user(
-			current_user.user.from_id,
-			__('Thank you for your feedback!')
-		)
-		IdenticaPlugin.notify_user(
-			CONFIG['feedback'],
-			FEEDBACK_TEMPLATE % (
-				LINK_TEMPLATE % current_user.user.from_id,
-				current_user.user.name, feedbacker.message.data[:100]
-			)
-		)
-		return redirect(url_for('base.get_profile'))
-	return render_template(
-		'base/profile.html',
-		profiler=profiler,
-		feedbacker=feedbacker,
-		nav_active='account'
-	)
-
-
-@blueprint.route('/account/sign-in/<step>/', methods=('GET', 'POST'))
-def sign_in(step: str):
-	"""
-	Return sign-in page and login user.
-	"""
-	if current_user.is_authenticated or step not in '1234':
-		return redirect(url_for('base.get_landing'))
+	if current_user.is_authenticated:
+		return redirect(url_for('base.get_home'))
 	sign_in = SignInForm()
-	if sign_in.validate_on_submit() and step in '34':
+	if sign_in.validate_on_submit():
 		if sign_in.pin.data is None:
 			sign_in.pin.errors = [ __('Empty PIN') ]
 		else:
@@ -295,12 +178,11 @@ def sign_in(step: str):
 					sign_in.pin.errors = [ __('Wrong PIN') ]
 				else:
 					sign_in.password.data = password
-					step = '4'
 			else:
 				verify_data = IdenticaPlugin.verify_pin(sign_in.pin.data)
 				if verify_data is None:
 					logging.debug('Wrong password submitted')
-					return { 'redirect': url_for('base.sign_in', step=3) }
+					return { 'redirect': url_for('base.sign_in') }
 				elif verify_data.get('from'):
 					user = UserStore().get_or_create_user(
 						verify_data['from']['id'],
@@ -310,19 +192,18 @@ def sign_in(step: str):
 							verify_data['from'].get('username')
 						)
 					)
+					ProcessStore.bind_token(user.uid, current_user.get_token())
 					login_user(SignedInUser(user), remember=True)
 					user_info = '%s (%s)' % \
 						(
 							user.name, user.from_id
 						) if user is not None else None
 					logging.debug('Signed in as user %s' % user_info)
-					return { 'redirect': url_for('base.get_landing') }
+					return { 'redirect': url_for('base.get_home') }
 				return { 'wait': True }
 	return render_template(
 		'base/sign_in.html',
-		step=step,
-		sign_in=sign_in,
-		nav_active='account'
+		sign_in=sign_in
 	)
 
 
@@ -361,4 +242,51 @@ def sign_out():
 	"""
 	if current_user.is_authenticated:
 		logout_user()
-	return redirect(url_for('base.get_profile'))
+	return redirect(url_for('base.get_home'))
+
+
+@blueprint.route('/timezone/', methods=('POST',))
+def set_timezone():
+	"""
+	Set timezone for session.
+	"""
+	try:
+		session['timezone_offset'] = int(request.form.get('timezoneOffset'))
+		utc_now = datetime.datetime.utcnow()
+		return {
+			'status': 'ok',
+			'message': {
+				'text': 'Timezone for session initiated successfully',
+				'utc': utc_now,
+				'local': utc_now - datetime.timedelta(minutes=session['timezone_offset'])
+			}
+		}
+	except:
+		pass
+	return {
+		'status': 'error',
+		'message': {
+			'text': 'Timezone initiation error'
+		}
+	}
+
+
+@blueprint.route('/feedback/', methods=('POST',))
+def send_feedback():
+	"""
+	Send feedback.
+	"""
+	IdenticaPlugin.notify_user(
+		CONFIG['feedback'],
+		'ID: %s\nName: %s\nContact: %s\nMessage: %s' % (
+			current_user.user.from_id \
+				if current_user.is_authenticated else 'anonymous',
+			request.form.get('feedbackerName'),
+			request.form.get('feedbackerContact'),
+			request.form.get('feedbackerMessage')
+		)
+	)
+	return {
+		'redirect': None,
+		'message': __('Thank you for your feedback!')
+	}

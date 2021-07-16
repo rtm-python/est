@@ -1,0 +1,39 @@
+{%- extends "layout.html" -%}
+{%- set username = current_user.get_name()|default({ 'value': None }, True) -%}
+{%- set menu_items = [ (url_for('testing.get_catalog'), 'caret-right', __('Testing')), (url_for('rating.get_top'), 'graph', __('Ratings')) ] -%}
+{%- if current_user.is_authenticated -%}
+	{%- set menu_items = menu_items + [ (url_for('base.get_home'), 'person', username.value) ] -%}
+{%- else -%}
+	{%- set menu_items = menu_items + [ (url_for('base.sign_in'), 'key', __('Enter')) ] -%}
+{%- endif -%}
+{%- block main -%}
+	<div class="main container-fluid">
+		<div class="w-100">
+			<div class="sticky-top mb-3">
+				<div class="card shadow px-3 py-2 rotated-background-card bg-gradient-whitesmoke" angle="l1">
+					<div class="d-flex align-items-center justify-content-between">
+						<a href="{{ url_for('base.get_home') }}" class="logo-mini d-flex align-items-center">
+							<img class="mr-2" src="{{ url_for('static', filename='est_o.png') }}">
+							<div class="mr-2">{{ __(basename) }}</div>
+						</a>
+						<div class="d-flex align-items-md-center gap-2">
+							{%- for item_link, item_glyph, item_value in menu_items -%}
+								<a href="{{ item_link }}" class="d-none d-md-inline menu-item-styled menu-item-styled-orange"><span class="oi oi-{{ item_glyph }} mr-1"></span>{{ item_value }}</a>
+							{%- endfor -%}
+							<button class="d-inline d-md-none menu-item-styled menu-item-styled-butter bg-transparent" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMenu" aria-expanded="false" aria-controls="collapseMenu"><span class="oi oi-menu"></span></button>
+						</div>
+					</div>
+				</div>
+				<div class="collapse my-2" id="collapseMenu">
+					<div class="card shadow p-3 bg-gradient-whitesmoke">
+						{%- for item_link, item_glyph, item_value in menu_items -%}
+							<a href="{{ item_link }}" class="btn btn-styled btn-styled-orange offset-2 col-8 my-2"><span class="oi oi-{{ item_glyph }} mr-1"></span>{{ item_value }}</a>
+						{%- endfor -%}
+					</div>
+				</div>
+			</div>
+			{%- block content -%}
+			{%- endblock content -%}
+		</div>
+	</div>
+{%- endblock main -%}

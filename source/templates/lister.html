@@ -1,0 +1,40 @@
+<div id="filterGroup" class="d-inline-block text-center my-1">
+	<div class="collapse show" id="collapse-filter" data-parent="#filterGroup">
+		<a class="btn btn-sm btn-styled btn-styled-light ml-1" href="#" data-toggle="collapse" data-target="#collapse-filter-links" aria-expanded="true" aria-controls="collapse-filter-links"><span class="oi oi-tags"></span><div class="d-inline ml-1">{{ __('Filter') }}</div></a>
+	</div>
+	<div class="collapse collapse-frame" id="collapse-filter-links" data-parent="#filterGroup">
+		<div>
+			<div class="m-2">{{ __('Filter') + ':' }}</div>
+			{%- for filter in filters -%}
+				<a class="btn btn-sm btn-styled btn-styled-light m-1" href="{{ filter.url }}"><span class="oi oi-tag"></span><div class="d-inline ml-1">{{ __(filter['label']) }}</div></a>
+			{%- endfor -%}
+			<a class="btn btn-sm btn-styled btn-styled-light" href="#" data-toggle="collapse" data-target="#collapse-filter" aria-expanded="true" aria-controls="collapse-filter"><span class="oi oi-x"></span><div class="d-none d-sm-inline ml-1">{{ __('Close') }}</div></a>
+		</div>
+	</div>
+</div>
+<div id="pageGroup" class="d-inline-block text-center my-1">
+	<div class="collapse show" id="collapse-page" data-parent="#pageGroup">
+		<a class="btn btn-sm btn-styled btn-styled-light ml-1" href="#" data-toggle="collapse" data-target="#collapse-page-links" aria-expanded="true" aria-controls="collapse-page-links">
+			<span class="oi oi-layers"></span>
+			<div class="d-inline ml-1">{{ __('Page') + ':' }}</div>
+			<div class="d-inline ml-1">{{ pagination.page_index }}</div>
+		</a>
+	</div>
+	<div class="collapse collapse-frame" id="collapse-page-links" data-parent="#pageGroup">
+		<div>
+			<div class="m-2">{{ __('Page') + ':' }}</div>
+			{%- if pagination.page_index > 1 -%}
+				{%- set pagination_kwargs = { '%sPageIndex' % pagination.prefix: pagination.page_index - 1 } -%}
+				<a href="{{ url_for(pagination.endpoint, **pagination_kwargs) }}" class="btn btn-sm btn-styled btn-styled-light m-1"><span class="oi oi-chevron-left"></span></a>
+			{%- endif -%}
+			{%- if pagination.page_index < pagination.page_count -%}
+				{%- set pagination_kwargs = { '%sPageIndex' % pagination.prefix: pagination.page_index + 1 } -%}
+				<a href="{{ url_for(pagination.endpoint, **pagination_kwargs) }}" class="btn btn-sm btn-styled btn-styled-light m-1"><span class="oi oi-chevron-right"></span></a>
+			{%- endif -%}
+			{%- if pagination.page_count <= 1 -%}
+				<small class="d-inline-block m-1 p-1 text-muted">{{ __('Total') }}: {{ pagination.entity_count }} {{ __('elements') }}</small>
+			{%- endif -%}
+			<a class="btn btn-sm btn-styled btn-styled-light" href="#" data-toggle="collapse" data-target="#collapse-page" aria-expanded="true" aria-controls="collapse-page"><span class="oi oi-x"></span><div class="d-none d-sm-inline ml-1">{{ __('Close') }}</div></a>
+		</div>
+	</div>
+</div>

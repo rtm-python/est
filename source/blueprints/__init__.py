@@ -12,6 +12,7 @@ import json
 # Application modules import
 from config import CONFIG
 from config import UrlPrefix
+from config import EXTENSION_LIST
 
 # Additional libraries import
 from flask import Flask
@@ -29,14 +30,14 @@ application = Flask(
 )
 application.config['SECRET_KEY'] = CONFIG['key']
 paranoid = Paranoid(application)
-paranoid.redirect_view = 'base.get_landing'
+paranoid.redirect_view = 'base.get_home'
 
 # Blueprint modules import and blueprints registration
 # (prevent circular imports)
 for module_name in \
 		[
 			'base',
-			'test',
+			'testing',
 			'rating'
 		]:
 	module = importlib.import_module('blueprints.%s' % module_name)
@@ -55,7 +56,7 @@ def redirect_on_invalid_session():
 	"""
 	Return redirect on invalid session.
 	"""
-	return redirect(url_for('base.get_landing'))
+	return redirect(url_for('base.get_home'))
 
 
 @application.before_request
@@ -98,3 +99,20 @@ def __config(key: str) -> object:
 	Return configuration data by key.
 	"""
 	return CONFIG.get(key)
+
+
+@application.context_processor
+def get_extensions():
+	"""
+	Return extensions.
+	"""
+	def _extensions() -> object:
+		return __extensions()
+	return dict(__extensions=__extensions)
+
+
+def __extensions() -> object:
+	"""
+	Return extensions.
+	"""
+	return EXTENSION_LIST

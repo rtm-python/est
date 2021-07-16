@@ -5,21 +5,16 @@ Blueprint module to handle test catalog routes.
 """
 
 # Standard libraries import
-import sys
-import json
-import datetime
 import importlib
 import logging
 
 # Application modules import
 from blueprints import application
-from blueprints.test import blueprint
-from blueprints.__filter__ import FilterForm
+from blueprints.testing import blueprint
 from blueprints.__locale__ import __
 from blueprints.__pagination__ import get_pagination
-from blueprints.__args__ import get_string
 from blueprints.__args__ import get_boolean
-from blueprints.__args__ import set_value
+from blueprints.__args__ import get_string
 from config import EXTENSION_LIST
 from models.test_store import TestStore
 from models.entity.test import Test
@@ -31,43 +26,28 @@ from flask import request
 from flask import url_for
 from flask_wtf import FlaskForm
 from wtforms import StringField
-from wtforms import BooleanField
 from wtforms import SelectField
 from wtforms import SubmitField
 from wtforms import validators
 from flask_login import current_user
 
-
-class CatalogFilterForm(FilterForm):
-	"""
-	This is CatalogFilterForm class to retrieve form data.
-	"""
-	name = StringField('FilterName')
-	extension = StringField('FilterExtension')
-	hide_global = BooleanField('FilterHideGlobal')
-	submit = SubmitField('FilterSubmit')
-
-	def __init__(self) -> 'CatalogFilterForm':
-		"""
-		Initiate object with values from request
-		"""
-		super(CatalogFilterForm, self).__init__('catalog')
-
-
-class CreatorForm(FlaskForm):
-	"""
-	This is CreatorForm class to retrieve form data.
-	"""
-	extension = SelectField('creatorExtension', validators=[validators.DataRequired()])
-	submit = SubmitField('creatorSubmit')
-
-	def __init__(self) -> 'CreatorForm':
-		"""
-		Initiate object with extension
-		"""
-		super(CreatorForm, self).__init__()
-		self.extension.choices = EXTENSION_LIST
-		self.extension.data = request.form.get(self.extension.label.text)
+ALL_EXTENSIONS = 'all-extensions'
+CATALOG_FILTERS = [
+	{
+		'name': 'filterCatalogHideGlobal',
+		'label': {
+			False: 'Hide Global Tasks',
+			True: 'Show Global Tasks'
+		}
+	}
+]
+for extension in [ ALL_EXTENSIONS ] + EXTENSION_LIST:
+	CATALOG_FILTERS += [
+		{
+			'name': 'extension',
+			'label': extension
+		}
+	]
 
 
 class ExtensionOptionsField(StringField):
@@ -97,7 +77,6 @@ class TestForm(FlaskForm):
 	name = StringField('name', validators=[validators.DataRequired()])
 	options = ExtensionOptionsField('options')
 	answer_count = SelectField('answer_count', validators=[validators.DataRequired()])
-	limit_time = SelectField('limit_time', validators=[validators.DataRequired()])
 	submit = SubmitField('submit')
 
 	def __init__(self, extension_module: object, test: object = None) -> 'TestForm':
@@ -108,15 +87,11 @@ class TestForm(FlaskForm):
 		self.answer_count.choices = [
 			('5', '5'), ('10', '10'), ('15', '15'),('25', '25'),('50', '50')
 		]
-		self.limit_time.choices = [
-			('25', 'Slow'), ('50', 'Normal'), ('100', 'Fast')
-		]
 		self.options.extension_module = extension_module
 		if test:
 			self.name.data = test.name
 			self.options.data = test.extension_options
 			self.answer_count.data = str(test.answer_count)
-			self.limit_time.data = str(test.limit_time)
 		else:
 			for field in self:
 				if field.name != 'csrf_token':
@@ -138,96 +113,107 @@ def verify_test_owner(test: Test) -> bool:
 
 
 @blueprint.route('/', methods=('GET', 'POST'))
-@blueprint.route('/catalog/', methods=('GET', 'POST'))
-def get_catalog():
+@blueprint.route('/extension/<extension>/', methods=('GET', 'POST'))
+def get_catalog(extension: str = ALL_EXTENSIONS):
 	"""
-	Return test catalog page.
+	Return testing catalog page.
 	"""
-	# Handle filter form
-	filter = CatalogFilterForm()
-	if filter.is_submit(filter.submit.label.text) and \
-			filter.validate_on_submit(): # Valid post request
-		filter.store_fields()
-		return redirect(filter.url_for_with_fields('test.get_catalog'))
-	filter.define_fields()
-	# Handle creator form
-	creator = CreatorForm()
+	# Filters
+	filters = []
 	if current_user.is_authenticated:
-		if request.form.get('creatorSubmit') and \
-				creator.validate_on_submit(): # Valid post request
-			return redirect(url_for(
-				'test.create', extension=creator.extension.data))
+		start_index = 0
+	else:
+		start_index = 1
+	for filter in CATALOG_FILTERS[start_index: ]:
+		filter_value = get_boolean(filter['name']) or False \
+			if isinstance(filter['label'], dict) else filter['label']
+		filters += [
+			{
+				'name': filter['name'],
+				'label': filter['label'][filter_value] \
+					if isinstance(filter['label'], dict) else filter['label'],
+				'value': filter_value,
+				'url': url_for(
+					'testing.get_catalog',
+					**{
+						filter['name']: not filter_value \
+							if isinstance(filter['label'], dict) else filter_value
+					}
+				)
+			}
+		]
 	# Prepare list data
+	filter_hide_global = filters[0]['value'] \
+		if current_user.is_authenticated else None
 	pagination = get_pagination(
 		'catalog',
 		 TestStore.count_list(
-			filter.name.data,
-			filter.extension.data,
+			None, None if extension == ALL_EXTENSIONS else extension,
 			current_user.get_id(),
-			current_user.get_admin_uid_list() if not filter.hide_global.data else []
+			current_user.get_admin_uid_list() if not filter_hide_global else []
 		)
 	)
-	pagination['endpoint'] = 'test.get_catalog'
+	pagination['endpoint'] = 'testing.get_catalog'
 	pagination['prefix'] = 'catalog'
 	tests =  TestStore.read_list(
 		(pagination['page_index'] - 1) * pagination['per_page'],
 		pagination['per_page'],
-		filter.name.data,
-		filter.extension.data,
+		None, None if extension == ALL_EXTENSIONS else extension,
 		current_user.get_id(),
-		current_user.get_admin_uid_list() if not filter.hide_global.data else []
+		current_user.get_admin_uid_list() if not filter_hide_global else []
 	)
 	return render_template(
-		'test/catalog.html',
-		filter=filter,
-		creator=creator,
+		'testing/catalog.html',
+		filters=filters,
 		tests=tests,
-		pagination=pagination,
-		nav_active='catalog'
+		pagination=pagination
 	)
 
 
-@blueprint.route('/catalog/create/<extension>/', methods=('GET', 'POST'))
-def create(extension: str):
+@blueprint.route('/create/', methods=('GET', 'POST'))
+@blueprint.route('/create/<extension>/', methods=('GET', 'POST'))
+def create(extension: str = None):
 	"""
 	Return create test page.
 	"""
 	if not current_user.is_authenticated:
-		return redirect(url_for('test.get_catalog'))
-	try:
-		extension_module = importlib.import_module('extensions.%s' % extension)
-	except:
-		logging.error('Extension import error', exc_info=1)
-		redirect(url_for('test.get_catalog'))
-	creator = TestForm(extension_module=extension_module)
-	if creator.validate_on_submit(): # Valid post request
-		TestStore.create(
-			creator.name.data,
-			extension,
-			creator.options.data,
-			int(creator.answer_count.data),
-			int(creator.limit_time.data),
-			current_user.get_id()
-		)
-		return redirect(url_for('test.get_catalog'))
+		return redirect(url_for('testing.get_catalog'))
+	if extension is not None:
+		try:
+			extension_module = importlib.import_module('extensions.%s' % extension)
+		except:
+			logging.error('Extension import error', exc_info=1)
+			redirect(url_for('testing.get_catalog'))
+		creator = TestForm(extension_module=extension_module)
+		if creator.validate_on_submit():
+			TestStore.create(
+				creator.name.data,
+				extension,
+				creator.options.data,
+				int(creator.answer_count.data),
+				current_user.get_id()
+			)
+			return redirect(url_for('testing.get_catalog'))
+	else:
+		creator = None
 	return render_template(
-		'test/editor.html',
-		type='create',
+		'testing/editor.html',
+		extensions=EXTENSION_LIST,
+		current_extension=extension,
 		editor=creator,
-		nav_active='catalog'
 	)
 
 
-@blueprint.route('/catalog/update/<uid>/', methods=('GET', 'POST'))
+@blueprint.route('/update/<uid>/', methods=('GET', 'POST'))
 def update(uid: str):
 	"""
-	Return test update page.
+	Return update test page.
 	"""
 	if not current_user.is_authenticated:
-		return redirect(url_for('test.get_catalog'))
+		return redirect(url_for('testing.get_catalog'))
 	test = TestStore.read(uid)
 	if not verify_test_owner(test):
-		return reidrect(url_for('test.get_catalog'))
+		return reidrect(url_for('testing.get_catalog'))
 	try:
 		extension_module = importlib.import_module('extensions.%s' % test.extension)
 	except:
@@ -237,30 +223,30 @@ def update(uid: str):
 		updater = TestForm(extension_module, test)
 	else:
 		updater = TestForm(extension_module)
-	if updater.validate_on_submit(): # Valid post request
+	if updater.validate_on_submit():
 		TestStore.update(
 			uid,
 			updater.name.data,
 			updater.options.data,
-			int(updater.answer_count.data),
-			int(updater.limit_time.data)
+			int(updater.answer_count.data)
 		)
-		return redirect(url_for('test.get_catalog'))
+		return redirect(url_for('testing.get_catalog'))
 	return render_template(
-		'test/editor.html',
-		type='update',
-		editor=updater,
-		nav_active='catalog'
+		'testing/editor.html',
+		current_extension=test.extension,
+		editor=updater
 	)
 
 
-@blueprint.route('/catalog/delete/<uid>/', methods=('GET',))
+@blueprint.route('/delete/<uid>/', methods=('GET',))
 def delete(uid: str):
 	"""
-	Delete test and redirect to test catalog.
+	Delete test and redirect to testing catalog.
 	"""
+	if not current_user.is_authenticated:
+		return redirect(url_for('testing.get_catalog'))
 	test = TestStore.read(uid)
 	if not verify_test_owner(test):
-		return reidrect(url_for('test.get_catalog'))
+		return reidrect(url_for('testing.get_catalog'))
 	TestStore.delete(uid)
-	return redirect(url_for('test.get_catalog'))
+	return redirect(url_for('testing.get_catalog'))

@@ -1,14 +1,13 @@
-
 {%- extends "rating/base.html" -%}
 {% set endpoint = 'rating.get_top' -%}
-{%- block rating_content -%}
+{%- block ratings_content -%}
 	<div class="card w-100 my-3">
 		{% if top_crammers|length %}
 			<ul class="list-group list-group-flush">
 				{%- for name_value, process_count, correct_count, answer_time, total in top_crammers -%}
-					<li class="list-group-item d-flex justify-content-between align-items-start" style="{%- if loop.first -%}background: lightgrey;{%- endif -%}">
+					<li class="list-group-item d-flex justify-content-between align-items-start{%- if loop.index == 1 -%}{{ ' rating-first' }}{%- endif -%}">
 						<div>
-							<div class="d-inline-block mr-3">{{ loop.index }}<span class="small ml-1" style="position: relative; top: -5px;">{{ __('place') }}</div>
+							<div class="d-inline-block mr-3">{{ loop.index }}<span class="small ml-1 rating-place"></span>{{ __('place') }}</div>
 							{{ name_value }}
 						</div>
 						<div class="ml-3">
@@ -30,7 +29,13 @@
 				{%- endfor -%}
 			</ul>
 		{%- else -%}
-			<small class="text-muted w-100 text-center p-3">{{ __('Top 10 empty') }}</small>
+			<ul class="list-group list-group-flush">
+				<li class="list-group-item d-flex justify-content-center align-items-start">
+					<div>
+						{{ __('Top 10 empty') }}
+					</div>
+				</li>
+			</ul>
 		{%- endif -%}
 	</div>
-{%- endblock rating_content -%}
+{%- endblock ratings_content -%}

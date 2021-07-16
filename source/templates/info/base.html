@@ -1,0 +1,19 @@
+{%- set basename = __config('name') -%}
+<div class="position-relative">
+	<div class="modal fade info-page" id="staticInfo" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticInfoLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content bg-gradient-whitesmoke">
+				<div class="p-3 text-center">
+					<div class="modal-title logo d-flex align-items-center justify-content-center" id="staticInfoLabel">
+						<img class="mr-2" src="{{ url_for('static', filename='est_o.png') }}">
+						<div class="mr-2">{{ __(basename) }}</div>
+					</div>
+					<div class="content-delimeter my-3"></div>
+					{%- block info_content -%}
+					{%- endblock info_content -%}
+					<a href="#" data-bs-dismiss="modal" class="btn btn-sm btn-styled btn-styled-light info-page-closer w-50 m-1"><span class="oi oi-x mr-1"></span>{{ __('Close') }}</a>
+				</div>
+		</div>
+		</div>
+	</div>
+</div>

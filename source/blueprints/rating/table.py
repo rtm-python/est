@@ -35,6 +35,7 @@ ALL_EXTENSIONS = 'all-extensions'
 
 
 @blueprint.route('/top/', methods=('GET',))
+@blueprint.route('/top/<period>/', methods=('GET',))
 @blueprint.route('/top/<period>/<extension>/', methods=('GET',))
 def get_top(period: str = ALL_PERIODS, extension: str = ALL_EXTENSIONS):
 	"""
@@ -76,3 +77,20 @@ def get_top(period: str = ALL_PERIODS, extension: str = ALL_EXTENSIONS):
 		subtitle='top 10',
 		info_page=info_page
 	)
+
+
+@application.context_processor
+def get_periods():
+	"""
+	Return periods.
+	"""
+	def _periods() -> object:
+		return __periods()
+	return dict(__periods=__periods)
+
+
+def __periods() -> object:
+	"""
+	Return periods.
+	"""
+	return PERIODS

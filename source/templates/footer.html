@@ -22,19 +22,20 @@
 					</div>		
 				</div>
 				<div class="d-block d-sm-flex text-start">
-					<div class="d-block d-sm-inline-block ml-4 mb-3 text-start">
-						<a class="d-block text-dark" href="#"><strong>{{ __('Testing') }}</strong></a>
-						<a class="d-block text-dark" href="#">{{ __('Arithmetic') }}</a>
-						<a class="d-block text-dark" href="#">{{ __('Clock') }}</a>
+					<div class="d-block d-sm-inline-block ml-5 mb-3 text-start">
+						<a class="d-block text-dark" href="{{ url_for('testing.get_catalog') }}"><strong>{{ __('Testing') }}</strong></a>
+						{%- for extension in __extensions() -%}
+							<a class="d-block text-dark" href="#">{{ __(extension) }}</a>
+						{%- endfor -%}
 					</div>
-					<div class="d-block d-sm-inline-block ml-4 mb-3 text-start">
-						<a class="d-block text-dark" href="#"><strong>{{ __('Ratings') }}</strong></a>
-						<a class="d-block text-dark" href="#">{{ __('Top 10') }} <small class="d-inline-block">{{ __('30 Days') }}</small></a>
-						<a class="d-block text-dark" href="#">{{ __('Top 10') }} <small class="d-inline-block">{{ __('7 Days') }}</small></a>
-						<a class="d-block text-dark" href="#">{{ __('Top 10') }} <small class="d-inline-block">{{ __('Today') }}</small></a>
-						<a class="d-block text-dark" href="#">{{ __('Personal') }} <small class="d-inline-block">{{ __('Crammers') }}</small></a>
-						<a class="d-block text-dark" href="#">{{ __('Personal') }} <small class="d-inline-block">{{ __('Passed Tests') }}</small></a>
-						<a class="d-block text-dark" href="#">{{ __('Personal') }} <small class="d-inline-block">{{ __('Correct Answers') }}</small></a>
+					<div class="d-block d-sm-inline-block ml-5 mb-3 text-start">
+						<a class="d-block text-dark" href="{{ url_for('rating.get_top') }}"><strong>{{ __('Ratings') }}</strong></a>
+						{%- for period in __periods() -%}
+							<a class="d-block text-dark" href="{{ url_for('rating.get_top', period=period) }}">{{ __('Top 10') }} <small class="d-inline-block">{{ __(period) }}</small></a>
+						{%- endfor -%}
+						{%- for criteria in __criterias() -%}
+							<a class="d-block text-dark" href="{{ url_for('rating.get_chart', criteria=criteria) }}">{{ __('Personal') }} <small class="d-inline-block">{{ __(criteria) }}</small></a>
+						{%- endfor -%}
 					</div>
 				</div>
 			</div>

@@ -12,6 +12,7 @@ import json
 # Application modules import
 from config import CONFIG
 from config import UrlPrefix
+from config import EXTENSION_LIST
 
 # Additional libraries import
 from flask import Flask
@@ -98,3 +99,20 @@ def __config(key: str) -> object:
 	Return configuration data by key.
 	"""
 	return CONFIG.get(key)
+
+
+@application.context_processor
+def get_extensions():
+	"""
+	Return extensions.
+	"""
+	def _extensions() -> object:
+		return __extensions()
+	return dict(__extensions=__extensions)
+
+
+def __extensions() -> object:
+	"""
+	Return extensions.
+	"""
+	return EXTENSION_LIST

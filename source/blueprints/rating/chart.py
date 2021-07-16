@@ -32,15 +32,16 @@ ALL_EXTENSIONS = 'all-extensions'
 
 
 @blueprint.route('/personal/', methods=('GET',))
-@blueprint.route('/personal/<extension>/<criteria>/', methods=('GET',))
-def get_chart(extension: str = ALL_EXTENSIONS, criteria: str = CRITERIAS[0]):
+@blueprint.route('/personal/<criteria>/', methods=('GET',))
+@blueprint.route('/personal/<criteria>/<extension>/', methods=('GET',))
+def get_chart(criteria: str = CRITERIAS[0], extension: str = ALL_EXTENSIONS):
 	"""
 	Return personal chart page.
 	"""
 	if session.get('timezone_offset') is None:
 		return redirect(url_for('testing.get_catalog'))
-	if (extension not in EXTENSION_LIST and extension != ALL_EXTENSIONS) or \
-			criteria not in CRITERIAS:
+	if criteria not in CRITERIAS or \
+			(extension not in EXTENSION_LIST and extension != ALL_EXTENSIONS):
 		return redirect(url_for('rating.get_chart'))
 	until = datetime.datetime.utcnow() + datetime.timedelta(days=1) - \
 		datetime.timedelta(minutes=session['timezone_offset'])
@@ -79,11 +80,28 @@ def get_chart(extension: str = ALL_EXTENSIONS, criteria: str = CRITERIAS[0]):
 			name_data['value'][date_index_dict[process_date_local]] = correct_count
 	return render_template(
 		'rating/chart.html',
-		extensions=[ ALL_EXTENSIONS ] + EXTENSION_LIST,
-		current_extension=extension,
 		criterias=CRITERIAS,
 		current_criteria=criteria,
+		extensions=[ ALL_EXTENSIONS ] + EXTENSION_LIST,
+		current_extension=extension,
 		days=days,
 		data=data,
 		subtitle='personal'
 	)
+
+
+@application.context_processor
+def get_criterias():
+	"""
+	Return criterias.
+	"""
+	def _criterias() -> object:
+		return __criterias()
+	return dict(__criterias=__criterias)
+
+
+def __criterias() -> object:
+	"""
+	Return criterias.
+	"""
+	return CRITERIAS

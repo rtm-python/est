@@ -338,6 +338,5 @@ def get_crammers_expression():
 	"""
 	Return result calculation expression.
 	"""
-	return 1.0 * Process.correct_count / Process.answer_count * 100 * \
-		func.min(1.0 * Process.limit_time / Process.answer_time, 1.0) * \
-			Process.answer_count / Process.answer_time
+	return 1.0 * Process.correct_count / Process.answer_count * \
+		Process.limit_time / Process.answer_time * Process.correct_count

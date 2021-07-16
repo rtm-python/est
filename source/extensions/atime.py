@@ -9,8 +9,8 @@ import json
 from random import randint
 
 # Performance constants
-DEFINITION_TIME_PER_TASK = 3.0
-CALCULATION_TIME_PER_TASK = 9.0
+DEFINITION_TIME_PER_TASK = 9.0
+CALCULATION_TIME_PER_TASK = 20.0
 
 # Default constants
 MAX_MINUTES = 24 * 60

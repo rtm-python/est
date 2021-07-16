@@ -25,7 +25,7 @@
 					<div class="d-block d-sm-inline-block ml-5 mb-3 text-start">
 						<a class="d-block text-dark" href="{{ url_for('testing.get_catalog') }}"><strong>{{ __('Testing') }}</strong></a>
 						{%- for extension in __extensions() -%}
-							<a class="d-block text-dark" href="#">{{ __(extension) }}</a>
+							<a class="d-block text-dark" href="{{ url_for('testing.get_catalog', extension=extension) }}">{{ __(extension) }}</a>
 						{%- endfor -%}
 					</div>
 					<div class="d-block d-sm-inline-block ml-5 mb-3 text-start">

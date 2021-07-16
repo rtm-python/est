@@ -14,6 +14,7 @@ from blueprints.testing import blueprint
 from blueprints.__locale__ import __
 from blueprints.__pagination__ import get_pagination
 from blueprints.__args__ import get_boolean
+from blueprints.__args__ import get_string
 from config import EXTENSION_LIST
 from models.test_store import TestStore
 from models.entity.test import Test
@@ -30,7 +31,7 @@ from wtforms import SubmitField
 from wtforms import validators
 from flask_login import current_user
 
-
+ALL_EXTENSIONS = 'all-extensions'
 CATALOG_FILTERS = [
 	{
 		'name': 'filterCatalogHideGlobal',
@@ -40,6 +41,13 @@ CATALOG_FILTERS = [
 		}
 	}
 ]
+for extension in [ ALL_EXTENSIONS ] + EXTENSION_LIST:
+	CATALOG_FILTERS += [
+		{
+			'name': 'extension',
+			'label': extension
+		}
+	]
 
 
 class ExtensionOptionsField(StringField):
@@ -105,7 +113,8 @@ def verify_test_owner(test: Test) -> bool:
 
 
 @blueprint.route('/', methods=('GET', 'POST'))
-def get_catalog():
+@blueprint.route('/extension/<extension>/', methods=('GET', 'POST'))
+def get_catalog(extension: str = ALL_EXTENSIONS):
 	"""
 	Return testing catalog page.
 	"""
@@ -116,15 +125,20 @@ def get_catalog():
 	else:
 		start_index = 1
 	for filter in CATALOG_FILTERS[start_index: ]:
-		filter_value = get_boolean(filter['name']) or False
+		filter_value = get_boolean(filter['name']) or False \
+			if isinstance(filter['label'], dict) else filter['label']
 		filters += [
 			{
 				'name': filter['name'],
-				'label': filter['label'][filter_value],
+				'label': filter['label'][filter_value] \
+					if isinstance(filter['label'], dict) else filter['label'],
 				'value': filter_value,
 				'url': url_for(
 					'testing.get_catalog',
-					**{ filter['name']: not filter_value }
+					**{
+						filter['name']: not filter_value \
+							if isinstance(filter['label'], dict) else filter_value
+					}
 				)
 			}
 		]
@@ -134,7 +148,8 @@ def get_catalog():
 	pagination = get_pagination(
 		'catalog',
 		 TestStore.count_list(
-			None, None, current_user.get_id(),
+			None, None if extension == ALL_EXTENSIONS else extension,
+			current_user.get_id(),
 			current_user.get_admin_uid_list() if not filter_hide_global else []
 		)
 	)
@@ -143,7 +158,8 @@ def get_catalog():
 	tests =  TestStore.read_list(
 		(pagination['page_index'] - 1) * pagination['per_page'],
 		pagination['per_page'],
-		None, None, current_user.get_id(),
+		None, None if extension == ALL_EXTENSIONS else extension,
+		current_user.get_id(),
 		current_user.get_admin_uid_list() if not filter_hide_global else []
 	)
 	return render_template(

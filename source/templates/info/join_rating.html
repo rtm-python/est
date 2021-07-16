@@ -1,0 +1,8 @@
+{%- extends "info/base.html" -%}
+{% block info_content %}
+	<div class="text-center my-2">
+		<h4 class="d-inline-block">{{ __('Do you want to get') }}<strong class="d-inline-block mx-2" style="color: orange;">{{ __('into the top 10') }}</strong>?</h4>
+		<p>{{ __('Just enter your account without any registration and earn crammers as more as possible by passing tests...') }}</p>
+	</div>
+	<a href="{{ url_for('base.sign_in') }}" class="btn btn-sm btn-styled btn-styled-red w-50 m-1"><span class="oi oi-key mr-1"></span>{{ __('Enter') }}</a>
+{% endblock info_content %}

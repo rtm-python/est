@@ -8,6 +8,8 @@ $(window).on("load", function() {
 		e.preventDefault();
 		postPlayerForm($(this));
 	});
+	$(".info-page").modal("show");
+	$(".info-page-closer").on("click", function(){ $(".info-page").modal("hide"); });
 });
 
 $(window).on("resize", function() {

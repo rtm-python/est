@@ -60,14 +60,12 @@ def get_top(period: str = ALL_PERIODS, extension: str = ALL_EXTENSIONS):
 		0, 10, None if extension == ALL_EXTENSIONS else extension,
 		None, None, None, get_crammers_expression(), since, until
 	)
+	info_page = None
 	if not current_user.is_authenticated:
 		session['anonymous-rating'] = (session.get('anonymous-rating') or 0) + 1
-		if session['anonymous-rating'] > 5:
+		if session['anonymous-rating'] > 5 or True:
 			del session['anonymous-rating']
-			session['alert'] = {
-				'glyph': 'key', 'url': url_for('base.sign_in'),
-				'message': 'Do you want to enter crammers top 10 rating?'
-			}
+			info_page = render_template('info/join_rating.html')
 	return render_template(
 		'rating/table.html',
 		periods=[ ALL_PERIODS ] + PERIODS,
@@ -75,5 +73,6 @@ def get_top(period: str = ALL_PERIODS, extension: str = ALL_EXTENSIONS):
 		current_period=period,
 		current_extension=extension,
 		top_crammers=top_crammers,
-		subtitle='top 10'
+		subtitle='top 10',
+		info_page=info_page
 	)

@@ -17,7 +17,7 @@
 			<div id="nameGroup" class="d-inline-block text-center">
 				<div class="collapse {{ list_show }} collapse-affect-background" id="collapse-name-list" data-parent="#nameGroup">
 					<div class="my-3">
-						<h5>{{ __('Names') }}</h5>
+						<h5>{{ __('Usernames') }}</h5>
 						{%- for name_uid, name_value in names -%}
 							<div class="d-inline-block col-10 col-md-8 my-2">
 								<a href="{{ url_for('base.select_name', uid=name_uid) }}" class="btn btn-styled btn-styled-green w-100">{{ name_value }}</a>
@@ -25,18 +25,18 @@
 						{%- endfor -%}
 					</div>
 					<div class="d-inline-block col-10 col-md-8 my-2">
-						<a class="btn btn-sm btn-styled btn-styled-light w-100" href="#" data-toggle="collapse" data-target="#collapse-name-create" aria-expanded="true" aria-controls="collapse-name-create">{{ __('Create Name') }}</a>
+						<a class="btn btn-sm btn-styled btn-styled-light w-100" href="#" data-toggle="collapse" data-target="#collapse-name-create" aria-expanded="true" aria-controls="collapse-name-create">{{ __('Create Username') }}</a>
 						<a class="btn btn-sm btn-styled btn-styled-red w-100 mt-1" href="#" data-toggle="collapse" data-target="#collapse-name-exit" aria-expanded="true" aria-controls="collapse-name-exit">{{ __('Exit Account') }}</a>
 					</div>
 				</div>
 				<div class="collapse {{ name_show }} collapse-affect-background" id="collapse-name-create" data-parent="#nameGroup">
 					<div class="my-3">
-						<h5>{{ __('Create Name') }}</h5>
+						<h5>{{ __('Create Username') }}</h5>
 						<form id="namerForm" method="post" actions="">
 							{{ namer.csrf_token }}
 							<div class="d-inline-block col-10 col-md-8 my-2">
-								<small class="text-muted">{{ __('Name') }}</small>
-								<input autofocus id="value" type="text" class="form-control form-control-sm text-center{%- if namer.value.errors -%}{{ ' is-invalid' }}{%- endif -%}" id="{{ namer.value.label.text }}" name="{{ namer.value.label.text }}" placeholder="{{ __('Name') }}" value="{{ namer.value.data|default('', True) }}"/>
+								<small class="text-muted">{{ __('Username') }}</small>
+								<input autofocus id="value" type="text" class="form-control form-control-sm text-center{%- if namer.value.errors -%}{{ ' is-invalid' }}{%- endif -%}" id="{{ namer.value.label.text }}" name="{{ namer.value.label.text }}" placeholder="{{ __('Username') }}" value="{{ namer.value.data|default('', True) }}"/>
 								{%- for error in namer.value.errors -%}
 									<div class="invalid-feedback">
 										{{ error }}
@@ -56,7 +56,7 @@
 				</div>
 				<div class="collapse collapse-affect-background" id="collapse-name-exit" data-parent="#nameGroup">
 					<div class="my-3">
-						<h5>{{ __('Exit Account') }}</h5>
+						<h5 class="my-2">{{ __('Exit Account') }}</h5>
 						<div class="d-inline-block col-10 col-md-8">
 							<a href="{{ url_for('base.sign_out') }}" class="btn btn-sm btn-styled btn-styled-red w-100"><span class="oi oi-key mr-1"></span>{{ __('Exit') }}</a>
 						</div>

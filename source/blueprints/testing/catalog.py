@@ -36,8 +36,8 @@ CATALOG_FILTERS = [
 	{
 		'name': 'filterCatalogHideGlobal',
 		'label': {
-			False: 'Hide Global Tasks',
-			True: 'Show Global Tasks'
+			False: 'Hide Global Tests',
+			True: 'Show Global Tests'
 		}
 	}
 ]

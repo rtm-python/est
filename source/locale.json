@@ -67,17 +67,29 @@
 		"endpoint": null,
 		"ru": "Скрыть общие тесты"
 	},
+	"Show Global Tests": {
+		"endpoint": null,
+		"ru": "Показать общие тесты"
+	},
 	"Hide Others": {
 		"endpoint": null,
 		"ru": "Скрыть других"
+	},
+	"Show Others": {
+		"endpoint": null,
+		"ru": "Показать других"
 	},
 	"Hide Others Processes": {
 		"endpoint": null,
 		"ru": "Скрыть тестирование других"
 	},
-	"Hide Completed Processes": {
+	"Hide Completed": {
 		"endpoint": null,
-		"ru": "Скрыть завершенные процессы"
+		"ru": "Скрыть завершенные"
+	},
+	"Show Completed": {
+		"endpoint": null,
+		"ru": "Показать завершенные"
 	},
 	"Apply": {
 		"endpoint": null,
@@ -95,6 +107,14 @@
 	"Create": {
 		"endpoint": null,
 		"ru": "Создать"
+	},
+	"Edit": {
+		"endpoint": null,
+		"ru": "Редактировать"
+	},
+	"History": {
+		"endpoint": null,
+		"ru": "История"
 	},
 
 	"Page": {
@@ -184,6 +204,10 @@
 		"ru": "секунд"
 	},
 
+	"Incomplete": {
+		"endpoint": null,
+		"ru": "Незавершенный"
+	},
 	"Completed": {
 		"endpoint": null,
 		"ru": "Завершено"
@@ -204,10 +228,59 @@
 		"endpoint": null,
 		"ru": "Средний результат"
 	},
+	"Test": {
+		"endpoint": null,
+		"ru": "Тест"
+	},
 
+	"Sound": {
+		"endpoint": null,
+		"ru": "Звук"
+	},
+	"On": {
+		"endpoint": null,
+		"ru": "Включен"
+	},
+	"Off": {
+		"endpoint": null,
+		"ru": "Выключен"
+	},
+	"Show": {
+		"endpoint": null,
+		"ru": "Показать"
+	},
+	"Answers": {
+		"endpoint": null,
+		"ru": "Ответы"
+	},
+	"Nothing": {
+		"endpoint": null,
+		"ru": "Ничего"
+	},
+	"Hold": {
+		"endpoint": null,
+		"ru": "Приостановить"
+	},
+	"Incorrect": {
+		"endpoint": null,
+		"ru": "Неправильно"
+	},
+
+	"Period": {
+		"endpoint": null,
+		"ru": "Период"
+	},
+	"Criteria": {
+		"endpoint": null,
+		"ru": "Критерий"
+	},
 	"Select Extension": {
 		"endpoint": null,
 		"ru": "Выберите дополнение"
+	},
+	"Extensions": {
+		"endpoint": null,
+		"ru": "Дополнения"
 	},
 	"Choose": {
 		"endpoint": null,
@@ -405,24 +478,6 @@
 		"ru": "Пустой ПИН"
 	},
 	
-
-	"Select user below or create new user": {
-		"endpoint": null,
-		"ru": "Выберите пользователя ниже или создайте нового пользователя"
-	},
-	"Update": {
-		"endpoint": null,
-		"ru": "Обновить"
-	},
-	"Do you really want to delete user?": {
-		"endpoint": null,
-		"ru": "Вы действительно желаете удалить пользователя?"
-	},
-	"Switch": {
-		"endpoint": null,
-		"ru": "Переключиться"
-	},
-	
 	"Crammers": {
 		"endpoint": null,
 		"ru": "Зубрилки"
@@ -431,8 +486,18 @@
 		"endpoint": null,
 		"ru": "Топ 10"
 	},
+	"top 10": {
+		"endpoint": null,
+		"en": "Top 10",
+		"ru": "Топ 10"
+	},
 	"Personal": {
 		"endpoint": null,
+		"ru": "Персональный"
+	},
+	"personal": {
+		"endpoint": null,
+		"en": "Personal",
 		"ru": "Персональный"
 	},
 	"all-days": {
@@ -501,11 +566,68 @@
 		"ru": "Ошибка"
 	},
 
+	"Usernames": {
+		"endpoint": null,
+		"ru": "Имена пользователей"
+	},
+	"Username": {
+		"endpoint": null,
+		"ru": "Имя пользователя"
+	},
+	"Create Username": {
+		"endpoint": null,
+		"ru": "Создать имя пользователя"
+	},
+	"Exit Account": {
+		"endpoint": null,
+		"ru": "Выйти из учетной записи"
+	},
+	"Exit": {
+		"endpoint": null,
+		"ru": "Выйти"
+	},
+	"Enter": {
+		"endpoint": null,
+		"ru": "Войти"
+	},
+	"Find chatbot": {
+		"endpoint": null,
+		"ru": "Найти чатбот"
+	},
+	"Send request": {
+		"endpoint": null,
+		"ru": "Отправить запрос"
+	},
+	"Submit PIN": {
+		"endpoint": null,
+		"ru": "Отправить ПИН"
+	},
+
 	"Thank you for your feedback!": {
 		"endpoint": null,
 		"ru": "Благодарим Вас за отзыв!"
 	},
-
+	"Website for kids to help improve basic knowledge, logical thinking and skills in arithmetic, understanding of time, foreign languages, etc.": {
+		"endpoint": null,
+		"ru": "Интернет-ресурс для детей чтобы помочь улучшить основные знания, логическое мышление и навыки по арифметике, пониманию времени, иностранным языкам и др."
+	},
+	"Please, help us to develop and maintain this website.": {
+		"endpoint": null,
+		"ru": "Пожалуйста, помогите нам развивать и поддерживать этот Интернет-ресурс."
+	},
+	"Send Feedback": {
+		"endpoint": null,
+		"ru": "Отправить отзыв"
+	},
+	"Your Name": {
+		"endpoint": null,
+		"ru": "Ваше имя"
+	},
+	"Contact": {
+		"endpoint": null,
+		"ru": "Контакты"
+	},
+	
 	"Answer should be a number.": {
 		"endpoint": null,
 		"ru": "Ответ должен быть числом."

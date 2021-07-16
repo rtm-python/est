@@ -38,7 +38,7 @@ def get_chart(extension: str = ALL_EXTENSIONS, criteria: str = CRITERIAS[0]):
 	Return personal chart page.
 	"""
 	if session.get('timezone_offset') is None:
-		return redirect(url_for('base.get_home'))
+		return redirect(url_for('testing.get_catalog'))
 	if (extension not in EXTENSION_LIST and extension != ALL_EXTENSIONS) or \
 			criteria not in CRITERIAS:
 		return redirect(url_for('rating.get_chart'))

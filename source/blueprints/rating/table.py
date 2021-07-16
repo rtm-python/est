@@ -41,7 +41,7 @@ def get_top(period: str = ALL_PERIODS, extension: str = ALL_EXTENSIONS):
 	Return top rating table page.
 	"""
 	if session.get('timezone_offset') is None:
-		return redirect(url_for('base.get_home'))
+		return redirect(url_for('testing.get_catalog'))
 	if (period not in PERIODS and period != ALL_PERIODS) or \
 			(extension not in EXTENSION_LIST and extension != ALL_EXTENSIONS):
 		return redirect(url_for('rating.get_top'))

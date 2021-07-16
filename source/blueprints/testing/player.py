@@ -90,7 +90,7 @@ def start(uid: str):
 	Start testing and redirect to testing player page.
 	"""
 	if session.get('timezone_offset') is None:
-		return redirect(url_for('base.get_home'))
+		return redirect(url_for('testing.get_catalog'))
 	test = TestStore.read(uid)
 	if test is None:
 		return redirect(url_for('testing.get_catalog'))
@@ -119,7 +119,7 @@ def play(uid: str):
 	Return testing player page.
 	"""
 	if session.get('timezone_offset') is None:
-		return redirect(url_for('base.get_home'))
+		return redirect(url_for('testing.get_history'))
 	process, test, _, _ = ProcessStore.read_with_test(uid)
 	if not verify_process_owner(process):
 		if request.method == 'POST' and request.form.get('ajax'):
@@ -208,7 +208,7 @@ def hold(uid: str):
 	Hold testing and redirect to testing catalog page.
 	"""
 	if session.get('timezone_offset') is None:
-		return redirect(url_for('base.get_home'))
+		return redirect(url_for('testing.get_history'))
 	process, test, _, _ = ProcessStore.read_with_test(uid)
 	if not verify_process_owner(process):
 		return redirect(url_for('testing.get_catalog'))

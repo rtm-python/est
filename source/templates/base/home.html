@@ -77,11 +77,6 @@
 	</div>
 	<script type="text/javascript">
 		$(window).on("load", function() {
-			var timezoneOffset = (new Date()).getTimezoneOffset();
-			if (timezoneOffset.toString() != "{{ session.get('timezone_offset') }}") {
-				postTimezoneOffset((new Date()).getTimezoneOffset());
-			}
-
 			$(".collapse-affect-background").on('shown.bs.collapse', function(){
 				cardWidth = 0;
 				initRotatedBackgroundCards();

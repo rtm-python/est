@@ -7,6 +7,7 @@ Blueprint module to handle account routes.
 # Standard libraries import
 import secrets
 import logging
+import datetime
 
 # Application modules import
 from blueprints import application
@@ -360,3 +361,29 @@ def sign_out():
 	if current_user.is_authenticated:
 		logout_user()
 	return redirect(url_for('base.get_home'))
+
+
+@blueprint.route('/timezone/', methods=('POST',))
+def set_timezone():
+	"""
+	Set timezone for session.
+	"""
+	try:
+		session['timezone_offset'] = int(request.form.get('timezoneOffset'))
+		utc_now = datetime.datetime.utcnow()
+		return {
+			'status': 'ok',
+			'message': {
+				'text': 'Timezone for session initiated successfully',
+				'utc': utc_now,
+				'local': utc_now - datetime.timedelta(minutes=session['timezone_offset'])
+			}
+		}
+	except:
+		pass
+	return {
+		'status': 'error',
+		'message': {
+			'text': 'Timezone initiation error'
+		}
+	}

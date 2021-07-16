@@ -99,17 +99,19 @@ function setShow(state) {
 	$("#collapse-show-frame").collapse("toggle");
 }
 
-function postTimezoneOffset(timezoneOffset) {
-	$.ajax({
-		type: "post",
-		async: false,
-		url: "/timezone",
-		data: "timezoneOffset=" + timezoneOffset.toString(),
-		success: function (data, textStatus, request) {
-			console.log(timezoneOffset);
-			console.log(data);
-		}
-	});
+function initTimezoneOffset(sessionTimezoneOffset) {
+	var timezoneOffset = (new Date()).getTimezoneOffset();
+	console.log(timezoneOffset.toString());
+	console.log(sessionTimezoneOffset);
+	if (timezoneOffset.toString() != sessionTimezoneOffset) {
+		$.ajax({
+			type: "post",
+			async: false,
+			url: "/timezone",
+			data: "timezoneOffset=" + timezoneOffset.toString(),
+			success: function (data, textStatus, request) { console.log(data); }
+		});
+	}
 }
 
 function localizeTimestamp() {

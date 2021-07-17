@@ -540,6 +540,14 @@
 		"en": "Correct Answers",
 		"ru": "Правильные ответы"
 	},
+	"Current Task": {
+		"endpoint": null,
+		"ru": "Текущее задание"
+	},
+	"Tasks Left": {
+		"endpoint": null,
+		"ru": "Заданий осталось"
+	},
 	"Top 10 empty": {
 		"endpoint": null,
 		"ru": "Топ 10 пуст"
@@ -627,7 +635,20 @@
 		"endpoint": null,
 		"ru": "Контакты"
 	},
-	
+
+	"Do you want to get": {
+		"endpoint": null,
+		"ru": "Хочешь попасть"
+	},
+	"into the top 10": {
+		"endpoint": null,
+		"ru": "в Топ 10"
+	},
+	"Just enter your account without any registration and earn crammers as more as possible by passing tests...": {
+		"endpoint": null,
+		"ru": "Просто войди под учетной записью без регистрации и проходя тестирование зарабатывай зубрилки столько сколько получится..."
+	},
+
 	"Answer should be a number.": {
 		"endpoint": null,
 		"ru": "Ответ должен быть числом."

@@ -6,7 +6,21 @@
 			{%- include 'testing/form.html' -%}
 		</form>
 	</div>
-	<div class="content-delimeter my-3"></div>
+	<!-- <div class="content-delimeter my-3"></div> -->
+	<div class="my-4">
+		<div class="d-flex justify-content-between">
+			<small class="player-progress-current">{{ __('Current Task') }}</small>
+			<small class="player-progress-left">{{ __('Tasks Left') }}</small>
+		</div>
+		<div class="progress player-progress">
+			{%- set progress_percent_value = (process.answer_count + 1) / test.answer_count * 100  -%}
+			<div id="playerProgress" class="progress-bar bg-warning" role="progressbar" style="width: {{ progress_percent_value }}%;" aria-valuenow="{{ progress_percent_value }}" aria-valuemin="0" aria-valuemax="100"></div>
+		</div>
+		<div class="d-flex justify-content-between">
+			<small id="playerProgressCurrent" class="player-progress-current">{{ process.answer_count + 1 }}</small>
+			<small id="playerProgressLeft" class="player-progress-left">{{ test.answer_count - process.answer_count - 1 }}</small>
+		</div>
+	</div>
 	<div class="d-inline text-center">
 		<div id="soundGroup" class="d-inline-block text-center my-1">
 			<div class="collapse show" id="collapse-sound" data-parent="#soundGroup">

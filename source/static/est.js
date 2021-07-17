@@ -69,8 +69,13 @@ function postPlayerForm(el) {
 				if (response.redirect) location.pathname = response.redirect;
 				if (response.form) $(el).html(response.form);
 				if (response.passed) {
-					$("#passed-tasks").prepend(response.passed);
+					$("#passedTasks").prepend(response.passed);
 					if (sound_state) $("#" + response.audio)[0].play();
+				}
+				if (response.progress) {
+					$("#playerProgress").attr("style", "width: " + response.progress.percent + "%;");
+					$("#playerProgressCurrent").html(response.progress.current);
+					$("#playerProgressLeft").html(response.progress.left);
 				}
 				if (response.form || response.answer) if (play) play();
 			} 

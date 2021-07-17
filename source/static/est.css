@@ -377,3 +377,15 @@ a.text-dark:hover {
 	color: whitesmoke !important;
 	text-decoration: none;
 }
+
+.player-progress {
+	height: 3px;
+}
+
+.player-progress-current {
+	color: orange;	
+}
+
+.player-progress-left {
+	color: lightgrey;	
+}

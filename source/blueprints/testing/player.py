@@ -189,6 +189,11 @@ def play(uid: str):
 				test=test,
 				passed_task=passed_tasks[0]
 			),
+			'progress': {
+				'percent': (process.answer_count + 1) / test.answer_count * 100,
+				'current': process.answer_count + 1,
+				'left': test.answer_count - process.answer_count - 1
+			},
 			'audio': player_audio
 		}
 	return render_template(

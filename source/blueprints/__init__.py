@@ -85,6 +85,23 @@ def __dict(text: str) -> dict:
 
 
 @application.context_processor
+def merge_dictionaries():
+	"""
+	Return merged dictionaries.
+	"""
+	def _merge(d1: dict, d2, dict) -> dict:
+		return __merge(d1, d2)
+	return dict(__merge=__merge)
+
+
+def __merge(d1: dict, d2: dict) -> dict:
+	"""
+	Return merged dictionaries.
+	"""
+	return { **d1, **d2 }
+
+
+@application.context_processor
 def get_config():
 	"""
 	Return configuration data by key.

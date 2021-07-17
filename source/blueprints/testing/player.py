@@ -309,7 +309,8 @@ def get_history(uid: str):
 			name.uid if name is not None else None
 		)
 	)
-	pagination['endpoint'] = 'test.get_process'
+	pagination['endpoint'] = 'testing.get_history'
+	pagination['pre_kwargs'] = { 'uid': uid }
 	pagination['prefix'] = 'process'
 	processes = ProcessStore.read_list(
 		(pagination['page_index'] - 1) * pagination['per_page'],

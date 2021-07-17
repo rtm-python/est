@@ -24,11 +24,11 @@
 		<div>
 			<div class="m-2">{{ __('Page') }}:</div>
 			{%- if pagination.page_index > 1 -%}
-				{%- set pagination_kwargs = { '%sPageIndex' % pagination.prefix: pagination.page_index - 1 } -%}
+				{%- set pagination_kwargs = __merge(pagination.pre_kwargs, { '%sPageIndex' % pagination.prefix: pagination.page_index - 1 }) -%}
 				<a href="{{ url_for(pagination.endpoint, **pagination_kwargs) }}" class="btn btn-sm btn-styled btn-styled-light m-1"><span class="oi oi-chevron-left"></span></a>
 			{%- endif -%}
 			{%- if pagination.page_index < pagination.page_count -%}
-				{%- set pagination_kwargs = { '%sPageIndex' % pagination.prefix: pagination.page_index + 1 } -%}
+				{%- set pagination_kwargs = __merge(pagination.pre_kwargs, { '%sPageIndex' % pagination.prefix: pagination.page_index + 1 }) -%}
 				<a href="{{ url_for(pagination.endpoint, **pagination_kwargs) }}" class="btn btn-sm btn-styled btn-styled-light m-1"><span class="oi oi-chevron-right"></span></a>
 			{%- endif -%}
 			{%- if pagination.page_count <= 1 -%}

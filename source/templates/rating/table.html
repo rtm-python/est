@@ -1,11 +1,16 @@
 {%- extends "rating/base.html" -%}
-{% set endpoint = 'rating.get_top' -%}
+{%- set endpoint = 'rating.get_top' -%}
+{%- if user_crammers|default('', True) -%}
+	{%- set place = user_crammers[0] -%}
+{%- else -%}
+	{%- set place = 0 -%}
+{%- endif -%}
 {%- block ratings_content -%}
 	<div class="card w-100 my-3">
 		{% if top_crammers|length %}
 			<ul class="list-group list-group-flush">
 				{%- for name_value, process_count, correct_count, answer_time, total in top_crammers -%}
-					<li class="list-group-item d-flex justify-content-between align-items-start{%- if loop.index == 1 -%}{{ ' rating-first' }}{%- endif -%}">
+					<li class="list-group-item d-flex justify-content-between align-items-start{%- if loop.index == 1 -%}{{ ' rating-first' }}{%- endif -%}{%- if loop.index == place -%}{{ ' rating-user' }}{%- endif -%}">
 						<div>
 							<div class="d-inline-block mr-3">{{ loop.index }}<span class="small ml-1 rating-place"></span>{{ __('place') }}</div>
 							{{ name_value }}
@@ -38,4 +43,32 @@
 			</ul>
 		{%- endif -%}
 	</div>
+	{%- if place > 10 -%}
+		<div class="card w-100 my-3">
+			<ul class="list-group list-group-flush">
+				{%- set _, name_value, process_count, correct_count, answer_time, total = user_crammers -%}
+				<li class="list-group-item d-flex justify-content-between align-items-start rating-user">
+					<div>
+						<div class="d-inline-block mr-3">{{ place }}<span class="small ml-1 rating-place"></span>{{ __('place') }}</div>
+						{{ name_value }}
+					</div>
+					<div class="ml-3">
+						<div class="d-none d-md-inline-block small text-muted">
+							<div class="d-inline-block mr-5">
+								{{ process_count }}
+								<span class="ml-1">{{  __('passed tests') }}</span>
+							</div>
+							<div class="d-inline-block mr-5">
+								{{ correct_count }}
+								<span class="ml-1">{{  __('correct answers') }}</span>
+							</div>
+						</div>
+						<div class="d-inline-block">
+							{{ total }}
+							<span class="small">{{ __('crammers') }}</span></div>
+					</div>
+				</li>
+			</ul>
+		</div>
+	{%- endif -%}
 {%- endblock ratings_content -%}

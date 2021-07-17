@@ -62,11 +62,18 @@ def get_top(period: str = ALL_PERIODS, extension: str = ALL_EXTENSIONS):
 		None, None, None, get_crammers_expression(), since, until
 	)
 	info_page = None
+	user_crammers = None
 	if not current_user.is_authenticated:
 		session['anonymous-rating'] = (session.get('anonymous-rating') or 0) + 1
 		if session['anonymous-rating'] > 5:
 			del session['anonymous-rating']
 			info_page = render_template('info/join_rating.html')
+	elif current_user.get_name() is not None:
+		user_crammers = ProcessStore.get_user_crammers(
+			None if extension == ALL_EXTENSIONS else extension,
+			None, None, current_user.get_name().uid,
+			get_crammers_expression(), since, until
+		)
 	return render_template(
 		'rating/table.html',
 		periods=[ ALL_PERIODS ] + PERIODS,
@@ -75,7 +82,8 @@ def get_top(period: str = ALL_PERIODS, extension: str = ALL_EXTENSIONS):
 		current_extension=extension,
 		top_crammers=top_crammers,
 		subtitle='top 10',
-		info_page=info_page
+		info_page=info_page,
+		user_crammers=user_crammers
 	)
 
 

@@ -256,6 +256,44 @@ class ProcessStore(Store):
 			pre_local.c.process_modified_local
 		).all()
 
+	@staticmethod
+	def get_user_crammers(filter_extension: str,
+												filter_user_uid: str,
+												filter_anonymous_token: str,
+												filter_name_uid: str,
+												crammers_expression,
+												since: datetime.datetime,
+												until: datetime.datetime) -> (int, int):
+		pre = _get_crammers_subquery(
+			filter_extension, None, None, None,
+			crammers_expression, since, until
+		)
+		top = database.session.query(
+			pre.c.name_uid.label('name_uid'),
+			pre.c.name_value.label('name'),
+			func.count(pre.c.process_id).label('process_count'),
+			func.sum(pre.c.process_correct_count).label('correct_count'),
+			func.sum(pre.c.process_answer_time).label('answer_time'),
+			func.sum(pre.c.crammers).label('total'),
+			pre.c.process_modified_local.label('process_modified_local'),
+		).group_by(
+			pre.c.name_id
+		).subquery()
+		row = database.session.query(
+			top.c.name_uid, top.c.name, top.c.total,
+			top.c.process_count, top.c.correct_count, top.c.answer_time,
+			func.row_number().over(
+				order_by=and_(desc(top.c.total), top.c.process_modified_local)
+			).label("place")
+		).subquery()
+		return database.session.query(
+			row.c.place, row.c.name, row.c.process_count,
+			row.c.correct_count, row.c.answer_time, row.c.total			
+		).filter(
+			True if filter_name_uid is None else \
+				filter_name_uid == row.c.name_uid
+		).first()
+
 
 def _get_list_query(filter_test_uid: str,
 										filter_hide_completed: bool,
@@ -319,7 +357,8 @@ def _get_crammers_subquery(filter_extension: str,
 		Name.value.label('name_value'),
 		Name.id.label('name_id'),
 		(cast(crammers_expression, sqlalchemy.Integer)).label('crammers'),
-		(Process.modified_local).label('process_modified_local')
+		(Process.modified_local).label('process_modified_local'),
+		Name.uid.label('name_uid')
 	).join(
 		Test
 	).outerjoin(

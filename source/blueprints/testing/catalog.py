@@ -154,6 +154,7 @@ def get_catalog(extension: str = ALL_EXTENSIONS):
 		)
 	)
 	pagination['endpoint'] = 'testing.get_catalog'
+	pagination['pre_kwargs'] = {}
 	pagination['prefix'] = 'catalog'
 	tests =  TestStore.read_list(
 		(pagination['page_index'] - 1) * pagination['per_page'],

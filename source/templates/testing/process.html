@@ -1,0 +1,24 @@
+{%- extends "layout_center.html" -%}
+{%- import 'extension/' + test.extension + '.html' as extension with context -%}
+{%- set title -%}{{ __('Testing') }}{%- endset -%}
+{%- block content -%}
+	{%- block testing_content -%}
+	{%- endblock testing_content -%}
+	<div id="passedTasks">
+		{%- for passed_task in passed_tasks -%}
+			{%- set loop_index = loop.index -%}
+			{%- include 'testing/passed.html' -%}
+		{%- endfor -%}
+	</div>
+	<audio id="correct-audio" preload="auto"><source src="{{ url_for('static', filename='yay.mp3') }}" type="audio/mpeg"></audio>
+	<audio id="incorrect-audio" preload="auto"><source src="{{ url_for('static', filename='break.mp3') }}" type="audio/mpeg"></audio>
+	{%- if player_audio -%}
+		<script type="text/javascript">
+			$(window).on('load', function() {
+				var audio = $("#{{ player_audio }}");
+				if (audio) audio[0].play();
+			});
+		</script>
+	{%- endif -%}
+	{%- if extension.script -%}{{ extension.script() }}{%- endif -%}
+{%- endblock content -%}

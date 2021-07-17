@@ -318,6 +318,10 @@ body, html {
 	font-size: 1.15rem;
 }
 
+.rating-user {
+	background-color: orange !important;
+}
+
 .info-page {
 	background: rgba(0, 0, 0, 0.65);
 }

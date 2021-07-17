@@ -34,7 +34,7 @@
 						<h5>{{ __('Create Username') }}</h5>
 						<form id="namerForm" method="post" actions="">
 							{{ namer.csrf_token }}
-							<div class="d-inline-block col-10 col-md-8 my-2">
+							<div class="d-inline-block col-10 col-md-8 mb-3">
 								<small class="text-muted">{{ __('Username') }}</small>
 								<input autofocus id="value" type="text" class="form-control form-control-sm text-center{%- if namer.value.errors -%}{{ ' is-invalid' }}{%- endif -%}" id="{{ namer.value.label.text }}" name="{{ namer.value.label.text }}" placeholder="{{ __('Username') }}" value="{{ namer.value.data|default('', True) }}"/>
 								{%- for error in namer.value.errors -%}

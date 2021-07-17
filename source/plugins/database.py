@@ -1,0 +1,146 @@
+# -*- coding: utf-8 -*-
+
+"""
+Module to handle database plugin.
+"""
+
+# Standard libraries import
+import os
+import csv
+import logging
+import datetime
+import uuid
+
+# Application modules import
+from models import database
+
+# Additional libraries import
+import sqlalchemy
+
+
+class Plugin():
+	"""
+	This Plugin class describes importing/exporting data to/form database.
+	"""
+	target_path = None
+	table_list = None
+
+	def __init__(self, target_path: str, table_list: list) -> "Plugin":
+		"""
+		Initiate Plugin object.
+		"""
+		self.target_path = target_path
+		self.table_list = table_list
+
+	def export_csv(self) -> None:
+		"""
+		Export data from database.
+		"""
+		metadata = sqlalchemy.MetaData()
+		metadata.bind = database.engine
+		for table in self.table_list:
+			sql_table = sqlalchemy.Table(table, metadata, autoload=True)
+			sql_select = sqlalchemy.sql.select([sql_table])
+			with database.engine.connect() as connection:
+				sql_result = connection.execute(sql_select)
+				csv_filepath = os.path.join(self.target_path, '%s.csv' % table)
+				with open(csv_filepath, 'w') as csv_file:
+					csv_writer = csv.writer(csv_file)
+					csv_writer.writerow(sql_result.keys())
+					csv_writer.writerows(sql_result)
+			print('Table "%s" exported to "%s"' % (table, csv_filepath))
+
+	def import_csv(self) -> None:
+		"""
+		Import data to database.
+		"""
+		metadata = sqlalchemy.MetaData()
+		metadata.bind = database.engine
+		sql_table_service = sqlalchemy.Table('service', metadata, autoload=True)
+		sql_insert_service = sql_table_service.insert()
+		sql_table_data = sqlalchemy.Table('data', metadata, autoload=True)
+		sql_insert_data = sql_table_data.insert()
+		for table in self.table_list:
+			sql_table = sqlalchemy.Table(table, metadata, autoload=True)
+			sql_insert = sql_table.insert()
+			with database.engine.connect() as connection:
+				csv_filepath = os.path.join(self.target_path, '%s.csv' % table)
+				with open(csv_filepath, 'r') as csv_file:
+					csv_dict_reader = csv.DictReader(csv_file)
+					if table == 'service_data':
+						rows = []
+						service_dict = {}
+						service_id = 0
+						data_dict = {}
+						data_id = 0
+						for row in csv_dict_reader:
+							casted_row = cast_row_values(row)
+							service = service_dict.get(casted_row['service_name'])
+							if service is None:
+								service_id += 1
+								service = {
+									'id': service_id,
+									'uid': str(uuid.uuid4()),
+									'created_utc': casted_row['created_utc'],
+									'modified_utc': casted_row['modified_utc'],
+									'deleted_utc': casted_row['deleted_utc'],
+									'name': casted_row['service_name'],
+									'is_deleted': False
+								}
+								service_dict[casted_row['service_name']] = service
+							casted_row['service_id'] = service['id']
+							del casted_row['service_name']
+							data = data_dict.get(casted_row['data_name'])
+							if data is None:
+								data_id += 1
+								data = {
+									'id': data_id,
+									'uid': str(uuid.uuid4()),
+									'created_utc': casted_row['created_utc'],
+									'modified_utc': casted_row['modified_utc'],
+									'deleted_utc': casted_row['deleted_utc'],
+									'name': casted_row['data_name'],
+									'is_deleted': False
+								}
+								data_dict[casted_row['data_name']] = data
+							casted_row['data_id'] = data['id']
+							del casted_row['data_name']
+							rows += [casted_row]
+						services = []
+						for key, value in service_dict.items():
+							services += [value]
+						connection.execute(
+							sql_insert_service, services
+						)						
+						datas = []
+						for key, value in data_dict.items():
+							datas += [value]
+						connection.execute(
+							sql_insert_data, datas
+						)
+						connection.execute(
+							sql_insert, rows
+						)
+					else:
+						connection.execute(
+							sql_insert, [cast_row_values(row) for row in csv_dict_reader]
+						)
+			print('Table "%s" imported from "%s"' % (table, csv_filepath))
+
+
+def cast_row_values(row: dict) -> dict:
+	"""
+	Cast row values (datetime).
+	"""
+	for key, value in row.items():
+		if len(value) == 0:
+			row[key] = None
+		elif value == 'True' or value == 'False':
+			row[key] = bool(value)
+		elif key.endswith('_utc'):
+			if len(value) == 26:
+				row[key] = datetime.datetime.strptime(value, '%Y-%m-%d %H:%M:%S.%f')
+			elif len(value) == 19:
+				row[key] = datetime.datetime.strptime(value, '%Y-%m-%d %H:%M:%S')
+	row['is_deleted'] = bool(row['deleted_utc'] is not None)
+	return row

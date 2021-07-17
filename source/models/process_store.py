@@ -286,6 +286,7 @@ class ProcessStore(Store):
 				order_by=and_(desc(top.c.total), top.c.process_modified_local)
 			).label("place")
 		).subquery()
+	
 		return database.session.query(
 			row.c.place, row.c.name, row.c.process_count,
 			row.c.correct_count, row.c.answer_time, row.c.total			

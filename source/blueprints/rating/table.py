@@ -75,7 +75,7 @@ def get_top(period: str = ALL_PERIODS, extension: str = ALL_EXTENSIONS):
 				None, None, current_user.get_name().uid,
 				get_crammers_expression(), since, until
 			)
-		except:
+		except Exception as exc:
 			logging.error(getattr(exc, 'message', repr(exc)))
 			logging.error(current_user.get_name().value, current_user.get_name().uid, extension)
 			user_crammers = None

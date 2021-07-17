@@ -56,10 +56,6 @@ class Plugin():
 		"""
 		metadata = sqlalchemy.MetaData()
 		metadata.bind = database.engine
-		sql_table_service = sqlalchemy.Table('service', metadata, autoload=True)
-		sql_insert_service = sql_table_service.insert()
-		sql_table_data = sqlalchemy.Table('data', metadata, autoload=True)
-		sql_insert_data = sql_table_data.insert()
 		for table in self.table_list:
 			sql_table = sqlalchemy.Table(table, metadata, autoload=True)
 			sql_insert = sql_table.insert()
@@ -67,64 +63,9 @@ class Plugin():
 				csv_filepath = os.path.join(self.target_path, '%s.csv' % table)
 				with open(csv_filepath, 'r') as csv_file:
 					csv_dict_reader = csv.DictReader(csv_file)
-					if table == 'service_data':
-						rows = []
-						service_dict = {}
-						service_id = 0
-						data_dict = {}
-						data_id = 0
-						for row in csv_dict_reader:
-							casted_row = cast_row_values(row)
-							service = service_dict.get(casted_row['service_name'])
-							if service is None:
-								service_id += 1
-								service = {
-									'id': service_id,
-									'uid': str(uuid.uuid4()),
-									'created_utc': casted_row['created_utc'],
-									'modified_utc': casted_row['modified_utc'],
-									'deleted_utc': casted_row['deleted_utc'],
-									'name': casted_row['service_name'],
-									'is_deleted': False
-								}
-								service_dict[casted_row['service_name']] = service
-							casted_row['service_id'] = service['id']
-							del casted_row['service_name']
-							data = data_dict.get(casted_row['data_name'])
-							if data is None:
-								data_id += 1
-								data = {
-									'id': data_id,
-									'uid': str(uuid.uuid4()),
-									'created_utc': casted_row['created_utc'],
-									'modified_utc': casted_row['modified_utc'],
-									'deleted_utc': casted_row['deleted_utc'],
-									'name': casted_row['data_name'],
-									'is_deleted': False
-								}
-								data_dict[casted_row['data_name']] = data
-							casted_row['data_id'] = data['id']
-							del casted_row['data_name']
-							rows += [casted_row]
-						services = []
-						for key, value in service_dict.items():
-							services += [value]
-						connection.execute(
-							sql_insert_service, services
-						)						
-						datas = []
-						for key, value in data_dict.items():
-							datas += [value]
-						connection.execute(
-							sql_insert_data, datas
-						)
-						connection.execute(
-							sql_insert, rows
-						)
-					else:
-						connection.execute(
-							sql_insert, [cast_row_values(row) for row in csv_dict_reader]
-						)
+					connection.execute(
+						sql_insert, [cast_row_values(row) for row in csv_dict_reader]
+					)
 			print('Table "%s" imported from "%s"' % (table, csv_filepath))
 
 

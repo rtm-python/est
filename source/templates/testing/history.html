@@ -15,13 +15,16 @@
 			<div class="card shadow p-3 bg-gradient-whitesmoke w-100 my-2">
 				<div class="d-flex w-100 align-items-center">
 					<div class="flex-grow-1 mr-2">
-						<div>
-							{%- if name.value -%}<div class="d-inline-block mr-2">{{ name.value + ':' }}</div>{%- endif -%}
-							<strong>{{ result }}%</strong>
-						</div>
 						{%- if process.answer_count == test.answer_count -%}
+							<div>
+								{%- if name.value -%}<div class="d-inline-block mr-2">{{ name.value + ':' }}</div>{%- endif -%}
+								<strong>{{ result }}%</strong>
+							</div>
 							<div>{{ crammers }}<small class="ml-1">{{ __('crammers') }}</small></div>
 						{%- else -%}
+							<div>
+								{%- if name.value -%}<div class="d-inline-block mr-2">{{ name.value }}</div>{%- endif -%}
+							</div>
 							<div class="small text-muted">{{ __('Incomplete') }}</div>
 						{%- endif -%}
 					</div>

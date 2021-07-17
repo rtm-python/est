@@ -279,7 +279,7 @@ def send_feedback():
 	IdenticaPlugin.notify_user(
 		CONFIG['feedback'],
 		'ID: %s\nName: %s\nContact: %s\nMessage: %s' % (
-			current_user.user.from_id \
+			'%s (%s)' % (current_user.user.from_id, current_user.get_id()) \
 				if current_user.is_authenticated else 'anonymous',
 			request.form.get('feedbackerName'),
 			request.form.get('feedbackerContact'),

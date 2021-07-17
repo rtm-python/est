@@ -2,6 +2,7 @@
 	<span class="dot"></span>
 	<a href="#" class="dot text-center" data-toggle="collapse" data-target="#collapse-footer" aria-expanded="true" aria-controls="collapse-footer"><span class="oi oi-paperclip"></span></a>
 	<div class="d-inline-block w-100 text-center">
+		<div class="footer-background"></div>
 		<div class="collapse collapse-content p-3" id="collapse-footer">
 			<div class="d-flex">
 				<div class="me-auto text-start mb-3" style="max-width: 50%;">
@@ -12,7 +13,7 @@
 					<div class="d-inline small text-dark">{{ __('Website for kids to help improve basic knowledge, logical thinking and skills in arithmetic, understanding of time, foreign languages, etc.') }}</div>
 					<div id="footerGroup" class="d-inline-block w-100 mt-3">
 						<div class="collapse show" id="collapse-footer-base" data-parent="#footerGroup">
-							<div class="my-2">
+							<div class="mb-3">
 								<div>{{ __('Please, help us to develop and maintain this website.') }}</div>
 								<div class="d-none"><strong><small class="text-muted mr-1">PAYPAL</small>0000 0000 0000 0000</strong></div>
 								<div class="d-none"><strong><small class="text-muted mr-1">KASPIBANK</small>0000 0000 0000 0000</strong></div>
@@ -20,22 +21,22 @@
 							<a class="btn btn-sm btn-styled btn-styled-white" href="#" data-toggle="collapse" data-target="#collapse-footer-links" aria-expanded="true" aria-controls="collapse-footer-links"><span class="oi oi-chevron-down"></span><div class="d-inline ml-1">{{ __('Send Feedback') }}</div></a>
 						</div>
 						<div class="collapse" id="collapse-footer-links" data-parent="#footerGroup">
-							<form id="feedbacker" class="feedback-form" actions="/feedback" method="post">
-								<h6>{{ __('Feedback') }}</h6>
-								<div class="form-row mb-2">
-									<div class="col-10 my-1">
-										<small class="d-flex align-self-start">{{ __('Your Name') }}</small>
-										<input autofocus type="text" class="form-control form-control-sm" id="feedbackerName" name="feedbackerName" placeholder="{{ __('Your Name') }}" value="" />
+							<form id="feedbacker" class="feedback-form shadow p-3 coll-11 col-md-8 col-lg-12" actions="/feedback" method="post">
+								<h6 class="ml-1">{{ __('Feedback') }}</h6>
+								<div class="form-row">
+									<div class="col-12 col-sm-5 col-md-6 col-lg-3 my-1">
+										<small class="d-flex align-self-start ml-1">{{ __('Your Name') }}</small>
+										<input autofocus type="text" class="form-control form-control-sm" id="feedbackerName" name="feedbackerName" placeholder="{{ __('Your Name') }}" value="{{ (current_user.get_name()|default({ 'value': '' }, True)).value }}" />
 									</div>
-									<div class="col-10 my-1">
-										<small class="d-flex align-self-start">{{ __('Contact') }}</small>
+									<div class="col-12 col-sm-7 col-md-6 col-lg-3 my-1">
+										<small class="d-flex align-self-start ml-1">{{ __('Contact') }}</small>
 										<input type="text" class="form-control form-control-sm" id="feedbackerContact" name="feedbackerContact" placeholder="{{ __('Contact') }}" value="" />	
 									</div>
-									<div class="col-10 my-1">
-										<small class="d-flex align-self-start">{{ __('Message') }}</small>
+									<div class="col-12 col-lg-6 my-1">
+										<small class="d-flex align-self-start ml-1">{{ __('Message') }}</small>
 										<input type="text" class="form-control form-control-sm" id="feedbackerMessage" name="feedbackerMessage" placeholder="{{ __('Message') }}" value="" />	
 									</div>
-									<div class="col-10 my-2">
+									<div class="col-12 mt-2">
 										<button id="feedbackerSubmit" type="submit" class="btn btn-sm btn-styled btn-styled-green mr-1 my-1"><span class="oi oi-check"></span><div class="d-inline ml-1">{{ __('Submit') }}</div></button>
 										<a class="btn btn-sm btn-styled btn-styled-white mr-1 my-1" href="#" data-toggle="collapse" data-target="#collapse-footer-base" aria-expanded="true" aria-controls="collapse-footer-base"><span class="oi oi-x"></span><div class="d-inline ml-1">{{ __('Cancel') }}</div></a>
 									</div>

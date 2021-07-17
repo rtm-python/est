@@ -86,11 +86,11 @@ function postPlayerForm(el) {
 function setSound(state) {
 	sound_state = state;
 	if (state) {
-		$("#sound-state-on").removeClass("d-none").addClass("d-inline");
-		$("#sound-state-off").removeClass("d-inline").addClass("d-none");
+		$("#soundStateOn").removeClass("d-none").addClass("d-inline");
+		$("#soundStateOff").removeClass("d-inline").addClass("d-none");
 	} else {
-		$("#sound-state-on").removeClass("d-inline").addClass("d-none");
-		$("#sound-state-off").removeClass("d-none").addClass("d-inline");
+		$("#soundStateOn").removeClass("d-inline").addClass("d-none");
+		$("#soundStateOff").removeClass("d-none").addClass("d-inline");
 	}
 	$("#collapse-sound").collapse("toggle");
 	$("#collapse-sound-frame").collapse("toggle");
@@ -98,13 +98,13 @@ function setSound(state) {
 
 function setShow(state) {
 	if (state) {
-		$("#show-state-answers").removeClass("d-none").addClass("d-inline");
-		$("#show-state-nothing").removeClass("d-inline").addClass("d-none");
-		$("#passed-tasks").removeClass("d-none");
+		$("#showStateAnswers").removeClass("d-none").addClass("d-inline");
+		$("#showStateNothing").removeClass("d-inline").addClass("d-none");
+		$("#passedTasks").removeClass("d-none");
 	} else {
-		$("#show-state-answers").removeClass("d-inline").addClass("d-none");
-		$("#show-state-nothing").removeClass("d-none").addClass("d-inline");
-		$("#passed-tasks").attr("class", "d-none");
+		$("#showStateAnswers").removeClass("d-inline").addClass("d-none");
+		$("#showStateNothing").removeClass("d-none").addClass("d-inline");
+		$("#passedTasks").attr("class", "d-none");
 	}
 	$("#collapse-show").collapse("toggle");
 	$("#collapse-show-frame").collapse("toggle");

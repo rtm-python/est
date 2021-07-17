@@ -354,6 +354,10 @@
 		"endpoint": null,
 		"ru": "Быстро"
 	},
+	"Task Count": {
+		"endpoint": null,
+		"ru": "Количество задач"
+	},
 	"Save": {
 		"endpoint": null,
 		"ru": "Сохранить"
@@ -649,6 +653,26 @@
 		"ru": "Просто войди под учетной записью без регистрации и проходя тестирование зарабатывай зубрилки столько сколько получится..."
 	},
 
+	"night": {
+		"endpoint": null,
+		"en": "Night",
+		"ru": "Ночь"
+	},
+	"morning": {
+		"endpoint": null,
+		"en": "Morning",
+		"ru": "Утро"
+	},
+	"afternon": {
+		"endpoint": null,
+		"en": "Afternoon",
+		"ru": "День"
+	},
+	"evening": {
+		"endpoint": null,
+		"en": "Evening",
+		"ru": "Вечер"
+	},
 	"Answer should be a number.": {
 		"endpoint": null,
 		"ru": "Ответ должен быть числом."

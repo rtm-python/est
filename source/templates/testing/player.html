@@ -1,13 +1,21 @@
-{%- extends "testing/process.html" -%}
-{%- block testing_content -%}
-	<div class="text-center">
-		<h5>{{ test.name }}</h5>
-		<form id="player" actions="" method="post" class="player-form">
-			{%- include 'testing/form.html' -%}
-		</form>
-	</div>
-	<!-- <div class="content-delimeter my-3"></div> -->
-	<div class="my-4">
+{%- extends "layout_center.html" -%}
+{%- import 'extension/' + test.extension + '.html' as extension with context -%}
+{%- set title -%}{{ __('Testing') }}{%- endset -%}
+{%- block content -%}
+	<div class="card shadow p-5 rotated-background-card bg-gradient-whitesmoke" angle="l3">
+		<div class="logo d-flex align-items-center justify-content-center">
+			<img class="mr-2" src="{{ url_for('static', filename='est_o.png') }}">
+			<div class="mr-2">{{ __(basename) }}</div>
+		</div>
+		<div class="content-delimeter my-3"></div>
+			<div class="text-center">
+				<h5>{{ test.name }}</h5>
+				<form id="player" actions="" method="post" class="player-form">
+					{%- include 'testing/form.html' -%}
+				</form>
+			</div>
+		</div>
+	<div class="card shadow px-5 py-4 my-3 bg-gradient-yellow">
 		<div class="d-flex justify-content-between">
 			<small class="player-progress-current">{{ __('Current Task') }}</small>
 			<small class="player-progress-left">{{ __('Tasks Left') }}</small>
@@ -20,46 +28,63 @@
 			<small id="playerProgressCurrent" class="player-progress-current">{{ process.answer_count + 1 }}</small>
 			<small id="playerProgressLeft" class="player-progress-left">{{ test.answer_count - process.answer_count - 1 }}</small>
 		</div>
-	</div>
-	<div class="d-inline text-center">
-		<div id="soundGroup" class="d-inline-block text-center my-1">
-			<div class="collapse show" id="collapse-sound" data-parent="#soundGroup">
-				<a class="btn btn-sm btn-styled btn-styled-light mx-1" href="#" data-toggle="collapse" data-target="#collapse-sound-frame" aria-expanded="true" aria-controls="collapse-sound-frame">
-					<span class="oi oi-musical-note"></span>
-					<div class="d-inline ml-1">{{ __('Sound') }}</div>
-					<div id="sound-state-on" class="d-inline">:<span class="oi oi-volume-high mx-1"></span>{{ __('On') }}</div>
-					<div id="sound-state-off" class="d-none">:<span class="oi oi-volume-off mx-1"></span>{{ __('Off') }}</div>
-				</a>
-			</div>
-			<div class="collapse collapse-frame" id="collapse-sound-frame" data-parent="#soundGroup">
-				<div>
-					<div class="m-2">{{ __('Sound') + ':' }}</div>
-					<a class="btn btn-sm btn-styled btn-styled-light m-1" href="javascript:setSound(true);"><span class="oi oi-volume-high"></span><div class="d-inline ml-1">{{ __('On') }}</div></a>
-					<a class="btn btn-sm btn-styled btn-styled-light m-1" href="javascript:setSound(false);"><span class="oi oi-volume-off"></span><div class="d-inline ml-1">{{ __('Off') }}</div></a>
-					<a class="btn btn-sm btn-styled btn-styled-light" href="#" data-toggle="collapse" data-target="#collapse-sound" aria-expanded="true" aria-controls="collapse-sound"><span class="oi oi-x"></span><div class="d-inline ml-1">{{ __('Close') }}</div></a>
+		<div class="d-inline text-center">
+			<div id="soundGroup" class="d-inline-block text-center my-1">
+				<div class="collapse show" id="collapse-sound" data-parent="#soundGroup">
+					<a class="btn btn-sm btn-styled btn-styled-light mx-1" href="#" data-toggle="collapse" data-target="#collapse-sound-frame" aria-expanded="true" aria-controls="collapse-sound-frame">
+						<span class="oi oi-musical-note"></span>
+						<div class="d-inline ml-1">{{ __('Sound') }}</div>
+						<div id="soundStateOn" class="d-inline">:<span class="oi oi-volume-high mx-1"></span>{{ __('On') }}</div>
+						<div id="soundStateOff" class="d-none">:<span class="oi oi-volume-off mx-1"></span>{{ __('Off') }}</div>
+					</a>
+				</div>
+				<div class="collapse collapse-frame" id="collapse-sound-frame" data-parent="#soundGroup">
+					<div class="d-block">
+						<div class="m-2">{{ __('Sound') + ':' }}</div>
+						<a class="btn btn-sm btn-styled btn-styled-light m-1" href="javascript:setSound(true);"><span class="oi oi-volume-high"></span><div class="d-inline ml-1">{{ __('On') }}</div></a>
+						<a class="btn btn-sm btn-styled btn-styled-light m-1" href="javascript:setSound(false);"><span class="oi oi-volume-off"></span><div class="d-inline ml-1">{{ __('Off') }}</div></a>
+						<a class="btn btn-sm btn-styled btn-styled-light m-1" href="#" data-toggle="collapse" data-target="#collapse-sound" aria-expanded="true" aria-controls="collapse-sound"><span class="oi oi-x"></span><div class="d-inline ml-1">{{ __('Close') }}</div></a>
+					</div>
 				</div>
 			</div>
-		</div>
-		<div id="showGroup" class="d-inline-block text-center my-1">
-			<div class="collapse show" id="collapse-show" data-parent="#showGroup">
-				<a class="btn btn-sm btn-styled btn-styled-light mx-1" href="#" data-toggle="collapse" data-target="#collapse-show-frame" aria-expanded="true" aria-controls="collapse-show-frame">
-					<span class="oi oi-eye"></span>
-					<div class="d-inline ml-1">{{ __('Show') }}</div>
-					<div id="show-state-answers" class="d-inline">:<span class="oi oi-layers mx-1"></span>{{ __('Answers') }}</div>
-					<div id="show-state-nothing" class="d-none">:<span class="oi oi-ban mx-1"></span>{{ __('Nothing') }}</div>
-				</a>
-			</div>
-			<div class="collapse collapse-frame" id="collapse-show-frame" data-parent="#showGroup">
-				<div>
-					<div class="d-inline m-2">{{ __('Show') + ':' }}</div>
-					<a class="btn btn-sm btn-styled btn-styled-light m-1" href="javascript:setShow(true);"><span class="oi oi-layers"></span><div class="d-inline ml-1">{{ __('Answers') }}</div></a>
-					<a class="btn btn-sm btn-styled btn-styled-light m-1" href="javascript:setShow(false);"><span class="oi oi-ban"></span><div class="d-inline ml-1">{{ __('Nothing') }}</div></a>
-					<a class="btn btn-sm btn-styled btn-styled-light" href="#" data-toggle="collapse" data-target="#collapse-show" aria-expanded="true" aria-controls="collapse-show"><span class="oi oi-x"></span><div class="d-inline ml-1">{{ __('Close') }}</div></a>
+			<div id="showGroup" class="d-inline-block text-center my-1">
+				<div class="collapse show" id="collapse-show" data-parent="#showGroup">
+					<a class="btn btn-sm btn-styled btn-styled-light mx-1" href="#" data-toggle="collapse" data-target="#collapse-show-frame" aria-expanded="true" aria-controls="collapse-show-frame">
+						<span class="oi oi-eye"></span>
+						<div class="d-inline ml-1">{{ __('Show') }}</div>
+						<div id="showStateAnswers" class="d-inline">:<span class="oi oi-layers mx-1"></span>{{ __('Answers') }}</div>
+						<div id="showStateNothing" class="d-none">:<span class="oi oi-ban mx-1"></span>{{ __('Nothing') }}</div>
+					</a>
+				</div>
+				<div class="collapse collapse-frame" id="collapse-show-frame" data-parent="#showGroup">
+					<div>
+						<div class="d-inline m-2">{{ __('Show') + ':' }}</div>
+						<a class="btn btn-sm btn-styled btn-styled-light m-1" href="javascript:setShow(true);"><span class="oi oi-layers"></span><div class="d-inline ml-1">{{ __('Answers') }}</div></a>
+						<a class="btn btn-sm btn-styled btn-styled-light m-1" href="javascript:setShow(false);"><span class="oi oi-ban"></span><div class="d-inline ml-1">{{ __('Nothing') }}</div></a>
+						<a class="btn btn-sm btn-styled btn-styled-light m-1" href="#" data-toggle="collapse" data-target="#collapse-show" aria-expanded="true" aria-controls="collapse-show"><span class="oi oi-x"></span><div class="d-inline ml-1">{{ __('Close') }}</div></a>
+					</div>
 				</div>
 			</div>
-		</div>
-		<div class="w-100 mt-1">
-			<a class="btn btn-sm btn-styled btn-styled-light col-8 col-md-6" href="{{ url_for('testing.hold', uid=process.uid) }}"><span class="oi oi-media-pause"></span><div class="d-inline ml-1">{{ __('Hold') }}</div></a>
+			<div class="w-100 mt-1">
+				<a class="btn btn-sm btn-styled btn-styled-light col-8 col-md-6" href="{{ url_for('testing.hold', uid=process.uid) }}"><span class="oi oi-media-pause"></span><div class="d-inline ml-1">{{ __('Hold') }}</div></a>
+			</div>
 		</div>
 	</div>
-{%- endblock testing_content -%}
+	<div id="passedTasks">
+		{%- for passed_task in passed_tasks -%}
+			{%- set loop_index = loop.index -%}
+			{%- include 'testing/passed.html' -%}
+		{%- endfor -%}
+	</div>
+	<audio id="correct-audio" preload="auto"><source src="{{ url_for('static', filename='yay.mp3') }}" type="audio/mpeg"></audio>
+	<audio id="incorrect-audio" preload="auto"><source src="{{ url_for('static', filename='break.mp3') }}" type="audio/mpeg"></audio>
+	{%- if player_audio -%}
+		<script type="text/javascript">
+			$(window).on('load', function() {
+				var audio = $("#{{ player_audio }}");
+				if (audio) audio[0].play();
+			});
+		</script>
+	{%- endif -%}
+	{%- if extension.script -%}{{ extension.script() }}{%- endif -%}
+{%- endblock content -%}

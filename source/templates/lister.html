@@ -8,7 +8,7 @@
 			{%- for filter in filters -%}
 				<a class="btn btn-sm btn-styled btn-styled-light m-1" href="{{ filter.url }}"><span class="oi oi-tag"></span><div class="d-inline ml-1">{{ __(filter['label']) }}</div></a>
 			{%- endfor -%}
-			<a class="btn btn-sm btn-styled btn-styled-light" href="#" data-toggle="collapse" data-target="#collapse-filter" aria-expanded="true" aria-controls="collapse-filter"><span class="oi oi-x"></span><div class="d-none d-sm-inline ml-1">{{ __('Close') }}</div></a>
+			<a class="btn btn-sm btn-styled btn-styled-light m-1" href="#" data-toggle="collapse" data-target="#collapse-filter" aria-expanded="true" aria-controls="collapse-filter"><span class="oi oi-x"></span><div class="d-none d-sm-inline ml-1">{{ __('Close') }}</div></a>
 		</div>
 	</div>
 </div>
@@ -34,7 +34,7 @@
 			{%- if pagination.page_count <= 1 -%}
 				<small class="d-inline-block m-1 p-1 text-muted">{{ __('Total') }}: {{ pagination.entity_count }} {{ __('elements') }}</small>
 			{%- endif -%}
-			<a class="btn btn-sm btn-styled btn-styled-light" href="#" data-toggle="collapse" data-target="#collapse-page" aria-expanded="true" aria-controls="collapse-page"><span class="oi oi-x"></span><div class="d-none d-sm-inline ml-1">{{ __('Close') }}</div></a>
+			<a class="btn btn-sm btn-styled btn-styled-light m-1" href="#" data-toggle="collapse" data-target="#collapse-page" aria-expanded="true" aria-controls="collapse-page"><span class="oi oi-x"></span><div class="d-none d-sm-inline ml-1">{{ __('Close') }}</div></a>
 		</div>
 	</div>
 </div>

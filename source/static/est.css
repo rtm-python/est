@@ -326,16 +326,24 @@ body, html {
 	position: fixed;
 	bottom: 0;
 	width: 100%;
-	background: ghostwhite;
+	background: transparent;
 	z-index: 1100;
 }
 
 .footer > div {
-	background: orange;
-	border-top: 1px solid rgba(0, 0, 0, 0.5);
+	border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-.dot {
+.footer-background {
+	background-color: orange;
+	width: 100%;
+	height: 100%;
+	z-index: -100;
+	position: absolute;
+	border: 2px solid rgba(255, 255, 255, 0.25);
+}
+
+a.dot {
 	text-shadow: 0px 2px 2px black;
 	background-image: linear-gradient(to top, orange, orange 70%, #ffd07b);
 	color: white !important;
@@ -354,15 +362,18 @@ body, html {
 }
 
 span.dot {
-	height: min(calc(15vw) + 2px, calc(15vh) + 2px);
-	width: min(calc(15vw) + 2px, calc(15vh) + 2px);
-	top: max(calc(-5.15vw) - 1px, calc(-5.15vh) - 1px);
-	background-color: rgba(0, 0, 0, 0.5);
-	border: 1px solid rgba(0, 0, 0, 0.5);
+	height: min(calc(15vw) + 4px, calc(15vh) + 4px);
+	width: min(calc(15vw) + 4px, calc(15vh) + 4px);
+	top: max(calc(-5.15vw) - 2px, calc(-5.15vh) - 2px);
+	background-color: #ffd17b;
+	border: 1px solid rgba(0, 0, 0, 0.15);
 	z-index: -100;
+	border-radius: 50%;
+	position: absolute;
+	display: inline-block;
 }
 
-.dot:hover {
+a.dot:hover {
 	text-decoration: none;
 }
 
@@ -388,4 +399,9 @@ a.text-dark:hover {
 
 .player-progress-left {
 	color: lightgrey;	
+}
+
+.feedback-form {
+	background-color: rgba(255, 255, 255, 0.25);
+	border-radius: 5px;
 }

@@ -26,7 +26,7 @@
 					</div>
 					<div class="d-inline-block col-10 col-md-8 my-2">
 						<a class="btn btn-sm btn-styled btn-styled-light w-100" href="#" data-toggle="collapse" data-target="#collapse-name-create" aria-expanded="true" aria-controls="collapse-name-create">{{ __('Create Username') }}</a>
-						<a class="btn btn-sm btn-styled btn-styled-red w-100 mt-1" href="#" data-toggle="collapse" data-target="#collapse-name-exit" aria-expanded="true" aria-controls="collapse-name-exit">{{ __('Exit Account') }}</a>
+						<a class="btn btn-sm btn-styled btn-styled-red w-100 mt-3" href="#" data-toggle="collapse" data-target="#collapse-name-exit" aria-expanded="true" aria-controls="collapse-name-exit">{{ __('Exit Account') }}</a>
 					</div>
 				</div>
 				<div class="collapse {{ name_show }} collapse-affect-background" id="collapse-name-create" data-parent="#nameGroup">
@@ -56,7 +56,7 @@
 				</div>
 				<div class="collapse collapse-affect-background" id="collapse-name-exit" data-parent="#nameGroup">
 					<div class="my-3">
-						<h5 class="my-2">{{ __('Exit Account') }}</h5>
+						<h5 class="my-3">{{ __('Exit Account') }}</h5>
 						<div class="d-inline-block col-10 col-md-8">
 							<a href="{{ url_for('base.sign_out') }}" class="btn btn-sm btn-styled btn-styled-red w-100"><span class="oi oi-key mr-1"></span>{{ __('Exit') }}</a>
 						</div>

@@ -78,7 +78,7 @@ def cast_row_values(row: dict) -> dict:
 			row[key] = None
 		elif value == 'True' or value == 'False':
 			row[key] = bool(value)
-		elif key.endswith('_utc') or key.endswith('_utc'):
+		elif key.endswith('_utc') or key.endswith('_local'):
 			if len(value) == 26:
 				row[key] = datetime.datetime.strptime(value, '%Y-%m-%d %H:%M:%S.%f')
 			elif len(value) == 19:

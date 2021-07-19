@@ -71,7 +71,7 @@ function postPlayerForm(el) {
 				if (response.form) $(el).html(response.form);
 				if (response.passed) {
 					$("#passedTasks").prepend(response.passed);
-					if (sound_state) $("#" + response.audio)[0].play();
+					if (sound_state) $("#" + response.audio).clone()[0].play();
 				}
 				if (response.progress) {
 					$("#playerProgress").attr("style", "width: " + response.progress.percent + "%;");

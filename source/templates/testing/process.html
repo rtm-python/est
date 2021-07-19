@@ -10,8 +10,8 @@
 			{%- include 'testing/passed.html' -%}
 		{%- endfor -%}
 	</div>
-	<audio id="correct-audio" preload="auto"><source src="{{ url_for('static', filename='yay.mp3') }}" type="audio/mpeg"></audio>
-	<audio id="incorrect-audio" preload="auto"><source src="{{ url_for('static', filename='break.mp3') }}" type="audio/mpeg"></audio>
+	<audio id="correct-audio" preload="auto"><source src="{{ url_for('static', filename='level-completed.mp3') }}" type="audio/mpeg" creator="https://orangefreesounds.com"></audio>
+	<audio id="incorrect-audio" preload="auto"><source src="{{ url_for('static', filename='fail-sound-effect-2.mp3') }}" type="audio/mpeg" creator="https://orangefreesounds.com"></audio>
 	{%- if player_audio -%}
 		<script type="text/javascript">
 			$(window).on('load', function() {

@@ -5,4 +5,5 @@
 		<p>{{ __('Just enter your account without any registration and earn crammers as more as possible by passing tests...') }}</p>
 	</div>
 	<a href="{{ url_for('base.sign_in') }}" class="btn btn-sm btn-styled btn-styled-red w-50 m-1 button-click"><span class="oi oi-key mr-1"></span>{{ __('Enter') }}</a>
+	<audio id="popup-audio" preload="auto" autoplay><source src="{{ url_for('static', filename='poof-sounds-effect.mp3') }}" type="audio/mpeg" creator="https://orangefreesounds.com"></audio>
 {% endblock info_content %}

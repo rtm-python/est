@@ -4,7 +4,7 @@
 	</div>
 	<div class="collapse collapse-frame" id="collapse-filter-links" data-parent="#filterGroup">
 		<div>
-			<div class="m-2">{{ __('Filter') }}:</div>
+			<div class="pt-1">{{ __('Filter') }}:</div>
 			{%- for filter in filters -%}
 				<a class="btn btn-sm btn-styled btn-styled-light m-1" href="{{ filter.url }}"><span class="oi oi-tag"></span><div class="d-inline ml-1">{{ __(filter['label']) }}</div></a>
 			{%- endfor -%}
@@ -22,7 +22,7 @@
 	</div>
 	<div class="collapse collapse-frame" id="collapse-page-links" data-parent="#pageGroup">
 		<div>
-			<div class="m-2">{{ __('Page') }}:</div>
+			<div class="pt-1">{{ __('Page') }}:</div>
 			{%- if pagination.page_index > 1 -%}
 				{%- set pagination_kwargs = __merge(pagination.pre_kwargs, { '%sPageIndex' % pagination.prefix: pagination.page_index - 1 }) -%}
 				<a href="{{ url_for(pagination.endpoint, **pagination_kwargs) }}" class="btn btn-sm btn-styled btn-styled-light m-1"><span class="oi oi-chevron-left"></span></a>

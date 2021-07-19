@@ -18,7 +18,7 @@
 							</div>
 							<div class="collapse collapse-frame" id="collapse-period-links" data-parent="#periodGroup">
 								<div>
-									<div class="m-2">{{ __('Period') }}:</div>
+									<div class="pt-1">{{ __('Period') }}:</div>
 									{%- for period in periods -%}
 										<a class="btn btn-sm btn-styled btn-styled-light m-1" href="{{ url_for('rating.get_top', period=period, extension=current_extension) }}"><span class="oi oi-calendar"></span><div class="d-inline ml-1">{{ __(period) }}</div></a>
 									{%- endfor -%}
@@ -39,7 +39,7 @@
 							</div>
 							<div class="collapse collapse-frame" id="collapse-criteria-links" data-parent="#criteriaGroup">
 								<div>
-									<div class="m-2">{{ __('Criteria') }}:</div>
+									<div class="pt-1">{{ __('Criteria') }}:</div>
 									{%- for criteria in criterias -%}
 										<a class="btn btn-sm btn-styled btn-styled-light m-1" href="{{ url_for('rating.get_chart', extension=current_extension, criteria=criteria) }}"><span class="oi oi-calendar"></span><div class="d-inline ml-1">{{ __(criteria) }}</div></a>
 									{%- endfor -%}
@@ -58,7 +58,7 @@
 						</div>
 						<div class="collapse collapse-frame" id="collapse-extension-links" data-parent="#extensionGroup">
 							<div>
-								<div class="m-2">{{ __('Extension') }}:</div>
+								<div class="pt-1">{{ __('Extension') }}:</div>
 								{%- for extension in extensions -%}
 									{%- if subtitle == 'top 10' -%}
 										<a class="btn btn-sm btn-styled btn-styled-light m-1" href="{{ url_for('rating.get_top', period=current_period, extension=extension) }}"><span class="oi oi-box"></span><div class="d-inline ml-1">{{ __(extension) }}</div></a>

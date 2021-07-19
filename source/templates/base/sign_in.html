@@ -11,18 +11,18 @@
 				<div class="collapse show collapse-affect-background mb-4" id="collapse-enter-find" data-parent="#enterGroup">
 					<div class="enter-collapse-content">
 						<h5 class="my-1"><span class="number-glyph number-glyph-grey">1</span>{{ __('Find chatbot') }}</h5>
-						<a href="https://t.me/crammer_identica_bot">
+						<a href="https://t.me/crammer_identica_bot" class="button-click">
 							<img src="{{ url_for('static', filename='est_identica.png') }}" class="w-50 mb-1">
 						</a>
 						<div>{{ __('Please, click or scan QR-code above')}}</div>
 						<div>{{ __('to start interaction with chatbot')}}</div>
 						{%- include 'base/chatbot.html' -%}
 					</div>
-					<a class="btn btn-sm btn-styled btn-styled-light m-1 offset-1 col-10" href="#" data-toggle="collapse" data-target="#collapse-enter-request" aria-expanded="true" aria-controls="collapse-enter-request"><span class="number-glyph number-glyph-grey">2</span>{{ __('Send request') }}</a>
-					<a class="btn btn-sm btn-styled btn-styled-light m-1 offset-1 col-10" href="#" data-toggle="collapse" data-target="#collapse-enter-pin" aria-expanded="true" aria-controls="collapse-enter-pin"><span class="number-glyph number-glyph-grey">3</span>{{ __('Submit PIN') }}</a>
+					<a class="btn btn-sm btn-styled btn-styled-light m-1 offset-1 col-10 button-click" href="#" data-toggle="collapse" data-target="#collapse-enter-request" aria-expanded="true" aria-controls="collapse-enter-request"><span class="number-glyph number-glyph-grey">2</span>{{ __('Send request') }}</a>
+					<a class="btn btn-sm btn-styled btn-styled-light m-1 offset-1 col-10 button-click" href="#" data-toggle="collapse" data-target="#collapse-enter-pin" aria-expanded="true" aria-controls="collapse-enter-pin"><span class="number-glyph number-glyph-grey">3</span>{{ __('Submit PIN') }}</a>
 				</div>
 				<div class="collapse collapse-affect-background mb-4" id="collapse-enter-request" data-parent="#enterGroup">
-					<a class="btn btn-sm btn-styled btn-styled-light m-1 offset-1 col-10" href="#" data-toggle="collapse" data-target="#collapse-enter-find" aria-expanded="true" aria-controls="collapse-enter-find"><span class="number-glyph number-glyph-grey">1</span>{{ __('Find chatbot') }}</a>
+					<a class="btn btn-sm btn-styled btn-styled-light m-1 offset-1 col-10 button-click" href="#" data-toggle="collapse" data-target="#collapse-enter-find" aria-expanded="true" aria-controls="collapse-enter-find"><span class="number-glyph number-glyph-grey">1</span>{{ __('Find chatbot') }}</a>
 					<div class="enter-collapse-content">
 						<h5 class="my-1"><span class="number-glyph number-glyph-grey">2</span>{{ __('Send request') }}</h5>
 						<div class="w-100 h-100 position-relative">
@@ -37,11 +37,11 @@
 							<div class="ml-1">{{ __('Or (2) request PIN to use it within sign in form') }}</div>
 						</div>
 					</div>
-					<a class="btn btn-sm btn-styled btn-styled-light m-1 offset-1 col-10" href="#" data-toggle="collapse" data-target="#collapse-enter-pin" aria-expanded="true" aria-controls="collapse-enter-pin"><span class="number-glyph number-glyph-grey">3</span>{{ __('Submit PIN') }}</a>
+					<a class="btn btn-sm btn-styled btn-styled-light m-1 offset-1 col-10 button-click" href="#" data-toggle="collapse" data-target="#collapse-enter-pin" aria-expanded="true" aria-controls="collapse-enter-pin"><span class="number-glyph number-glyph-grey">3</span>{{ __('Submit PIN') }}</a>
 				</div>
 				<div class="collapse collapse-affect-background mb-4" id="collapse-enter-pin" data-parent="#enterGroup">
-					<a class="btn btn-sm btn-styled btn-styled-light m-1 offset-1 col-10" href="#" data-toggle="collapse" data-target="#collapse-enter-find" aria-expanded="true" aria-controls="collapse-enter-find"><span class="number-glyph number-glyph-grey">1</span>{{ __('Find chatbot') }}</a>
-					<a class="btn btn-sm btn-styled btn-styled-light m-1 offset-1 col-10" href="#" data-toggle="collapse" data-target="#collapse-enter-request" aria-expanded="true" aria-controls="collapse-enter-request"><span class="number-glyph number-glyph-grey">2</span>{{ __('Send request') }}</a>
+					<a class="btn btn-sm btn-styled btn-styled-light m-1 offset-1 col-10 button-click" href="#" data-toggle="collapse" data-target="#collapse-enter-find" aria-expanded="true" aria-controls="collapse-enter-find"><span class="number-glyph number-glyph-grey">1</span>{{ __('Find chatbot') }}</a>
+					<a class="btn btn-sm btn-styled btn-styled-light m-1 offset-1 col-10 button-click" href="#" data-toggle="collapse" data-target="#collapse-enter-request" aria-expanded="true" aria-controls="collapse-enter-request"><span class="number-glyph number-glyph-grey">2</span>{{ __('Send request') }}</a>
 					<div class="enter-collapse-content">
 						<h5 class="my-1"><span class="number-glyph number-glyph-grey">3</span>{{ __('Submit PIN') }}</h5>
 						<form id="signInForm" method="post" actions="">
@@ -73,14 +73,14 @@
 									</div>
 								</div>
 								<div class="offset-1 col-10 my-2">
-									<button type="submit" class="btn btn-sm btn-styled btn-styled-green w-100"><span class="oi oi-check"></span><div class="d-inline ml-1">{{ __('Submit') }}</div></button>
+									<button type="submit" class="btn btn-sm btn-styled btn-styled-green w-100 button-click"><span class="oi oi-check"></span><div class="d-inline ml-1">{{ __('Submit') }}</div></button>
 								</div>
 							{%- endif -%}
 						</form>
 					</div>
 				</div>
 				<div class="content-delimeter my-3"></div>
-				<a class="btn btn-sm btn-styled btn-styled-light col-10 my-2" href="{{ url_for('base.get_home') }}"><span class="oi oi-x"></span><div class="d-inline ml-1">{{ __('Cancel') }}</div></a>
+				<a class="btn btn-sm btn-styled btn-styled-light col-10 my-2 button-click" href="{{ url_for('base.get_home') }}"><span class="oi oi-x"></span><div class="d-inline ml-1">{{ __('Cancel') }}</div></a>
 			</div>
 		</div>
 	</div>

@@ -20,13 +20,13 @@
 						<h5>{{ __('Usernames') }}</h5>
 						{%- for name_uid, name_value in names -%}
 							<div class="d-inline-block col-10 col-md-8 my-2">
-								<a href="{{ url_for('base.select_name', uid=name_uid) }}" class="btn btn-styled btn-styled-green w-100">{{ name_value }}</a>
+								<a href="{{ url_for('base.select_name', uid=name_uid) }}" class="btn btn-styled btn-styled-green w-100 button-click">{{ name_value }}</a>
 							</div>
 						{%- endfor -%}
 					</div>
 					<div class="d-inline-block col-10 col-md-8 my-2">
-						<a class="btn btn-sm btn-styled btn-styled-light w-100" href="#" data-toggle="collapse" data-target="#collapse-name-create" aria-expanded="true" aria-controls="collapse-name-create">{{ __('Create Username') }}</a>
-						<a class="btn btn-sm btn-styled btn-styled-red w-100 mt-3" href="#" data-toggle="collapse" data-target="#collapse-name-exit" aria-expanded="true" aria-controls="collapse-name-exit">{{ __('Exit Account') }}</a>
+						<a class="btn btn-sm btn-styled btn-styled-light w-100 button-click" href="#" data-toggle="collapse" data-target="#collapse-name-create" aria-expanded="true" aria-controls="collapse-name-create">{{ __('Create Username') }}</a>
+						<a class="btn btn-sm btn-styled btn-styled-red w-100 mt-3 button-click" href="#" data-toggle="collapse" data-target="#collapse-name-exit" aria-expanded="true" aria-controls="collapse-name-exit">{{ __('Exit Account') }}</a>
 					</div>
 				</div>
 				<div class="collapse {{ name_show }} collapse-affect-background" id="collapse-name-create" data-parent="#nameGroup">
@@ -44,13 +44,13 @@
 								{%- endfor -%}
 							</div>
 							<div class="d-inline-block col-10 col-md-8">
-								<button type="submit" class="btn btn-sm btn-styled btn-styled-green w-100"><span class="oi oi-check"></span><div class="d-inline ml-1">{{ __('Submit') }}</div></button>
+								<button type="submit" class="btn btn-sm btn-styled btn-styled-green w-100 button-click"><span class="oi oi-check"></span><div class="d-inline ml-1">{{ __('Submit') }}</div></button>
 							</div>
 						</form>
 					</div>
 					{%- if names -%}
 						<div class="d-inline-block col-10 col-md-8">
-							<a class="btn btn-sm btn-styled btn-styled-light w-100" href="#" data-toggle="collapse" data-target="#collapse-name-list" aria-expanded="true" aria-controls="collapse-name-list">{{ __('Cancel') }}</a>
+							<a class="btn btn-sm btn-styled btn-styled-light w-100 button-click" href="#" data-toggle="collapse" data-target="#collapse-name-list" aria-expanded="true" aria-controls="collapse-name-list">{{ __('Cancel') }}</a>
 						</div>
 					{%- endif -%}
 				</div>
@@ -58,20 +58,20 @@
 					<div class="my-3">
 						<h5 class="my-3">{{ __('Exit Account') }}</h5>
 						<div class="d-inline-block col-10 col-md-8">
-							<a href="{{ url_for('base.sign_out') }}" class="btn btn-sm btn-styled btn-styled-red w-100"><span class="oi oi-key mr-1"></span>{{ __('Exit') }}</a>
+							<a href="{{ url_for('base.sign_out') }}" class="btn btn-sm btn-styled btn-styled-red w-100 button-click"><span class="oi oi-key mr-1"></span>{{ __('Exit') }}</a>
 						</div>
 					</div>
 					<div class="d-inline-block col-10 col-md-8">
-						<a class="btn btn-sm btn-styled btn-styled-light w-100" href="#" data-toggle="collapse" data-target="#collapse-name-list" aria-expanded="true" aria-controls="collapse-name-list">{{ __('Cancel') }}</a>
+						<a class="btn btn-sm btn-styled btn-styled-light w-100 button-click" href="#" data-toggle="collapse" data-target="#collapse-name-list" aria-expanded="true" aria-controls="collapse-name-list">{{ __('Cancel') }}</a>
 					</div>
 				</div>
 			</div>
 		{%- else -%}
 			<div class="d-inline-block col-12 offset-sm-1 col-sm-8 offset-md-2 col-md-8 my-2">
-				<a href="{{ url_for('testing.get_catalog') }}" class="btn btn-styled btn-styled-light w-100"><span class="oi oi-caret-right mr-1"></span>{{ __('Testing') }}</a>
+				<a href="{{ url_for('testing.get_catalog') }}" class="btn btn-styled btn-styled-light w-100 button-click"><span class="oi oi-caret-right mr-1"></span>{{ __('Testing') }}</a>
 			</div>
 			<div class="d-inline-block col-12 offset-sm-1 col-sm-8 offset-md-2 col-md-8 my-2">
-				<a href="{{ url_for('base.sign_in') }}" class="btn btn-styled btn-styled-green w-100"><span class="oi oi-key mr-1"></span>{{ __('Enter') }}</a>
+				<a href="{{ url_for('base.sign_in') }}" class="btn btn-styled btn-styled-green w-100 button-click"><span class="oi oi-key mr-1"></span>{{ __('Enter') }}</a>
 			</div>
 		{%- endif -%}
 	</div>

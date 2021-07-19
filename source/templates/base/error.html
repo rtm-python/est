@@ -9,7 +9,7 @@
 			<p class="text-center larger p-0 m-0">{{ __('Error') }}</p>
 			<h1 class="text-center large">{{ error_code }}</h1>
 		<div class="offset-1 col-10 my-2">
-			<a class="btn btn-sm btn-styled btn-styled-light w-100" href="{{ url_for('base.get_home') }}"><span class="oi oi-x"></span><div class="d-inline ml-1">{{ __('Ok') }}</div></a>
+			<a class="btn btn-sm btn-styled btn-styled-light w-100 button-click" href="{{ url_for('base.get_home') }}"><span class="oi oi-x"></span><div class="d-inline ml-1">{{ __('Ok') }}</div></a>
 		</div>
 	</div>
 {%- endblock content -%}

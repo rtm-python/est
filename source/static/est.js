@@ -14,6 +14,7 @@ $(window).on("load", function() {
 		e.preventDefault();
 		postFeedbackForm($(this));
 	});
+	$(".button-click").click(function() {	$("#button-click")[0].play(); });
 });
 
 $(window).on("resize", function() {

@@ -48,8 +48,8 @@
 							{%- endfor -%}
 						</div>
 						<div class="col-12 my-2">
-							<button type="submit" class="btn btn-sm btn-styled btn-styled-green col-8 col-md-6"><span class="oi oi-check"></span><div class="d-inline ml-1">{{ __('Submit') }}</div></button>
-							<a class="btn btn-sm btn-styled btn-styled-light col-8 col-md-6 mt-2" href="{{ url_for('testing.get_catalog') }}"><span class="oi oi-x"></span><div class="d-inline ml-1">{{ __('Cancel') }}</div></a>
+							<button type="submit" class="btn btn-sm btn-styled btn-styled-green col-8 col-md-6 button-click"><span class="oi oi-check"></span><div class="d-inline ml-1">{{ __('Submit') }}</div></button>
+							<a class="btn btn-sm btn-styled btn-styled-light col-8 col-md-6 mt-2 button-click" href="{{ url_for('testing.get_catalog') }}"><span class="oi oi-x"></span><div class="d-inline ml-1">{{ __('Cancel') }}</div></a>
 						</div>
 					</div>
 				</form>
@@ -57,7 +57,7 @@
 			{%- endif -%}
 			<div id="extensionGroup" class="d-inline-block text-center w-100 my-1">
 				<div class="collapse show" id="collapse-extension" data-parent="#extensionGroup">
-					<a class="btn btn-sm btn-styled btn-styled-light col-8 col-md-6" href="#" data-toggle="collapse" data-target="#collapse-extension-frame" aria-expanded="true" aria-controls="collapse-extension-frame">
+					<a class="btn btn-sm btn-styled btn-styled-light col-8 col-md-6 button-click" href="#" data-toggle="collapse" data-target="#collapse-extension-frame" aria-expanded="true" aria-controls="collapse-extension-frame">
 						<span class="oi oi-box"></span>
 						{%- if editor -%}
 							<div class="d-inline ml-1">{{ __('Extension') }}</div>
@@ -71,15 +71,15 @@
 					<div>
 						<div class="d-inline m-2">{{ __('Extensions') + ':' }}</div>
 						{%- for extension in extensions -%}
-							<a class="btn btn-sm btn-styled btn-styled-light m-1" href="{{ url_for('testing.create', extension=extension) }}">{{ __(extension) }}</a>
+							<a class="btn btn-sm btn-styled btn-styled-light m-1 button-click" href="{{ url_for('testing.create', extension=extension) }}">{{ __(extension) }}</a>
 						{%- endfor -%}
-						<a class="btn btn-sm btn-styled btn-styled-light m-1" href="#" data-toggle="collapse" data-target="#collapse-extension" aria-expanded="true" aria-controls="collapse-extension"><span class="oi oi-x"></span><div class="d-inline ml-1">{{ __('Close') }}</div></a>
+						<a class="btn btn-sm btn-styled btn-styled-light m-1 button-click" href="#" data-toggle="collapse" data-target="#collapse-extension" aria-expanded="true" aria-controls="collapse-extension"><span class="oi oi-x"></span><div class="d-inline ml-1">{{ __('Close') }}</div></a>
 					</div>
 				</div>
 			</div>
 			{%- if not editor -%}
 				<div class="w-100 mt-1">
-					<a class="btn btn-sm btn-styled btn-styled-light col-8 col-md-6" href="{{ url_for('testing.get_catalog') }}"><span class="oi oi-x"></span><div class="d-inline ml-1">{{ __('Cancel') }}</div></a>
+					<a class="btn btn-sm btn-styled btn-styled-light col-8 col-md-6 button-click" href="{{ url_for('testing.get_catalog') }}"><span class="oi oi-x"></span><div class="d-inline ml-1">{{ __('Cancel') }}</div></a>
 				</div>	
 			{%- endif -%}
 		</div>

@@ -676,5 +676,14 @@
 	"Answer should be a number.": {
 		"endpoint": null,
 		"ru": "Ответ должен быть числом."
+	},
+
+	"Photo creator freepik - ru.freepik.com": {
+		"endpoint": null,
+		"ru": "Фото создано freepik - ru.freepik.com"
+	},
+	"Sound effects creator OFS - orangefreesounds.com": {
+		"endpoint": null,
+		"ru": "Звуковые эффекты созданы OFS - orangefreesounds.com"
 	}
 }

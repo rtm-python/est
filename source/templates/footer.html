@@ -1,12 +1,12 @@
 <div class="footer d-flex justify-content-center">
 	<span class="dot"></span>
-	<a href="#" class="dot text-center" data-toggle="collapse" data-target="#collapse-footer" aria-expanded="true" aria-controls="collapse-footer"><span class="oi oi-paperclip"></span></a>
+	<a href="#" class="dot text-center button-click" data-toggle="collapse" data-target="#collapse-footer" aria-expanded="true" aria-controls="collapse-footer"><span class="oi oi-paperclip"></span></a>
 	<div class="d-inline-block w-100 text-center">
 		<div class="footer-background"></div>
 		<div class="collapse collapse-content p-3" id="collapse-footer">
 			<div class="d-flex">
 				<div class="me-auto text-start mb-3" style="max-width: 50%;">
-					<a href="{{ url_for('base.get_home') }}" class="logo-mini d-flex align-items-center">
+					<a href="{{ url_for('base.get_home') }}" class="logo-mini d-flex align-items-center button-click">
 						<img class="mr-2" src="{{ url_for('static', filename='est_w.png') }}">
 						<div class="mr-2 text-light">{{ __(basename) }}</div>
 					</a>
@@ -18,7 +18,7 @@
 								<div class="d-none"><strong><small class="text-muted mr-1">PAYPAL</small>0000 0000 0000 0000</strong></div>
 								<div class="d-none"><strong><small class="text-muted mr-1">KASPIBANK</small>0000 0000 0000 0000</strong></div>
 							</div>
-							<a class="btn btn-sm btn-styled btn-styled-white" href="#" data-toggle="collapse" data-target="#collapse-footer-links" aria-expanded="true" aria-controls="collapse-footer-links"><span class="oi oi-chevron-down"></span><div class="d-inline ml-1">{{ __('Send Feedback') }}</div></a>
+							<a class="btn btn-sm btn-styled btn-styled-white button-click" href="#" data-toggle="collapse" data-target="#collapse-footer-links" aria-expanded="true" aria-controls="collapse-footer-links"><span class="oi oi-chevron-down"></span><div class="d-inline ml-1">{{ __('Send Feedback') }}</div></a>
 						</div>
 						<div class="collapse" id="collapse-footer-links" data-parent="#footerGroup">
 							<form id="feedbacker" class="feedback-form shadow p-3 coll-11 col-md-8 col-lg-12" actions="/feedback" method="post">
@@ -37,29 +37,29 @@
 										<input type="text" class="form-control form-control-sm" id="feedbackerMessage" name="feedbackerMessage" placeholder="{{ __('Message') }}" value="" />	
 									</div>
 									<div class="col-12 mt-2">
-										<button id="feedbackerSubmit" type="submit" class="btn btn-sm btn-styled btn-styled-green mr-1 my-1"><span class="oi oi-check"></span><div class="d-inline ml-1">{{ __('Submit') }}</div></button>
-										<a class="btn btn-sm btn-styled btn-styled-white mr-1 my-1" href="#" data-toggle="collapse" data-target="#collapse-footer-base" aria-expanded="true" aria-controls="collapse-footer-base"><span class="oi oi-x"></span><div class="d-inline ml-1">{{ __('Cancel') }}</div></a>
+										<button id="feedbackerSubmit" type="submit" class="btn btn-sm btn-styled btn-styled-green mr-1 my-1 button-click"><span class="oi oi-check"></span><div class="d-inline ml-1">{{ __('Submit') }}</div></button>
+										<a class="btn btn-sm btn-styled btn-styled-white mr-1 my-1 button-click" href="#" data-toggle="collapse" data-target="#collapse-footer-base" aria-expanded="true" aria-controls="collapse-footer-base"><span class="oi oi-x"></span><div class="d-inline ml-1">{{ __('Cancel') }}</div></a>
 									</div>
 								</div>
 							</form>
-							<a class="btn btn-sm btn-styled btn-styled-white my-2 feedback-close d-none" href="#" data-toggle="collapse" data-target="#collapse-footer-base" aria-expanded="true" aria-controls="collapse-footer-base"><span class="oi oi-x"></span><div class="d-inline ml-1">{{ __('Close') }}</div></a>
+							<a class="btn btn-sm btn-styled btn-styled-white my-2 feedback-close d-none button-click" href="#" data-toggle="collapse" data-target="#collapse-footer-base" aria-expanded="true" aria-controls="collapse-footer-base"><span class="oi oi-x"></span><div class="d-inline ml-1">{{ __('Close') }}</div></a>
 						</div>
 					</div>		
 				</div>
 				<div class="d-block d-sm-flex text-start" style="min-width: 30%;">
 					<div class="d-block d-sm-inline-block ml-5 mb-3 text-start">
-						<a class="d-block text-dark" href="{{ url_for('testing.get_catalog') }}"><strong>{{ __('Testing') }}</strong></a>
+						<a class="d-block text-dark button-click" href="{{ url_for('testing.get_catalog') }}"><strong>{{ __('Testing') }}</strong></a>
 						{%- for extension in __extensions() -%}
-							<a class="d-block text-dark" href="{{ url_for('testing.get_catalog', extension=extension) }}">{{ __(extension) }}</a>
+							<a class="d-block text-dark button-click" href="{{ url_for('testing.get_catalog', extension=extension) }}">{{ __(extension) }}</a>
 						{%- endfor -%}
 					</div>
 					<div class="d-block d-sm-inline-block ml-5 mb-3 text-start">
-						<a class="d-block text-dark" href="{{ url_for('rating.get_top') }}"><strong>{{ __('Ratings') }}</strong></a>
+						<a class="d-block text-dark button-click" href="{{ url_for('rating.get_top') }}"><strong>{{ __('Ratings') }}</strong></a>
 						{%- for period in __periods() -%}
-							<a class="d-block text-dark" href="{{ url_for('rating.get_top', period=period) }}">{{ __('Top 10') }} <small class="d-inline-block">{{ __(period) }}</small></a>
+							<a class="d-block text-dark button-click" href="{{ url_for('rating.get_top', period=period) }}">{{ __('Top 10') }} <small class="d-inline-block">{{ __(period) }}</small></a>
 						{%- endfor -%}
 						{%- for criteria in __criterias() -%}
-							<a class="d-block text-dark" href="{{ url_for('rating.get_chart', criteria=criteria) }}">{{ __('Personal') }} <small class="d-inline-block">{{ __(criteria) }}</small></a>
+							<a class="d-block text-dark button-click" href="{{ url_for('rating.get_chart', criteria=criteria) }}">{{ __('Personal') }} <small class="d-inline-block">{{ __(criteria) }}</small></a>
 						{%- endfor -%}
 					</div>
 				</div>
@@ -68,4 +68,3 @@
 		</div>
 	</div>
 </div>
-

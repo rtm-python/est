@@ -55,10 +55,11 @@ def get_chart(criteria: str = CRITERIAS[0], extension: str = ALL_EXTENSIONS):
 	days = []
 	date_index_dict = {}
 	for day in range(30):
-		date = until - datetime.timedelta(days=(29 - day))
+		date = until - datetime.timedelta(days=(30 - day))
 		days += [	(date).strftime('%a, %d') ]
 		date_index_dict[date.strftime('%Y-%m-%d')] = day
 	data = {}
+	day_start = 29
 	for name_value, process_count, correct_count, answer_time, total, \
 			process_date_local in chart_data:
 		if name_value is None:
@@ -68,16 +69,29 @@ def get_chart(criteria: str = CRITERIAS[0], extension: str = ALL_EXTENSIONS):
 			hex_color = '#%06X' % random.randint(0,256**3 - 1)
 			name_data = {
 				'value': [0] * 30,
-				'bg-color': hex_color + '%02X' % 25,
+				'bg-color': hex_color + '%02X' % 50,
 				'fg-color': hex_color
 			}
 			data[name_value] = name_data
+		day = date_index_dict[process_date_local]
 		if criteria == CRITERIAS[0]:
-			name_data['value'][date_index_dict[process_date_local]] = total
+			if total > 0 and day_start > day:
+				day_start = day
+			name_data['value'][day] = total
 		elif criteria == CRITERIAS[1]:
-			name_data['value'][date_index_dict[process_date_local]] = process_count
+			if process_count > 0 and day_start > day:
+				day_start = day
+			name_data['value'][day] = process_count
 		elif criteria == CRITERIAS[2]:
-			name_data['value'][date_index_dict[process_date_local]] = correct_count
+			if correct_count > 0 and day_start > day:
+				day_start = day
+			name_data['value'][day] = correct_count
+	if day_start > 0:
+		if day_start > 22:
+			day_start = 22
+		days = days[day_start: ]
+		for name_value, name_data in data.items():
+			name_data['value'] = name_data['value'][day_start: ]
 	return render_template(
 		'rating/chart.html',
 		criterias=CRITERIAS,

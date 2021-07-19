@@ -79,6 +79,9 @@ function postPlayerForm(el) {
 				}
 				if (response.form || response.answer) if (play) play();
 			} 
+		},
+		error: function (request, status, error) {
+			location.pathname = "/";
 		}
 	});
 }
@@ -154,6 +157,9 @@ function postFeedbackForm(el) {
 					$(".feedback-close").removeClass("d-none");
 				}
 			} 
+		},
+		error: function (request, status, error) {
+			location.pathname = "/";
 		}
 	});
 }

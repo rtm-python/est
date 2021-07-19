@@ -210,6 +210,8 @@ class ProcessStore(Store):
 			func.sum(pre.c.process_correct_count).label('correct_count'),
 			func.sum(pre.c.process_answer_time).label('answer_time'),
 			func.sum(pre.c.crammers).label('total'),
+		).filter(
+			pre.c.crammers > 0
 		).group_by(
 			pre.c.name_id
 		).order_by(
@@ -249,6 +251,8 @@ class ProcessStore(Store):
 			func.sum(pre_local.c.process_answer_time).label('answer_time'),
 			func.sum(pre_local.c.crammers).label('total'),
 			pre_local.c.process_date_local
+		).filter(
+			pre.c.crammers > 0
 		).group_by(
 			pre_local.c.name_value,
 			pre_local.c.process_date_local
@@ -276,6 +280,8 @@ class ProcessStore(Store):
 			func.sum(pre.c.process_answer_time).label('answer_time'),
 			func.sum(pre.c.crammers).label('total'),
 			pre.c.process_modified_local.label('process_modified_local'),
+		).filter(
+			pre.c.crammers > 0
 		).group_by(
 			pre.c.name_id
 		).subquery()
@@ -379,5 +385,6 @@ def _get_crammers_subquery(filter_extension: str,
 			Process.modified_local < until
 		) if since is not None else \
 			Process.modified_local < until,
+		Process.answer_count == Test.answer_count,
 		Test.deleted_utc == None
 	).subquery()

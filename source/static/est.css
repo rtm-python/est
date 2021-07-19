@@ -320,6 +320,7 @@ body, html {
 
 .rating-user {
 	background-color: orange !important;
+	color: white;
 }
 
 .info-page {
@@ -414,4 +415,12 @@ a.text-dark:hover {
 	width: 45%;
 	border: 1px solid lightgrey;
 	border-radius: 25px;
+}
+
+small {
+	font-weight: 100 !important;
+}
+
+.rating-first > div > small, .rating-first > div > div > small {
+	font-weight: 500 !important;
 }

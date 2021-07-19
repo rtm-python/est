@@ -353,23 +353,23 @@ a.dot {
 	background-image: linear-gradient(to top, orange, orange 70%, #ffd07b);
 	color: white !important;
 	background-color: orange;
-	height: min(15vw, 15vh);
-	width: min(15vw, 15vh);
-	top: max(calc(-5.15vw), calc(-5.15vh));
+	height: min(25vw, 25vh, 50px);
+	width: min(25vw, 25vh, 50px);
+	top: max(calc(-6.7vw), calc(-6.7vh), -22px);
 	border-radius: 50%;
 	position: absolute;
 	display: inline-block;
 }
 
 .dot > span {
-	top: max(calc(0.2vw), calc(0.2vh));
-	font-size: min(3.5vw, 3.5vh);
+	top: 0;
+	font-size: min(3.5vw, 3.5vh, 15px);
 }
 
 span.dot {
-	height: min(calc(15vw) + 4px, calc(15vh) + 4px);
-	width: min(calc(15vw) + 4px, calc(15vh) + 4px);
-	top: max(calc(-5.15vw) - 2px, calc(-5.15vh) - 2px);
+	height: min(calc(25vw) + 4px, calc(25vh) + 4px, 54px);
+	width: min(calc(25vw) + 4px, calc(25vh) + 4px, 54px);
+	top: max(calc(-6.7vw) - 2px, calc(-6.7vh) - 2px, 20px);
 	background-color: #ffd17b;
 	border: 1px solid rgba(0, 0, 0, 0.15);
 	z-index: -100;

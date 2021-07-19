@@ -87,8 +87,8 @@ def get_chart(criteria: str = CRITERIAS[0], extension: str = ALL_EXTENSIONS):
 				day_start = day
 			name_data['value'][day] = correct_count
 	if day_start > 0:
-		if day_start > 22:
-			day_start = 22
+		if day_start > 23:
+			day_start = 23
 		days = days[day_start: ]
 		for name_value, name_data in data.items():
 			name_data['value'] = name_data['value'][day_start: ]

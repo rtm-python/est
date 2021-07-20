@@ -20,6 +20,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField
 from wtforms import SubmitField
 from flask_login import current_user
+from flask_login import logout_user
 
 
 class NamerForm(FlaskForm):
@@ -47,8 +48,12 @@ def get_home():
 	"""
 	names = []
 	if current_user.is_authenticated:
-		for name in NameStore.read_list(None, None, current_user.user.id, None):
-			names += [(name.uid, name.value)]
+		name_list = NameStore.read_list(None, None, current_user.user.id, None)
+		if name_list is not None:
+			for name in name_list:
+				names += [(name.uid, name.value)]
+		else:
+			logout_user()
 	namer = NamerForm()
 	if namer.validate_on_submit() and current_user.is_authenticated:
 		if namer.value.data is None or len(namer.value.data.strip()) == 0:

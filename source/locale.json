@@ -241,6 +241,14 @@
 		"endpoint": null,
 		"ru": "Звук"
 	},
+	"Disable Sounds": {
+		"endpoint": null,
+		"ru": "Отключить звуки"
+	},
+	"Enable Sounds": {
+		"endpoint": null,
+		"ru": "Включить звуки"
+	},
 	"On": {
 		"endpoint": null,
 		"ru": "Включен"
@@ -253,6 +261,14 @@
 		"endpoint": null,
 		"ru": "Показать"
 	},
+	"Hide Answers": {
+		"endpoint": null,
+		"ru": "Скрыть ответы"
+	},
+	"Show Answers": {
+		"endpoint": null,
+		"ru": "Показать ответы"
+	},
 	"Answers": {
 		"endpoint": null,
 		"ru": "Ответы"
@@ -264,6 +280,10 @@
 	"Hold": {
 		"endpoint": null,
 		"ru": "Приостановить"
+	},
+	"Hold And Close": {
+		"endpoint": null,
+		"ru": "Приостановить и закрыть"
 	},
 	"Incorrect": {
 		"endpoint": null,

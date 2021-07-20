@@ -35,13 +35,13 @@
 				<div class="d-flex">
 					{%- set pagination_kwargs = __merge(pagination.pre_kwargs, { '%sPageIndex' % pagination.prefix: pagination.page_index - 1 }) -%}
 					<form class="row m-1 align-items-center" action="{{ url_for(pagination.endpoint, **pagination_kwargs) }}" method="get">
-						<div class="col-12 col-sm-4 col-md-4 px-1 my-1">
+						<div class="col-2 px-1 my-1">
 							<input autofocus type="text" class="form-control form-control-sm" id="{{ '%sPageIndex' % pagination.prefix }}" name="{{ '%sPageIndex' % pagination.prefix }}" placeholder="{{ __('Page') }}" value="{{ pagination.page_index }}"/>
 						</div>
-						<div class="col-12 col-sm-8 col-md-4 px-1 my-1">
+						<div class="col-5 px-1 my-1">
 							<button type="submit" class="w-100 btn btn-sm btn-styled btn-styled-light button-click"><span class="oi oi-check"></span><div class="d-inline ml-1">{{ __('Show') }}</div></button>
 						</div>
-						<div class="col-12 col-md-4 px-1 my-1">
+						<div class="col-5 px-1 my-1">
 							<a class="w-100 btn btn-sm btn-styled btn-styled-light button-click" href="#" data-toggle="collapse" data-target="#collapse-page" aria-expanded="true" aria-controls="collapse-page"><span class="oi oi-x"></span><div class="d-inline ml-1">{{ __('Close') }}</div></a>
 						</div>
 					</form>

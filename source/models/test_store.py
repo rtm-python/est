@@ -11,6 +11,7 @@ from models.entity.test import Test
 
 # Additional libraries import
 from sqlalchemy import or_
+from sqlalchemy import func
 
 class TestStore(Store):
 	"""
@@ -60,6 +61,19 @@ class TestStore(Store):
 		return super(TestStore, TestStore).delete(
 			TestStore.read(uid)
 		)
+
+	@staticmethod
+	def rand() -> Test:
+		"""
+		Return random test (only not deleted).
+		"""
+		return database.session.query(
+			Test
+		).filter(
+			Test.deleted_utc == None
+		).order_by(
+			func.random()
+		).first()
 
 	@staticmethod
 	def read_list(offset: int, limit: int,

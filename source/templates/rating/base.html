@@ -5,69 +5,61 @@
 		<div class="card shadow px-3 py-2 bg-gradient-yellow">
 			<div class="d-flex w-100 align-items-center">
 				<h5 class="flex-grow-1 my-2 mr-2 py-1">{{ title }}<div class="small">{{ __(subtitle) }}</div></h5>
-				<div class="d-inline-block text-end">
+				<div class="d-flex align-items-center justify-content-end flex-wrap">
 					{%- if subtitle == 'top 10' -%}
-						<a class="btn btn-sm btn-styled btn-styled-light m-1 button-click" href="{{ url_for('rating.get_chart') }}"><span class="oi oi-graph"></span><div class="d-inline ml-1">{{ __('Personal') }}</div></a>
-						<div id="periodGroup" class="d-inline-block text-center my-1">
+						<a class="btn btn-sm btn-styled btn-styled-light my-1 button-click" href="{{ url_for('rating.get_chart') }}">
+							<span class="oi oi-graph"></span><div class="d-inline ml-1">{{ __('Personal') }}</div>
+						</a>
+						<div id="periodGroup" class="d-inline-block text-end my-1 ml-2">
 							<div class="collapse show" id="collapse-period" data-parent="#periodGroup">
 								<a class="btn btn-sm btn-styled btn-styled-light button-click" href="#" data-toggle="collapse" data-target="#collapse-period-links" aria-expanded="true" aria-controls="collapse-period-links">
-									<span class="oi oi-calendar"></span>
-									<div class="d-inline ml-1">{{ __('Period') }}:</div>
-									<div class="d-inline ml-1">{{ __(current_period) }}</div>
+									<span class="oi oi-calendar"></span><div class="d-none d-sm-inline ml-1">{{ __('Period') }}:</div>
+									<div class="d-inline-block ml-1">{{ __(current_period) }}</div>
 								</a>
 							</div>
 							<div class="collapse collapse-frame" id="collapse-period-links" data-parent="#periodGroup">
-								<div>
-									<div class="pt-1">{{ __('Period') }}:</div>
-									{%- for period in periods -%}
-										<a class="btn btn-sm btn-styled btn-styled-light m-1 button-click" href="{{ url_for('rating.get_top', period=period, extension=current_extension) }}"><span class="oi oi-calendar"></span><div class="d-inline ml-1">{{ __(period) }}</div></a>
-									{%- endfor -%}
-									<a class="btn btn-sm btn-styled btn-styled-light button-click" href="#" data-toggle="collapse" data-target="#collapse-period" aria-expanded="true" aria-controls="collapse-period"><span class="oi oi-x"></span><div class="d-none d-sm-inline ml-1">{{ __('Close') }}</div></a>
-								</div>
+								{%- for period in periods -%}
+									<a class="btn btn-sm btn-styled btn-styled-light m-1 button-click" href="{{ url_for('rating.get_top', period=period, extension=current_extension) }}"><span class="oi oi-calendar"></span><div class="d-inline ml-1">{{ __(period) }}</div></a>
+								{%- endfor -%}
+								<a class="btn btn-sm btn-styled btn-styled-light m-1 button-click" href="#" data-toggle="collapse" data-target="#collapse-period" aria-expanded="true" aria-controls="collapse-period"><span class="oi oi-x"></span><div class="d-inline ml-1">{{ __('Close') }}</div></a>
 							</div>
 						</div>
 					{%- endif -%}
 					{%- if subtitle == 'personal' -%}
-						<a class="btn btn-sm btn-styled btn-styled-light m-1 button-click" href="{{ url_for('rating.get_top') }}"><span class="oi oi-graph"></span><div class="d-inline ml-1">{{ __('Top 10') }}</div></a>
-						<div id="criteriaGroup" class="d-inline-block text-center my-1">
+						<a class="btn btn-sm btn-styled btn-styled-light my-1 button-click" href="{{ url_for('rating.get_top') }}">
+							<span class="oi oi-graph"></span><div class="d-inline ml-1">{{ __('Top 10') }}</div>
+						</a>
+						<div id="criteriaGroup" class="d-inline-block text-end my-1 ml-2">
 							<div class="collapse show" id="collapse-criteria" data-parent="#criteriaGroup">
 								<a class="btn btn-sm btn-styled btn-styled-light button-click" href="#" data-toggle="collapse" data-target="#collapse-criteria-links" aria-expanded="true" aria-controls="collapse-criteria-links">
-									<span class="oi oi-calendar"></span>
-									<div class="d-inline ml-1">{{ __('Criteria') }}:</div>
-									<div class="d-inline ml-1">{{ __(current_criteria) }}</div>
+									<span class="oi oi-tag"></span><div class="d-none d-sm-inline ml-1">{{ __('Criteria') }}:</div>
+									<div class="d-inline-block ml-1">{{ __(current_criteria) }}</div>
 								</a>
 							</div>
 							<div class="collapse collapse-frame" id="collapse-criteria-links" data-parent="#criteriaGroup">
-								<div>
-									<div class="pt-1">{{ __('Criteria') }}:</div>
-									{%- for criteria in criterias -%}
-										<a class="btn btn-sm btn-styled btn-styled-light m-1 button-click" href="{{ url_for('rating.get_chart', extension=current_extension, criteria=criteria) }}"><span class="oi oi-calendar"></span><div class="d-inline ml-1">{{ __(criteria) }}</div></a>
-									{%- endfor -%}
-									<a class="btn btn-sm btn-styled btn-styled-light button-click" href="#" data-toggle="collapse" data-target="#collapse-criteria" aria-expanded="true" aria-controls="collapse-criteria"><span class="oi oi-x"></span><div class="d-none d-sm-inline ml-1">{{ __('Close') }}</div></a>
-								</div>
+								{%- for criteria in criterias -%}
+									<a class="btn btn-sm btn-styled btn-styled-light m-1 button-click" href="{{ url_for('rating.get_chart', extension=current_extension, criteria=criteria) }}"><span class="oi oi-tag"></span><div class="d-inline ml-1">{{ __(criteria) }}</div></a>
+								{%- endfor -%}
+								<a class="btn btn-sm btn-styled btn-styled-light m-1 button-click" href="#" data-toggle="collapse" data-target="#collapse-criteria" aria-expanded="true" aria-controls="collapse-criteria"><span class="oi oi-x"></span><div class="d-inline ml-1">{{ __('Close') }}</div></a>
 							</div>
 						</div>
 					{%- endif -%}
-					<div id="extensionGroup" class="d-inline-block text-center my-1">
+					<div id="extensionGroup" class="d-inline-block text-end my-1 ml-2">
 						<div class="collapse show" id="collapse-extension" data-parent="#extensionGroup">
-							<a class="btn btn-sm btn-styled btn-styled-light ml-2 button-click" href="#" data-toggle="collapse" data-target="#collapse-extension-links" aria-expanded="true" aria-controls="collapse-extension-links">
-								<span class="oi oi-box"></span>
-								<div class="d-inline ml-1">{{ __('Extension') }}:</div>
-								<div class="d-inline ml-1">{{ __(current_extension) }}</div>
+							<a class="btn btn-sm btn-styled btn-styled-light button-click" href="#" data-toggle="collapse" data-target="#collapse-extension-links" aria-expanded="true" aria-controls="collapse-extension-links">
+								<span class="oi oi-box"></span><div class="d-none d-sm-inline ml-1">{{ __('Extension') }}:</div>
+								<div class="d-inline-block ml-1">{{ __(current_extension) }}</div>
 							</a>
 						</div>
 						<div class="collapse collapse-frame" id="collapse-extension-links" data-parent="#extensionGroup">
-							<div>
-								<div class="pt-1">{{ __('Extension') }}:</div>
-								{%- for extension in extensions -%}
-									{%- if subtitle == 'top 10' -%}
-										<a class="btn btn-sm btn-styled btn-styled-light m-1 button-click" href="{{ url_for('rating.get_top', period=current_period, extension=extension) }}"><span class="oi oi-box"></span><div class="d-inline ml-1">{{ __(extension) }}</div></a>
-									{%- elif subtitle == 'personal' -%}
-										<a class="btn btn-sm btn-styled btn-styled-light m-1 button-click" href="{{ url_for('rating.get_chart', extension=extension, criteria=current_criteria) }}"><span class="oi oi-box"></span><div class="d-inline ml-1">{{ __(extension) }}</div></a>
-									{%- endif -%}
-								{%- endfor -%}
-								<a class="btn btn-sm btn-styled btn-styled-light button-click" href="#" data-toggle="collapse" data-target="#collapse-extension" aria-expanded="true" aria-controls="collapse-extension"><span class="oi oi-x"></span><div class="d-none d-sm-inline ml-1">{{ __('Close') }}</div></a>
-							</div>
+							{%- for extension in extensions -%}
+								{%- if subtitle == 'top 10' -%}
+									<a class="btn btn-sm btn-styled btn-styled-light m-1 button-click" href="{{ url_for('rating.get_top', period=current_period, extension=extension) }}"><span class="oi oi-box"></span><div class="d-inline ml-1">{{ __(extension) }}</div></a>
+								{%- elif subtitle == 'personal' -%}
+									<a class="btn btn-sm btn-styled btn-styled-light m-1 button-click" href="{{ url_for('rating.get_chart', extension=extension, criteria=current_criteria) }}"><span class="oi oi-box"></span><div class="d-inline ml-1">{{ __(extension) }}</div></a>
+								{%- endif -%}
+							{%- endfor -%}
+							<a class="btn btn-sm btn-styled btn-styled-light m-1 button-click" href="#" data-toggle="collapse" data-target="#collapse-extension" aria-expanded="true" aria-controls="collapse-extension"><span class="oi oi-x"></span><div class="d-inline ml-1">{{ __('Close') }}</div></a>
 						</div>
 					</div>
 				</div>

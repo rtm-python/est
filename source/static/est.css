@@ -435,3 +435,12 @@ small {
 .p-10 {
 	padding: 10%;
 }
+
+.fs-75 {
+	font-size: 0.75rem;
+}
+
+.d-inline-block-middle {
+	display: inline-block;
+	vertical-align: middle;
+}

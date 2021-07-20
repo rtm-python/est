@@ -84,14 +84,15 @@ def verify_process_owner(process: Process,
 	return True
 
 
+@blueprint.route('/random/start/', methods=('GET',))
 @blueprint.route('/<uid>/start/', methods=('GET',))
-def start(uid: str):
+def start(uid: str = None):
 	"""
 	Start testing and redirect to testing player page.
 	"""
 	if session.get('timezone_offset') is None:
 		return redirect(url_for('testing.get_catalog'))
-	test = TestStore.read(uid)
+	test = TestStore.rand() if uid is None else TestStore.read(uid)
 	if test is None:
 		return redirect(url_for('testing.get_catalog'))
 	name = current_user.get_name()

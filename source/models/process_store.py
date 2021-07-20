@@ -251,8 +251,6 @@ class ProcessStore(Store):
 			func.sum(pre_local.c.process_answer_time).label('answer_time'),
 			func.sum(pre_local.c.crammers).label('total'),
 			pre_local.c.process_date_local
-		).filter(
-			pre.c.crammers > 0
 		).group_by(
 			pre_local.c.name_value,
 			pre_local.c.process_date_local

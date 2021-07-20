@@ -5,6 +5,22 @@
 {%- else -%}
 	{%- set place = 0 -%}
 {%- endif -%}
+{%- set extra_links -%}
+	<a class="btn btn-sm btn-styled btn-styled-light m-1 button-click" href="{{ url_for('rating.get_chart') }}"><span class="oi oi-graph"></span><div class="d-inline ml-1">{{ __('Personal') }}</div></a>
+{%- endset -%}
+{%- set filter_group -%}
+	<div id="periodGroup" class="d-inline-block col-text-center col-sm-text-end">
+		<div class="collapse show" id="collapse-period" data-parent="#periodGroup">
+			<a class="btn btn-sm btn-styled btn-styled-light m-1 button-click" href="#" data-toggle="collapse" data-target="#collapse-period-links" aria-expanded="true" aria-controls="collapse-period-links"><span class="oi oi-calendar"></span><div class="d-none d-sm-inline ml-1">{{ __('Period') }}:</div><div class="d-inline-block ml-1">{{ __(current_period) }}</div></a>
+		</div>
+		<div class="collapse collapse-frame" id="collapse-period-links" data-parent="#periodGroup">
+			{%- for period in periods -%}
+				<a class="btn btn-sm btn-styled btn-styled-light m-1 button-click" href="{{ url_for('rating.get_top', period=period, extension=current_extension) }}"><span class="oi oi-calendar"></span><div class="d-inline ml-1">{{ __(period) }}</div></a>
+			{%- endfor -%}
+			<a class="btn btn-sm btn-styled btn-styled-light m-1 button-click" href="#" data-toggle="collapse" data-target="#collapse-period" aria-expanded="true" aria-controls="collapse-period"><span class="oi oi-x"></span><div class="d-inline ml-1">{{ __('Close') }}</div></a>
+		</div>
+	</div>
+{%- endset -%}
 {%- block ratings_content -%}
 	{% if top_crammers|length %}
 		{%- for name_value, process_count, correct_count, answer_time, total in top_crammers -%}

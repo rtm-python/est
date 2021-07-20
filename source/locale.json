@@ -142,6 +142,10 @@
 		"endpoint": null,
 		"ru": "Начать"
 	},
+	"Start Random": {
+		"endpoint": null,
+		"ru": "Начать случайный"
+	},
 	"Restart": {
 		"endpoint": null,
 		"ru": "Повторить"
@@ -623,7 +627,7 @@
 		"endpoint": null,
 		"ru": "Интернет-ресурс для детей чтобы помочь улучшить основные знания, логическое мышление и навыки по арифметике, пониманию времени, иностранным языкам и др."
 	},
-	"Please, help us to develop and maintain this website.": {
+	"Please, help us develop and maintain this website.": {
 		"endpoint": null,
 		"ru": "Пожалуйста, помогите нам развивать и поддерживать этот Интернет-ресурс."
 	},

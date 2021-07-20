@@ -10,13 +10,12 @@
 {%- block content -%}
 	<div class="w-100">
 		<div class="card shadow px-3 py-2 bg-gradient-yellow">
-			<div class="d-flex w-100 align-items-center">
-				<h5 class="flex-grow-1 my-2 mr-2 py-2">
+			<div class="d-block-center d-sm-flex w-100 align-items-center">
+				<h5 class="flex-grow-1 my-2 mr-2 py-1">
 					{{ lister.show_title(title, '') }}
 				</h5>
-				<div class="d-inline-block text-end">
-					{{ lister.show_filter(extra_links) }}
-					{{ lister.show_pagination() }}
+				<div class="d-inline-block col-text-center col-sm-text-end">
+					{{ lister.show_filter(extra_links) }}{{ lister.show_pagination() }}
 				</div>
 			</div>
 		</div>

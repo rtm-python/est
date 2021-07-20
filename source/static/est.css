@@ -444,3 +444,19 @@ small {
 	display: inline-block;
 	vertical-align: middle;
 }
+
+@media (max-width: 575px) {
+  .d-block-center {
+		display: block;
+		text-align: center;
+	}
+	.col-text-center {
+		text-align: center;
+	}
+}
+
+@media (min-width: 576px) {
+	.col-sm-text-end {
+		text-align: end;
+	}
+}

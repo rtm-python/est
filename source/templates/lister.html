@@ -1,5 +1,5 @@
 {%- macro show_filter(extra_links) -%}
-	<div id="filterGroup" class="d-inline-block text-end">
+	<div id="filterGroup" class="d-inline-block col-text-center col-sm-text-end">
 		<div class="collapse show" id="collapse-filter" data-parent="#filterGroup">
 			{{ extra_links }}<a class="btn btn-sm btn-styled btn-styled-light m-1 button-click" href="#" data-toggle="collapse" data-target="#collapse-filter-links" aria-expanded="true" aria-controls="collapse-filter-links"><span class="oi oi-magnifying-glass"></span><div class="d-inline ml-1">{{ __('Filter') }}</div></a>
 		</div>
@@ -27,7 +27,7 @@
 		<a href="{{ url_for(pagination.endpoint, **pagination_kwargs) }}" class="btn btn-sm btn-styled btn-styled-light m-1 button-click"><span class="oi oi-chevron-left mr-1"></span>{{ __('Page') }}<div class="d-inline ml-1">{{ pagination.page_index - 1 }}</div></a>
 	{%- endif -%}
 	{%- if pagination.page_count > 1 -%}
-		<div id="pageGroup" class="d-inline-block-middle text-end">
+		<div id="pageGroup" class="d-inline-block-middle col-text-center col-sm-text-end">
 			<div class="collapse show" id="collapse-page" data-parent="#pageGroup">
 				<a class="btn btn-sm btn-styled btn-styled-light m-1 button-click" href="#" data-toggle="collapse" data-target="#collapse-page-links" aria-expanded="true" aria-controls="collapse-page-links"><span class="oi oi-layers"></span><div class="d-inline ml-1">{{ __('Page') }} {{ pagination.page_index }}</div></a>
 			</div>

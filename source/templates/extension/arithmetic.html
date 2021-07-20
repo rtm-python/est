@@ -15,7 +15,7 @@
 							{{ answer }}
 						</div>
 					{%- else -%}
-						<input autofocus id="answer" type="text" class="text-center form-control{%- if player.answer.errors -%}{{ ' is-invalid' }}{%- endif -%}" name="answer" placeholder="? " value="{{ player.answer.data|default('', True) }}" autocomplete="off" pattern="[0-9]+" style="width: 75px; min-width: 75px; max-width: max-content;" oninput="resizeInputWidth();" />
+						<input autofocus id="answer" type="text" inputmode="decimal" class="text-center form-control{%- if player.answer.errors -%}{{ ' is-invalid' }}{%- endif -%}" name="answer" placeholder="? " value="{{ player.answer.data|default('', True) }}" autocomplete="off" pattern="[0-9]+" style="width: 75px; min-width: 75px; max-width: max-content;" oninput="resizeInputWidth();" />
 					{%- endif -%}
 				{%- else -%}
 					<div class="text-center form-control" style="border-radius: 55px; min-width: 55px;">

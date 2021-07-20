@@ -27,11 +27,11 @@
 			<small id="playerProgressLeft" class="player-progress-left">{{ test.answer_count - process.answer_count - 1 }}</small>
 		</div>
 		<div class="d-inline text-center mt-2">
-			<a id="soundStateOn" class="d-inline-block btn btn-sm btn-styled btn-styled-light m-1 button-click" href="javascript:setSound(false);"><span class="oi oi-volume-off"></span><div class="d-inline ml-1">{{ __('Disable Sounds') }}</div></a>
+			<a id="soundStateOn" class="btn btn-sm btn-styled btn-styled-light m-1 button-click" href="javascript:setSound(false);"><span class="oi oi-volume-off"></span><div class="d-inline ml-1">{{ __('Disable Sounds') }}</div></a>
 			<a id="soundStateOff" class="d-none btn btn-sm btn-styled btn-styled-light m-1 button-click" href="javascript:setSound(true);"><span class="oi oi-volume-high"></span><div class="d-inline ml-1">{{ __('Enable Sounds') }}</div></a>
-			<a id="showStateAnswers" class="d-inline-block btn btn-sm btn-styled btn-styled-light m-1 button-click" href="javascript:setShow(false);"><span class="oi oi-ban"></span><div class="d-inline ml-1">{{ __('Hide Answers') }}</div></a>
+			<a id="showStateAnswers" class="btn btn-sm btn-styled btn-styled-light m-1 button-click" href="javascript:setShow(false);"><span class="oi oi-ban"></span><div class="d-inline ml-1">{{ __('Hide Answers') }}</div></a>
 			<a id="showStateNothing" class="d-none btn btn-sm btn-styled btn-styled-light m-1 button-click" href="javascript:setShow(true);"><span class="oi oi-layers"></span><div class="d-inline ml-1">{{ __('Show Answers') }}</div></a>
-			<a class="d-inline-block btn btn-sm btn-styled btn-styled-light m-1 button-click" href="{{ url_for('testing.hold', uid=process.uid) }}"><span class="oi oi-media-pause"></span><div class="d-inline ml-1">{{ __('Hold And Close') }}</div></a>
+			<a class="btn btn-sm btn-styled btn-styled-light m-1 button-click" href="{{ url_for('testing.hold', uid=process.uid) }}"><span class="oi oi-media-pause"></span><div class="d-inline ml-1">{{ __('Hold And Close') }}</div></a>
 		</div>
 	</div>
 {%- endblock testing_content -%}

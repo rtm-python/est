@@ -148,7 +148,9 @@ def play(uid: str):
 		user_answer, validation_errors = extension_module.validate_answer(request.form)
 		if validation_errors: # Extension should validate anwser
 			data = json.loads(task.data)
-			player.errors = validation_errors
+			player.answer.errors = validation_errors
+			if request.form.get('ajax'):
+				passed_tasks = None
 		else:
 			task = TaskStore.set_answer(task.uid, user_answer)
 			process = ProcessStore.add_answer(
@@ -189,7 +191,7 @@ def play(uid: str):
 				'testing/passed.html',
 				test=test,
 				passed_task=passed_tasks[0]
-			),
+			) if passed_tasks else None,
 			'progress': {
 				'percent': (process.answer_count + 1) / test.answer_count * 100,
 				'current': process.answer_count + 1,
